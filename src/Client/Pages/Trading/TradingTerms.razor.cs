@@ -22,7 +22,7 @@ namespace Dreamrosia.Koin.Client.Pages.Trading
         private bool _loaded;
         private string _userId { get; set; }
 
-        private BackTestRequestDto _model { get; set; }
+        private BackTestingRequestDto _model { get; set; }
         private IEnumerable<SymbolDto> _symbols { get; set; } = new List<SymbolDto>();
 
         protected override async Task OnInitializedAsync()
@@ -63,7 +63,7 @@ namespace Dreamrosia.Koin.Client.Pages.Trading
         {
             var response = await TradingTermsManager.GetTradingTermsAsync(_userId);
 
-            _model = _mapper.Map<BackTestRequestDto>(response.Data ?? new BackTestRequestDto());
+            _model = _mapper.Map<BackTestingRequestDto>(response.Data ?? new BackTestingRequestDto());
 
             if (response.Succeeded) { return; }
 

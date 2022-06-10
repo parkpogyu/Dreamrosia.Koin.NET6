@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Application.Interfaces.Services
 {
-    public interface IMockTradingService
+    public interface IBackTestingService
     {
-        Task<IResult<byte[]>> GetBackTestingAsync(BackTestRequestDto model);
+        Task<IResult<byte[]>> GetBackTestingAsync(BackTestingRequestDto model);
     }
 }

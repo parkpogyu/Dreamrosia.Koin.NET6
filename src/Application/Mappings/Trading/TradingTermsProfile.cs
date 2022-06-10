@@ -12,7 +12,7 @@ namespace Dreamrosia.Koin.Application.Mappings
                                                       .ReverseMap()
                                                       .ForMember(d => d.Id, o => o.MapFrom(s => s.UserId));
 
-            CreateMap<TradingTermsDto, BackTestRequestDto>();
+            CreateMap<TradingTermsDto, BackTestingRequestDto>();
 
             CreateMap<TradingTerms, TradingTermsExtensionDto>().ForMember(d => d.UserId, o => o.MapFrom(s => s.Id));
         }

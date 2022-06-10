@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Infrastructure.Managers
 {
-    public class MockTradingManager : IMockTradingManager
+    public class BackTestingManager : IBackTestingManager
     {
         private readonly HttpClient _httpClient;
 
-        public MockTradingManager(HttpClient httpClient)
+        public BackTestingManager(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
 
-        public async Task<IResult<byte[]>> GetBackTestingAsync(BackTestRequestDto model)
+        public async Task<IResult<byte[]>> GetBackTestingAsync(BackTestingRequestDto model)
         {
-            var response = await _httpClient.PostAsJsonAsync(Routes.MockTradingEndpoints.GetBackTest, model);
+            var response = await _httpClient.PostAsJsonAsync(Routes.BackTestingEndpoints.GetBackTesting, model);
 
             return await response.ToResult<byte[]>();
         }

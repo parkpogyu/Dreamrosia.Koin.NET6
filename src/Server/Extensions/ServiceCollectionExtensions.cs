@@ -207,6 +207,8 @@ namespace Dreamrosia.Koin.Server.Extensions
             services.AddTransient<IAuditService, AuditService>();
             services.AddScoped<IExcelService, ExcelService>();
 
+            services.AddTransient<IMACDService, MACDService>();
+
             services.AddTransient<ICandleService, CandleService>();
             services.AddTransient<ICrixService, CrixService>();
             services.AddTransient<ISeasonSignalService, SeasonSignalService>();
@@ -224,7 +226,8 @@ namespace Dreamrosia.Koin.Server.Extensions
             services.AddTransient<IBankingTransactionService, BankingTransactionService>();
             services.AddTransient<IPointService, PointService>();
 
-            services.AddTransient<IMockTradingService, MockTradingService>();
+            services.AddTransient<IBackTestingService, BackTestingService>();
+            services.AddTransient<IBackTestingTraderService, BackTestingTraderService>();
 
 #if DEBUG
             services.AddTransient<ITestService, TestService>();

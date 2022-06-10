@@ -24,7 +24,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private bool _viewHelp { get; set; }
 
         [CascadingParameter(Name = "TradingTerms")]
-        private BackTestRequestDto TradingTerms
+        private BackTestingRequestDto TradingTerms
         {
             get => _model;
             set
@@ -66,7 +66,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
         private string _userId { get; set; }
 
-        private BackTestRequestDto _model { get; set; }
+        private BackTestingRequestDto _model { get; set; }
 
         private HashSet<SymbolDto> _selectedSymbols { get; set; } = new HashSet<SymbolDto>();
 

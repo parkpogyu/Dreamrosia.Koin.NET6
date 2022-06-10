@@ -1278,7 +1278,7 @@
   <data name="TimeTerms" xml:space="preserve">
     <value>기간</value>
   </data>
-  <data name="MockTrading" xml:space="preserve">
+  <data name="BackTestings" xml:space="preserve">
     <value>모의투자</value>
   </data>
   <data name="Order.PnLRat" xml:space="preserve">
@@ -1353,11 +1353,8 @@
   <data name="Order" xml:space="preserve">
     <value>주문</value>
   </data>
-  <data name="MockTrading.BackTest" xml:space="preserve">
+  <data name="BackTesting" xml:space="preserve">
     <value>백테스트</value>
-  </data>
-  <data name="MockTrading.RealTest" xml:space="preserve">
-    <value>실시간 모의투자</value>
   </data>
   <data name="AskTerms.LiquidatePositions" xml:space="preserve">
     <value>일괄 매도</value>

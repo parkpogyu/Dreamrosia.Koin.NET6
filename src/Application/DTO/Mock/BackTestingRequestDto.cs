@@ -3,7 +3,7 @@ using System;
 
 namespace Dreamrosia.Koin.Application.DTO
 {
-    public class BackTestRequestDto : TradingTermsDto
+    public class BackTestingRequestDto : TradingTermsDto
     {
         public float SeedMoney { get; set; } = DefaultValue.TradingTerms.MaximumAsset4Basic;
 

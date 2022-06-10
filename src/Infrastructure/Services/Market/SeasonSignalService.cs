@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Extensions;
-using Dreamrosia.Koin.Application.Indicators;
 using Dreamrosia.Koin.Application.Interfaces.Repositories;
 using Dreamrosia.Koin.Application.Interfaces.Services;
 using Dreamrosia.Koin.Domain.Entities;
@@ -125,6 +124,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             using var scope = _serviceProvider.CreateScope();
 
             var _candleService = scope.ServiceProvider.GetRequiredService<ICandleService>();
+            var _macdService = scope.ServiceProvider.GetRequiredService<MACDService>();
 
             var result = await _candleService.GetCandlesAsync(signal.market,
                                                               new DateTime().ToUniversalDate(),
@@ -138,22 +138,25 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
             if (last.candle_date_time_utc != today) { return; }
 
-            MovingAverageConvergenceDivergence macd = new MovingAverageConvergenceDivergence()
-            {
-                Short = 2,
-                Long = 10,
-            };
+            _macdService.Short = 2;
+            _macdService.Long = 2;
+
+            //MACDService _macdService = new MACDService()
+            //{
+            //    Short = 2,
+            //    Long = 10,
+            //};
 
             if (DateTime.Today.DayOfWeek == DayOfWeek.Monday)
             {
-                macd.Generate(candles.GetTimeFrameCandles(TimeFrames.Week));
+                _macdService.Generate(candles.GetTimeFrameCandles(TimeFrames.Week));
 
-                signal.WeeklySignal = macd.HistogramState(1);
+                signal.WeeklySignal = _macdService.HistogramState(1);
             }
 
-            macd.Generate(candles);
+            _macdService.Generate(candles);
 
-            signal.DailySignal = macd.HistogramState(1);
+            signal.DailySignal = _macdService.HistogramState(1);
             signal.UpdatedAt = DateTime.Now;
 
             _logger.LogInformation($"{signal.market}, W:{signal.WeeklySignal.ToDescriptionString()}, D:{ signal.DailySignal.ToDescriptionString()}");

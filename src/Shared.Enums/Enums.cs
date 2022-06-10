@@ -288,4 +288,19 @@ namespace Dreamrosia.Koin.Shared.Enums
         [Description("겨울")]
         Below,
     }
+
+    public enum BasePrices
+    {
+        [Description("시가")]
+        Open,
+
+        [Description("저가")]
+        Low,
+
+        [Description("고가")]
+        High,
+
+        [Description("종가")]
+        Close
+    }
 }

@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Pages.Mock
 {
-    public partial class BackTest
+    public partial class BackTesting
     {
-        [Inject] private IMockTradingManager MockTradingManager { get; set; }
+        [Inject] private IBackTestingManager BackTestingManager { get; set; }
         [Inject] private IMarketManager MarketManager { get; set; }
 
         [CascadingParameter(Name = "ViewHelp")]
         private bool _viewHelp { get; set; }
 
-        private readonly BackTestRequestDto _model = new BackTestRequestDto();
+        private readonly BackTestingRequestDto _model = new BackTestingRequestDto();
         private BackTestReportDto _report { get; set; } = new BackTestReportDto();
         private IEnumerable<SymbolDto> _symbols { get; set; } = new List<SymbolDto>();
 
@@ -51,7 +51,7 @@ namespace Dreamrosia.Koin.Client.Pages.Mock
 
             StateHasChanged();
 
-            var response = await MockTradingManager.GetBackTestingAsync(_model);
+            var response = await BackTestingManager.GetBackTestingAsync(_model);
 
             if (response.Succeeded)
             {

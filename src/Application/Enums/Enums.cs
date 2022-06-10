@@ -28,19 +28,4 @@ namespace Dreamrosia.Koin.Application.Enums
         Agent,
         Test
     }
-
-    public enum BasePrices
-    {
-        [Description("시가")]
-        Open,
-
-        [Description("저가")]
-        Low,
-
-        [Description("고가")]
-        High,
-
-        [Description("종가")]
-        Close
-    }
 }

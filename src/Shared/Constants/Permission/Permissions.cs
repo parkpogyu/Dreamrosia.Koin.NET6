@@ -99,10 +99,9 @@ namespace Dreamrosia.Koin.Shared.Constants.Permission
         #endregion
 
         #region Mock
-        public static class MockTradings
+        public static class BackTestings
         {
-            public const string BackTest = "Permissions.MockTradings.BackTest";
-            public const string RealTest = "Permissions.MockTradings.RealTest";
+            public const string BackTesting = "Permissions.BackTestings.BackTesting";
         }
         #endregion
 

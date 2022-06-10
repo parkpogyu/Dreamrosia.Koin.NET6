@@ -141,8 +141,7 @@ namespace Dreamrosia.Koin.Infrastructure
                     Permissions.Positions.Export,
                     Permissions.Transfers.View,
                     Permissions.Transfers.Export,
-                    Permissions.MockTradings.BackTest,
-                    Permissions.MockTradings.RealTest,
+                    Permissions.BackTestings.BackTesting,
                 };
 
                 #region Basic

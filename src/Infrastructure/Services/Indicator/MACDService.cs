@@ -1,5 +1,4 @@
 ﻿using Dreamrosia.Koin.Application.DTO;
-using Dreamrosia.Koin.Application.Enums;
 using Dreamrosia.Koin.Application.Interfaces.Services;
 using Dreamrosia.Koin.Shared.Enums;
 using System;
@@ -10,13 +9,13 @@ using System.Data;
 using System.Linq;
 using TALib;
 
-namespace Dreamrosia.Koin.Application.Indicators
+namespace Dreamrosia.Koin.Infrastructure.Services
 {
     /// <summary>
     /// MACD 지표
     /// </summary>
-    [DisplayName("MACD")]
-    public class MovingAverageConvergenceDivergence : IIndicator<CandleDto, MovingAverageConvergenceDivergence.Container>
+    [DisplayName("MovingAverageConvergenceDivergence")]
+    public class MACDService : IMACDService
     {
         // TicTacTec.TA.Library.Core.MacdExt
         // 
@@ -51,13 +50,13 @@ namespace Dreamrosia.Koin.Application.Indicators
 
         [Display(Name = "단기")]
         [DisplayFormat(DataFormatString = "{0:N0}")]
-        [DefaultValue(5)]
-        public int Short { get; set; } = 5;
+        [DefaultValue(2)]
+        public int Short { get; set; } = 2; // 5;
 
         [Display(Name = "장기")]
         [DisplayFormat(DataFormatString = "{0:N0}")]
-        [DefaultValue(35)]
-        public int Long { get; set; } = 35;
+        [DefaultValue(10)]
+        public int Long { get; set; } = 10; // 10;
 
         [Display(Name = "이평기간")]
         [DisplayFormat(DataFormatString = "{0:N0}")]
@@ -81,14 +80,14 @@ namespace Dreamrosia.Koin.Application.Indicators
 
         private readonly List<CandleDto> Sources = new List<CandleDto>();
 
-        public List<Container> Containers { get; private set; } = new List<Container>();
+        public List<MacdContainer> Containers { get; private set; } = new List<MacdContainer>();
 
-        public MovingAverageConvergenceDivergence()
+        public MACDService()
         {
             Name = "Moving Average Convergence Divergence";
         }
 
-        public IEnumerable<Container> Generate(IEnumerable<CandleDto> source)
+        public IEnumerable<MacdContainer> Generate(IEnumerable<CandleDto> source)
         {
             outBegIdx = -1;
             outNBElement = -1;
@@ -127,14 +126,14 @@ namespace Dreamrosia.Koin.Application.Indicators
             var signal = OutSignal[0..outNBElement];
             var histogram = OutMACDHist[0..outNBElement];
 
-            List<Container> containers = new List<Container>();
+            List<MacdContainer> containers = new List<MacdContainer>();
 
-            Container previous = null;
-            Container current = null;
+            MacdContainer previous = null;
+            MacdContainer current = null;
 
             for (int i = 0; i < outNBElement; i++)
             {
-                current = new Container(Sources[i + skip], macd[i], signal[i], histogram[i]);
+                current = new MacdContainer(Sources[i + skip], macd[i], signal[i], histogram[i]);
 
                 if (i == 0)
                 {
@@ -152,12 +151,12 @@ namespace Dreamrosia.Koin.Application.Indicators
                 containers.Add(current);
             }
 
-            Containers.AddRange(containers.Reverse<Container>());
+            Containers.AddRange(containers.Reverse<MacdContainer>());
 
             return Containers;
         }
 
-        private SeasonSignals HistogramState(Container previous, Container current)
+        private SeasonSignals HistogramState(MacdContainer previous, MacdContainer current)
         {
             SeasonSignals state = SeasonSignals.Indeterminate;
 
@@ -181,7 +180,7 @@ namespace Dreamrosia.Koin.Application.Indicators
             return state;
         }
 
-        private SeasonSignals HistogramState(Container current)
+        private SeasonSignals HistogramState(MacdContainer current)
         {
             SeasonSignals state = SeasonSignals.Indeterminate;
 
@@ -200,27 +199,6 @@ namespace Dreamrosia.Koin.Application.Indicators
         public SeasonSignals HistogramState(int index = 0)
         {
             return Containers.Count < index + 1 ? SeasonSignals.Indeterminate : Containers[index].SeasonSignals;
-        }
-
-        public class Container
-        {
-            public CandleDto Source { get; private set; }
-
-            public double MACD { get; private set; }
-
-            public double Signal { get; private set; }
-
-            public double Histogram { get; private set; }
-
-            public SeasonSignals SeasonSignals { get; set; } = SeasonSignals.Indeterminate;
-
-            public Container(CandleDto source, double macd, double signal, double histogram)
-            {
-                Source = source;
-                MACD = macd;
-                Signal = signal;
-                Histogram = histogram;
-            }
         }
     }
 }

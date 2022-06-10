@@ -1,11 +1,11 @@
-﻿@page "/mock/backtest"
-@attribute [Authorize(Policy = Permissions.MockTradings.BackTest)]
+﻿@page "/mock/backtesting"
+@attribute [Authorize(Policy = Permissions.BackTestings.BackTesting)]
 @using Dreamrosia.Koin.Client.Shared.Components
 
 <PageMenuTitle Menus="@(new []
 {
-    $"{_localizer["MockTrading"]}",
-    $"{_localizer["MockTrading.BackTest"]}",
+    $"{_localizer["BackTestings"]}",
+    $"{_localizer["BackTesting"]}",
 })" />
 
 <MudPaper Elevation="25" Class="d-flex justify-end align-center pa-2">
@@ -27,7 +27,7 @@
                @bind-Disabled="@_isProcessing"
                OnClick="GetBackTestingAsync"
                Class="ml-2">
-        @_localizer["MockTrading"]
+        @_localizer["BackTestings"]
     </MudButton>
 
 </MudPaper>

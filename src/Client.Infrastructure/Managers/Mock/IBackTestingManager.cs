@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Infrastructure.Managers
 {
-    public interface IMockTradingManager : IManager
+    public interface IBackTestingManager : IManager
     {
-        Task<IResult<byte[]>> GetBackTestingAsync(BackTestRequestDto model);
+        Task<IResult<byte[]>> GetBackTestingAsync(BackTestingRequestDto model);
     }
 }
