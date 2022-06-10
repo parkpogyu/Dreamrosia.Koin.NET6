@@ -1,0 +1,196 @@
+﻿@page "/personal/subscription"
+@page "/personal/subscription/{userId}"
+@using Dreamrosia.Koin.Application.Extensions
+@using Dreamrosia.Koin.Domain.Enums
+@using Dreamrosia.Koin.Shared.Constants.Role
+
+@if (!_loaded)
+{
+    <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <AuthorizeView Roles="@RoleConstants.AdministratorRole">
+        <Authorized>
+            <PageMenuTitle Menus="@(new []
+            {
+                $"{_localizer["Administrator"]}",
+                $"{_localizer["Subscriptions"]}",
+            })" />
+
+            <MudCard Elevation="25" Class="mb-1">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.body1" Color="MudBlazor.Color.Warning">@_localizer["This is an Administrator Only View."]</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                @*<MudCardContent Class="pa-46" Style="padding:26px!important">*@
+                <MudCardContent Class="mt-n6">
+
+                    <div class="d-flex justify-center align-end flex-x-scroll-container">
+                        <MudSpacer />
+                        <MudCheckBox @bind-Checked="@_user.IsActive"
+                                     Label="@_localizer["User.Active"]"
+                                     Color="MudBlazor.Color.Secondary"
+                                     Class="ml-4">
+                        </MudCheckBox>
+
+                        <MudButton Variant="Variant.Filled"
+                                   Color="MudBlazor.Color.Secondary"
+                                   Class="ml-4"
+                                   OnClick="ToggleUserStatus">
+                            @_localizer["Save"]
+                        </MudButton>
+                    </div>
+                </MudCardContent>
+            </MudCard>
+        </Authorized>
+        <NotAuthorized>
+            <PageMenuTitle Menus="@(new []
+            {
+                $"{_localizer["Personal"]}",
+                $"{_localizer["Subscriptions"]}",
+            })" />
+        </NotAuthorized>
+    </AuthorizeView>
+    <MudGrid>
+        <MudItem xs="12">
+            <MudCard Elevation="25">
+                <MudCardContent>
+                    <EditForm Model="@_model">
+                        <FluentValidationValidator @ref="@_membershipValidator" />
+                        <MudGrid>
+                            <MudItem xs="12" sm="6">
+                                <MudField Label=@_localizer["Subscription.UserCode"]
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense">
+                                    <MudText>@_user.UserCode</MudText>
+                                </MudField>
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudField Label="@_localizer["User.NickName"]"
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense">
+                                    <div class="d-flex justify-start align-center">
+                                        <UserAvatar Image="@_user.ProfileImage" />
+                                        <MudText>@_user.NickName</MudText>
+                                    </div>
+                                </MudField>
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudField Label="@_localizer["User.Email"]"
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense">
+                                    <MudText>@_user.Email</MudText>
+                                </MudField>
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudField Label="@_localizer["User.PhoneNumber"]"
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense">
+                                    <MudText>@_user.PhoneNumber</MudText>
+                                </MudField>
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudField Label=@_localizer["User.SignupDate"]
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense">
+                                    <MudText> @($"{_user.CreatedOn:yyyy-MM-dd}") </MudText>
+                                </MudField>
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudField Label=@_localizer["Subscription.Recommender"]
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense">
+
+                                    <div class="d-flex justify-space-between align-center">
+                                        <div class="d-flex justify-start align-center">
+                                            <UserAvatar Image="@_user.Recommender?.ProfileImage" />
+                                            <MudText> @_user.Recommender?.NickName</MudText>
+                                        </div>
+                                        <MudButton Variant="Variant.Filled"
+                                                   Color="MudBlazor.Color.Secondary"
+                                                   Size="Size.Small"
+                                                   Class="ml-auto"
+                                                   OnClick="(() => InvokeRecommenderModal())">
+                                            @_localizer["Change"]
+                                        </MudButton>
+                                    </div>
+                                </MudField>
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudField Label=@_localizer["Trading.AutoTrading"]
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense">
+                                    <MudSwitch @bind-Checked="@_user.AutoTrading"
+                                               Color="MudBlazor.Color.Primary"
+                                               ReadOnly="true"
+                                               Class="mb-n2 mt-n2" />
+                                </MudField>
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudField Label=@_localizer["User.IsAssignedBot"]
+                                          Variant="Variant.Outlined"
+                                          Margin="Margin.Dense">
+                                    <MudCheckBox @bind-Checked="@_user.IsAssignedBot"
+                                                 Dense="true" ReadOnly="true "
+                                                 Style="margin-top:-3px;margin-bottom:-8px" />
+                                </MudField>
+                            </MudItem>
+                            <MudItem xs="12" sm="4">
+                                <MudSelect Label=@_localizer["Membership.Level"]
+                                           T="MembershipLevel"
+                                           Margin="Margin.Dense" Variant="Variant.Outlined"
+                                           MultiSelection="false"
+                                           Value="@_model.Level"
+                                           ValueChanged="@((MembershipLevel value) => MembershipLevelChanged(value))">
+
+                                    <MudSelectItem T="MembershipLevel" Value="MembershipLevel.Free">@MembershipLevel.Free.ToDescriptionString()</MudSelectItem>
+                                    <MudSelectItem T="MembershipLevel" Value="MembershipLevel.Basic">@MembershipLevel.Basic.ToDescriptionString()</MudSelectItem>
+                                    <MudSelectItem T="MembershipLevel" Value="MembershipLevel.Advanced">@MembershipLevel.Advanced.ToDescriptionString()</MudSelectItem>
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem xs="12" sm="4">
+                                @if (_model.Level == Domain.Enums.MembershipLevel.Advanced)
+                                {
+                                    <MudNumericField T="float"
+                                                     Label=@_localizer["Trading.MaximumAsset"]
+                                                     Value="@_model.MaximumAsset" For="@(() => _model.MaximumAsset)"
+                                                     Min="20000000" Max="1000000000" Step="5000000" Format="N0"
+                                                     Margin="Margin.Dense" Variant="Variant.Outlined"
+                                                     ValueChanged="@((float value) => MaximumAssetChanged(value))" />
+                                }
+                                else
+                                {
+                                    <MudField Label=@_localizer["Trading.MaximumAsset"]
+                                              Variant="Variant.Outlined"
+                                              Margin="Margin.Dense">
+                                        <MudText Style="text-align:right"> @($"{_model.MaximumAsset:N0}") </MudText>
+                                    </MudField>
+                                }
+                            </MudItem>
+                            <MudItem xs="12" sm="4">
+                                <div class="d-flex justify-space-between align-center">
+                                    <MudField Label=@_localizer["Membership.DailyDeductionPoint"]
+                                              Variant="Variant.Outlined"
+                                              Margin="Margin.Dense">
+                                        <MudText Style="text-align:right"> @($"{_model.DailyDeductionPoint:N0}") </MudText>
+                                    </MudField>
+                                    <MudButton Variant="Variant.Filled"
+                                               Color="MudBlazor.Color.Secondary"
+                                               Size="Size.Small"
+                                               Class="ml-2 mr-3"
+                                               OnClick="ChangeMembershipAsync"
+                                               Disabled="@((_model.Level == _user.Membership.Level && _model.MaximumAsset == _user.Membership.MaximumAsset) ||
+                                                            DateTime.Now.Subtract( _user.Membership.CreatedOn).TotalDays < 1)">
+                                        @_localizer["Change"]
+                                    </MudButton>
+                                </div>
+                            </MudItem>
+                        </MudGrid>
+                    </EditForm>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+}

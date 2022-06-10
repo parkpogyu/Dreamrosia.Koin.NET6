@@ -1,0 +1,30 @@
+@page "/account/forgot-password"
+@layout MainLayout
+@attribute [AllowAnonymous]
+
+<EditForm Model="@_emailModel" OnValidSubmit="SubmitAsync">
+    <FluentValidationValidator @ref="_fluentValidationValidator" />
+    <MudGrid>
+        <MudItem xs="12">
+            <div class="d-flex justify-center">
+                <MudIcon Icon="@CustomIcons.Fastlane" Color="MudBlazor.Color.Primary" Size="Size.Large" ViewBox="0 0 256 256" Style="width: 128px; height: 128px;" />
+            </div>
+        </MudItem>
+        <MudItem xs="12">
+            <div class="d-flex justify-center">
+                <MudText Typo="Typo.h4">@_localizer["Forgot password?"]</MudText>
+            </div>
+        </MudItem>
+        <MudItem xs="12">
+            <div class="d-flex justify-center">
+                <MudText Typo="Typo.subtitle2" Class="mb-n4">@_localizer["Enter email for password reset"]</MudText>
+            </div>
+        </MudItem>
+        <MudItem xs="12">
+            <MudTextField Label="@_localizer["User.Email"]" @bind-Value="_emailModel.Email" For="@(() => _emailModel.Email)" Variant="Variant.Outlined"></MudTextField>
+        </MudItem>
+        <MudItem xs="12" Class="d-flex justify-center">
+            <MudButton Variant="Variant.Filled" Disabled="@(!Validated)" Color="MudBlazor.Color.Primary" Size="Size.Large" ButtonType="MudBlazor.ButtonType.Submit" FullWidth="true">@_localizer["Reset Password"]</MudButton>
+        </MudItem>
+    </MudGrid>
+</EditForm>

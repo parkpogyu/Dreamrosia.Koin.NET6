@@ -1,0 +1,23 @@
+﻿@page "/order/tradingterms"
+@page "/order/tradingterms/{userId}"
+@attribute [Authorize(Policy = Permissions.TradingTerms.View)]
+@using Dreamrosia.Koin.Client.Shared.Components
+
+<PageMenuTitle Menus="@(new []
+{
+    $"{_localizer["Order"]}",
+    $"{_localizer["TradingTerms"]}",
+})" UserId="@UserId" />
+
+@if (!_loaded)
+{
+    <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <CascadingValue Value="@_model" Name="TradingTerms">
+        <TradingPreference IsReal="true"  
+                           UserId="@_userId"
+                           Symbols="@_symbols" />
+    </CascadingValue>
+}

@@ -1,0 +1,21 @@
+@page "/login"
+@layout MainLayout
+@attribute [AllowAnonymous]
+
+<MudGrid>
+    <MudItem xs="12">
+        <div class="d-flex justify-center">
+            <MudIcon Icon="@CustomIcons.Fastlane" Color="MudBlazor.Color.Primary" Size="Size.Large" ViewBox="0 0 256 256" Style="width: 128px; height: 128px;" />
+        </div>
+    </MudItem>
+    <MudItem xs="12">
+        <div class="d-flex justify-center">
+            <MudText Typo="Typo.h4">@_localizer["Title"] @_localizer["Sign In"]</MudText>
+        </div>
+    </MudItem>
+    <MudItem xs="12" Class="d-flex justify-center">
+        <MudButton ButtonType="MudBlazor.ButtonType.Button" Size="Size.Small" Style="width: 100%;" OnClick="Signin" >
+            <img src="/images//kakao_login_large_narrow.png" style="width:100%" />
+        </MudButton>
+    </MudItem>
+</MudGrid>

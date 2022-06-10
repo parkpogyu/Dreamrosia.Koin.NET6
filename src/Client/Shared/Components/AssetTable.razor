@@ -1,0 +1,251 @@
+﻿
+<div id="@_divTableId">
+    <MudTable Items="@_items"
+              Elevation="25"
+              Hover="true" Dense="true" Bordered="true" Striped="true"
+              FixedHeader="true" FixedFooter="true"
+              RowsPerPage="@TablePager.DefaultPageSize"
+              Height="@_divTableHeight">
+        @*<ToolBarContent>
+                <MudButton DisableElevation
+                           IconColor="MudBlazor.Color.Secondary"
+                           Variant="Variant.Filled"
+                           OnClick="AssetsToExcelAsync"
+                           StartIcon="@Icons.Custom.FileFormats.FileExcel"
+                           Color="MudBlazor.Color.Surface">
+                    @_localizer["Export To Excel"]
+                </MudButton>
+            </ToolBarContent>*@
+        <HeaderContent>
+            @{
+                <MudTh> @_localizer["Date"] </MudTh>
+                if (IsReal)
+                {
+                    <MudTh> @_localizer["Asset.InAmt"] </MudTh>
+                    <MudTh> @_localizer["Asset.OutAmt"] </MudTh>
+                }
+                <MudTh> @_localizer["Asset.BidAmt"] </MudTh>
+                <MudTh> @_localizer["Asset.AskAmt"] </MudTh>
+                <MudTh> @_localizer["Asset.Fee"] </MudTh>
+                <MudTh> @_localizer["Asset.PnL"] </MudTh>
+                <MudTh> @_localizer["Asset.BalEvalAmt"] </MudTh>
+                <MudTh> @_localizer["Asset.Deposit"] </MudTh>
+                <MudTh> @_localizer["Asset.DssAmt"] </MudTh>
+                @if (IsReal)
+                {
+                    <MudTh> @_localizer["Asset.InvsAmt"] </MudTh>
+                }
+                else
+                {
+                    <MudTh> @_localizer["Asset.BorrowedAmt"] </MudTh>
+                }
+                <MudTh> @_localizer["Asset.InvsPnL"] </MudTh>
+                <MudTh> @_localizer["Asset.InvsPnLRat"] </MudTh>
+                <MudTh> @_localizer["Asset.MDDInvsPnL"] </MudTh>
+                <MudTh> @_localizer["Asset.MDDInvsPnLRat"] </MudTh>
+            }
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel=@_localizer["Date"] Style="text-align:center">
+                @($"{context.created_at:yyyy-MM-dd}")
+            </MudTd>
+            @{
+                if (IsReal)
+                {
+                    if (context.InAmt > 0)
+                    {
+                        <MudTd DataLabel=@_localizer["Asset.InAmt"] Class="positive-right">
+                            @($"{context.InAmt:N0}")
+                        </MudTd>
+                    }
+                    else
+                    {
+                        <MudTd DataLabel=@_localizer["Asset.InAmt"] />
+                    }
+                    if (context.OutAmt > 0)
+                    {
+                        <MudTd DataLabel=@_localizer["Asset.OutAmt"] Class="negative-right">
+                            @($"{context.OutAmt:N0}")
+                        </MudTd>
+                    }
+                    else
+                    {
+                        <MudTd DataLabel=@_localizer["Asset.OutAmt"] />
+                    }
+                }
+
+                if (context.BidAmt > 0)
+                {
+                    <MudTd DataLabel=@_localizer["Asset.BidAmt"] Class="positive-right">
+                        @($"{context.BidAmt:N0}")
+                    </MudTd>
+                }
+                else
+                {
+                    <MudTd DataLabel=@_localizer["Asset.BidAmt"] />
+                }
+
+                if (context.AskAmt > 0)
+                {
+                    <MudTd DataLabel=@_localizer["Asset.AskAmt"] Class="negative-right">
+                        @($"{context.AskAmt:N0}")
+                    </MudTd>
+                }
+                else
+                {
+                    <MudTd DataLabel=@_localizer["Asset.AskAmt"] />
+                }
+
+                if (context.Fee > 0)
+                {
+                    var fee = Math.Truncate(context.Fee * 100) / 100;
+
+                    <MudTd DataLabel=@_localizer["Asset.Fee"] Class="negative-right">
+                        @($"{fee:N2}")
+                    </MudTd>
+                }
+                else
+                {
+                    <MudTd DataLabel=@_localizer["Asset.Fee"] />
+                }
+
+                if (context.PnL < 0)
+                {
+                    <MudTd DataLabel=@_localizer["Asset.PnL"] Class="negative-right">
+                        @($"{context.PnL:N0}")
+                    </MudTd>
+                }
+                else if (context.PnL == 0)
+                {
+                    <MudTd DataLabel=@_localizer["Asset.PnL"] />
+                }
+                else
+                {
+                    <MudTd DataLabel=@_localizer["Asset.PnL"] Class="positive-right">
+                        @($"{context.PnL:N0}")
+                    </MudTd>
+                }
+
+                if (context.BalEvalAmt > 0)
+                {
+                    <MudTd DataLabel=@_localizer["Asset.BalEvalAmt"] Style="text-align:right">
+                        @($"{context.BalEvalAmt:N0}")
+                    </MudTd>
+                }
+                else
+                {
+                    <MudTd DataLabel=@_localizer["Asset.BalEvalAmt"] />
+                }
+
+                if (context.Deposit > 0)
+                {
+                    <MudTd DataLabel=@_localizer["Asset.Deposit"] Style="text-align:right">
+                        @($"{context.Deposit:N0}")
+                    </MudTd>
+                }
+                else
+                {
+                    <MudTd DataLabel=@_localizer["Asset.Deposit"] />
+                }
+
+                if (context.DssAmt > 0)
+                {
+                    <MudTd DataLabel=@_localizer["Asset.DssAmt"] Style="text-align:right">
+                        @($"{context.DssAmt:N0}")
+                    </MudTd>
+                }
+                else
+                {
+                    <MudTd DataLabel=@_localizer["Asset.DssAmt"] />
+                }
+
+                if (IsReal)
+                {
+                    if (context.InvsAmt > 0)
+                    {
+                        <MudTd DataLabel=@_localizer["Asset.InvsAmt"] Style="text-align:right">
+                            @($"{context.InvsAmt:N0}")
+                        </MudTd>
+                    }
+                    else
+                    {
+                        <MudTd DataLabel=@_localizer["Asset.InvsAmt"] />
+                    }
+                }
+                else
+                {
+                    if (context.BorrowedAmt > 0)
+                    {
+                        <MudTd DataLabel=@_localizer["Asset.BorrowedAmt"] Style="text-align:right">
+                            @($"{context.BorrowedAmt:N0}")
+                        </MudTd>
+                    }
+                    else
+
+                    {
+                        <MudTd DataLabel=@_localizer["Asset.Borrowed"] />
+                    }
+                }
+
+                if (context.InvsPnL < 0)
+                {
+                    <MudTd DataLabel=@_localizer["Asset.InvsPnL"] Class="negative-right">
+                        @($"{context.InvsPnL:N0}")
+                    </MudTd>
+                }
+                else if (context.InvsPnL == 0)
+                {
+                    <MudTd DataLabel=@_localizer["Asset.InvsPnL"] />
+                }
+                else
+                {
+                    <MudTd DataLabel=@_localizer["Asset.InvsPnL"] Class="positive-right">
+                        @($"{context.InvsPnL:N0}")
+                    </MudTd>
+                }
+
+                if (context.InvsPnLRat < 0)
+                {
+                    <MudTd DataLabel=@_localizer["Asset.InvsPnLRat"] Class="negative-right">
+                        @($"{context.InvsPnLRat:N2}")
+                    </MudTd>
+                }
+                else if (context.InvsPnLRat == 0)
+                {
+                    <MudTd DataLabel=@_localizer["Asset.InvsPnLRat"] />
+                }
+                else
+                {
+                    <MudTd DataLabel=@_localizer["Asset.InvsPnLRat"] Class="positive-right">
+                        @($"{context.InvsPnLRat:N2}")
+                    </MudTd>
+                }
+
+                if (context.MDDInvsPnL < 0)
+                {
+                    <MudTd DataLabel=@_localizer["Asset.MDDInvsPnL"] Class="negative-right">
+                        @($"{context.MDDInvsPnL:N0}")
+                    </MudTd>
+                }
+                else
+                {
+                    <MudTd DataLabel=@_localizer["Asset.MDDInvsPnL"] />
+                }
+
+                if (context.MDDInvsPnLRat < 0)
+                {
+                    <MudTd DataLabel=@_localizer["Asset.MDDInvsPnLRat"] Class="negative-right">
+                        @($"{context.MDDInvsPnLRat:N2}")
+                    </MudTd>
+                }
+                else
+                {
+                    <MudTd DataLabel=@_localizer["Asset.MDDInvsPnLRat"] />
+                }
+            }
+        </RowTemplate>
+        <PagerContent>
+            <TablePager />
+        </PagerContent>
+    </MudTable>
+</div>

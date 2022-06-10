@@ -1,0 +1,11 @@
+﻿@namespace Dreamrosia.Koin.Client.Shared.Components
+<MudHidden Breakpoint="Breakpoint.SmAndDown">
+    <MudText Typo="Typo.h5" Color="MudBlazor.Color.Primary" Class="mb-xs-0 mb-md-2">@Title</MudText>
+    <MudText Color="MudBlazor.Color.Surface" Class="mb-xs-0 mb-md-4">@Description</MudText>
+</MudHidden>
+
+@code
+{
+    [Parameter] public string Title { get; set; }
+    [Parameter] public string Description { get; set; }
+}

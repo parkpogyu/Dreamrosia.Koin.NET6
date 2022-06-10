@@ -1,0 +1,58 @@
+﻿@namespace Dreamrosia.Koin.Client.Shared.Components
+
+<div class="d-flex justify-space-between align-center mb-2">
+    <div class="d-flex justify-start align-center">
+        <MudIcon Icon="@Icons.Filled.Menu" Size="Size.Small" Class="mr-2" />
+        @{
+            var last = Menus.Last();
+
+            foreach (var menu in Menus)
+            {
+                if (menu.Equals(last))
+                {
+                    <MudText Color="MudBlazor.Color.Primary" Style="font-weight:bold">@menu</MudText>
+                }
+                else
+                {
+                    <MudText Class="mr-1">@menu</MudText>
+                    <MudIcon Icon="@Icons.Filled.KeyboardArrowRight" Size="Size.Small" Class="mr-1" />
+                }
+            }
+        }
+    </div>
+
+    <MudSpacer />
+
+    @if (!string.IsNullOrEmpty(UserId))
+    {
+        <div class="d-flex justify-end align-center ml-auto mr-4">
+
+            <UserAvatar Image="@_profileImage" />
+            <MudText>@_nickName</MudText>
+        </div>
+    }
+</div>
+
+@code
+{
+    [Parameter] public IEnumerable<string> Menus { get; set; }
+    [Parameter] public string UserId { get; set; }
+
+    private string _nickName { get; set; }
+    public string _profileImage { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (string.IsNullOrEmpty(UserId)) { return; }
+
+        var result = await _userManager.GetAsync(UserId);
+
+        if (result.Succeeded)
+        {
+            var user = result.Data;
+
+            _nickName = user.NickName;
+            _profileImage = user.ProfileImage;
+        }
+    }
+}

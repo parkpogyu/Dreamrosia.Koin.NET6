@@ -1,0 +1,56 @@
+﻿@using Dreamrosia.Koin.Application.DTO
+
+<style>
+    .mud-toolbar {
+        height: auto;
+    }
+</style>
+<div id="@_divTableId">
+    <MudTable Items="@(_items.Reverse())"
+              Elevation="25"
+              Hover="true" Dense="true" Bordered="true" Striped="true"
+              FixedHeader="true" FixedFooter="true"
+              RowsPerPage="@TablePager.DefaultPageSize"
+              Height="@_divTableHeight">
+        <HeaderContent>
+            <MudTh>@_localizer["Symbol.code"] </MudTh>
+            <MudTh>@_localizer["Date"] </MudTh>
+            <MudTh>@_localizer["Candle.opening_price"] </MudTh>
+            <MudTh>@_localizer["Candle.high_price"] </MudTh>
+            <MudTh>@_localizer["Candle.low_price"] </MudTh>
+            <MudTh>@_localizer["Candle.trade_price"] </MudTh>
+            <MudTh>@_localizer["Candle.candle_acc_trade_price"] </MudTh>
+            <MudTh>@_localizer["Candle.candle_acc_trade_volume"] </MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel=@_localizer["Symbol.code"]>
+                <CoinIcon Code=@($"{(context as CandleDto).code}") />
+            </MudTd>
+            <MudTd DataLabel=@_localizer["Date"] Style="text-align:center">
+                @($"{context.candle_date_time_utc:d}")
+            </MudTd>
+            <MudTd DataLabel=@_localizer["Candle.opening_price"] Style="text-align:right">
+                @(TickerDto.GetPriceText((context as CandleDto).opening_price))
+            </MudTd>
+            <MudTd DataLabel=@_localizer["Candle.high_price"] Style="text-align:right">
+                @(TickerDto.GetPriceText((context as CandleDto).high_price))
+            </MudTd>
+            <MudTd DataLabel=@_localizer["Candle.low_price"] Style="text-align:right">
+                @(TickerDto.GetPriceText((context as CandleDto).low_price))
+            </MudTd>
+            <MudTd DataLabel=@_localizer["Candle.trade_price"] Style="text-align:right">
+                @(TickerDto.GetPriceText((context as CandleDto).trade_price))
+            </MudTd>
+            <MudTd DataLabel=@_localizer["Candle.candle_acc_trade_price"] Style="text-align:right">
+                @($"{context.candle_acc_trade_price:N0}")
+            </MudTd>
+            <MudTd DataLabel=@_localizer["Candle.candle_acc_trade_volume"] Style="text-align:right">
+                @($"{context.candle_acc_trade_volume:N0}")
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <TablePager />
+        </PagerContent>
+    </MudTable>
+</div>
+

@@ -1,0 +1,403 @@
+﻿@using System;
+@using Dreamrosia.Koin.Application.DTO
+@using Dreamrosia.Koin.Application.Extensions
+@using Dreamrosia.Koin.Domain.Enums
+@using Dreamrosia.Koin.Shared.Enums
+
+<style>
+    .mud-table-body .mud-table-row .mud-table-cell .d-flex {
+        justify-content:center;
+    }
+</style>
+
+@if (!_loaded)
+{
+    <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <div id="TradingPreference">
+        <MudPaper Elevation="25" Class="pa-2">
+            <MudGrid>
+                <MudItem xs="12" md="6">
+                    <MudCard Elevation="25" Class="mb-2">
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText>@_localizer["Trading.BidTerms"]</MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <EditForm Model="@_model">
+                                <FluentValidationValidator @ref="@_bidTermsValidator" />
+                                <MudGrid>
+                                    <MudItem xs="12" sm="6">
+                                        <MudSelect T="BidAmountOption"
+                                                   Value="@_model.AmountOption"
+                                                   ValueChanged="@((BidAmountOption value) => BidAmountOptionChanged(value))"
+                                                   Label="@_localizer["BidTerms.AmountOption"]"
+                                                   Placeholder="@_localizer["BidTerms.AmountOption"]"
+                                                   Variant="Variant.Outlined"
+                                                   Margin="Margin.Dense"
+                                                   HelperText="@(_viewHelp ? (
+                                                             _model.AmountOption == BidAmountOption.Fixed ?  $"{_localizer["BidTerms.Amount"]} = {_model.Amount}" :
+                                                             _model.AmountOption == BidAmountOption.Manual ?
+                                                             $"{_localizer["BidTerms.Amount"]} = {_localizer["Asset.DssAmt"]} x {_model.AmountRate:N2}%" :
+                                                             $"{_localizer["BidTerms.Amount"]} = {_localizer["Asset.DssAmt"]} x {_autoAmountRate:N2}%"
+                                                                          ) : string.Empty )">
+                                            <MudSelectItem T="BidAmountOption" Value="@(BidAmountOption.Fixed)">@(BidAmountOption.Fixed.ToDescriptionString())</MudSelectItem>
+                                            <MudSelectItem T="BidAmountOption" Value="@(BidAmountOption.Manual)">@(BidAmountOption.Manual.ToDescriptionString())</MudSelectItem>
+                                            <MudSelectItem T="BidAmountOption" Value="@(BidAmountOption.Auto)">@(BidAmountOption.Auto.ToDescriptionString())</MudSelectItem>
+                                        </MudSelect>
+
+                                    </MudItem>
+                                    <MudItem xs="12" sm="6">
+
+                                        @if (_model.AmountOption == BidAmountOption.Fixed)
+                                        {
+                                            <MudNumericField T="float"
+                                                             Label="@_localizer["BidTerms.Fixed"]"
+                                                             @bind-Value="@_model.Amount" For="@(() => _model.Amount)"
+                                                             Min="10000" Max="1000000000" Format="N0"
+                                                             Margin="Margin.Dense" Variant="Variant.Outlined" />
+                                        }
+                                        else if (_model.AmountOption == BidAmountOption.Manual)
+                                        {
+                                            <MudNumericField T="float"
+                                                             Label="@_localizer["BidTerms.AmountRate"]"
+                                                             @bind-Value="@_model.AmountRate" For="@(() => _model.AmountRate)"
+                                                             Min="0" Max="100" Step="0.01F" Format="F2"
+                                                             Margin="Margin.Dense" Variant="Variant.Outlined" />
+                                        }
+                                        else
+                                        {
+                                            <MudNumericField T="float"
+                                                             Label="@_localizer["BidTerms.AmountRate"]"
+                                                             @bind-Value="@_autoAmountRate"
+                                                             Min="0" Max="100" Step="0.01F" Format="F2"
+                                                             Margin="Margin.Dense" Variant="Variant.Outlined"
+                                                             Disabled="true"
+                                                             HelperText="@(_viewHelp ?  (_selectedSymbols.Any() ? $"{_autoAmountRate:N2}% = (1 / {_selectedSymbols.Count()}) x 100" :
+                                                                                                              $"{_autoAmountRate:N2}% = (1 / {_symbols.Count()}) x 100" ) : string.Empty )" />
+                                        }
+                                    </MudItem>
+                                    <MudItem xs="12" sm="6">
+                                        <MudNumericField T="float"
+                                                         Label="@_localizer["BidTerms.Minimum"]"
+                                                         @bind-Value="@_model.Minimum" For="@(() => _model.Minimum)"
+                                                         Min="10000" Max="1000000000" Step="100000" Format="N0"
+                                                         Margin="Margin.Dense" Variant="Variant.Outlined"
+                                                         HelperText="@(_viewHelp ?  $"{_localizer["BidTerms.Minimum"]} : 10,000 ~ 업비트 제한" : string.Empty )" />
+                                    </MudItem>
+                                    <MudItem xs="12" sm="6">
+                                        <MudNumericField T="float"
+                                                         Label="@_localizer["BidTerms.Maximum"]"
+                                                         @bind-Value="@_model.Maximum" For="@(() => _model.Maximum)"
+                                                         Min="0" Max="1000000000" Step="100000" Format="N0"
+                                                         Margin="Margin.Dense" Variant="Variant.Outlined"
+                                                         HelperText="@(_viewHelp ?  $"{_localizer["BidTerms.Maximum"]} :{_localizer["BidTerms.Minimum"]} ~ 업비트 제한 , 0:업비트 제한" : string.Empty )" />
+                                    </MudItem>
+                                    @if (!IsReal)
+                                    {
+                                        <MudItem xs="12">
+                                            <MudNumericField T="float"
+                                                             Label="@_localizer["Asset.InvsAmt"]"
+                                                             @bind-Value="@_model.SeedMoney" For="@(() => _model.SeedMoney)"
+                                                             Min="10000" Max="10000000000" Step="5000000" Format="N0"
+                                                             Margin="Margin.Dense" Variant="Variant.Outlined"
+                                                             HelperText="@(_viewHelp ?  "투자 시작 자금" : string.Empty )" />
+                                        </MudItem>
+                                    }
+                                </MudGrid>
+                            </EditForm>
+                        </MudCardContent>
+                    </MudCard>
+
+                    <MudCard Elevation="25" Class="mb-2">
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText>@_localizer["Trading.AskTerms"]</MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <EditForm Model="@_model">
+                                <FluentValidationValidator @ref="@_askTermsValidator" />
+                                <MudGrid>
+                                    @*<MudItem xs="12" Class="d-flex align-baseline">
+                                            <MudField Label="개별설정"
+                                                      Margin="Margin.Dense" Variant="Variant.Outlined" >
+                                                <MudGrid Class="mt-2">
+                                                    <MudItem xs="12" sm="6" Class="d-flex align-center">
+                                                        <MudNumericField T="float"
+                                                                         Label="@_localizer["AskTerms.TakeProfit"]"
+                                                                         @bind-Value="@_model.TakeProfit"
+                                                                         For="@(() => _model.TakeProfit)"
+                                                                         Min="0" Step="0.01F" Format="N2"
+                                                                         Margin="Margin.Dense" Variant="Variant.Outlined"
+                                                                         Disabled="@(!(_model.UseTakeProfit && _model.IndivisualUse))"
+                                                                         HelperText="@(_viewHelp ?  $"개별 코인 {_localizer["AskTerms.TakeProfit"]}" : string.Empty )" />
+                                                        <MudCheckBox @bind-Checked="@_model.UseTakeProfit"
+                                                                     For="@(() => _model.UseTakeProfit)"
+                                                                     Color="@(IsReal?MudBlazor.Color.Secondary:MudBlazor.Color.Primary)"
+                                                                     Disabled="@(!_model.IndivisualUse)"
+                                                                     Dense="true" />
+                                                    </MudItem>
+                                                    <MudItem xs="12" sm="6" Class="d-flex align-center">
+                                                        <MudNumericField T="float"
+                                                                         Label="@_localizer["AskTerms.StopLoss"]"
+                                                                         @bind-Value="@_model.StopLoss"
+                                                                         For="@(() => _model.StopLoss)"
+                                                                         Min="-100" Max="0" Step="0.01F" Format="F2"
+                                                                         Margin="Margin.Dense" Variant="Variant.Outlined"
+                                                                         Disabled="@(!(_model.UseStopLoss && _model.IndivisualUse))"
+                                                                         HelperText="@(_viewHelp ?  $"개별 코인 {_localizer["AskTerms.StopLoss"]}" : string.Empty )" />
+                                                        <MudCheckBox @bind-Checked="@_model.UseStopLoss"
+                                                                     For="@(() => _model.UseStopLoss)"
+                                                                     Color="@(IsReal?MudBlazor.Color.Secondary:MudBlazor.Color.Primary)"
+                                                                     Disabled="@(!_model.IndivisualUse)"
+                                                                     Dense="true" />
+                                                    </MudItem>
+                                                </MudGrid>
+                                            </MudField>
+                                            <MudCheckBox Label="@_localizer["Usage"]"
+                                                         @bind-Checked="@_model.IndivisualUse"
+                                                         For="@(() => _model.IndivisualUse)"
+                                                         Color="@(IsReal?MudBlazor.Color.Secondary:MudBlazor.Color.Primary)"
+                                                         Dense="true"
+                                                         Class="ml-auto mt-6"/>
+                                        </MudItem>*@
+                                    <MudItem xs="12" sm="6" Class="d-flex align-center">
+                                        <MudNumericField T="float"
+                                                         Label="@_localizer["AskTerms.TakeProfit"]"
+                                                         @bind-Value="@_model.TakeProfit"
+                                                         For="@(() => _model.TakeProfit)"
+                                                         Min="0.26F" Step="0.01F" Format="N2"
+                                                         Margin="Margin.Dense" Variant="Variant.Outlined"
+                                                         Disabled="@(!_model.UseTakeProfit)"
+                                                         HelperText="@(_viewHelp ?  $"개별 코인 {_localizer["AskTerms.TakeProfit"]}" : string.Empty )" />
+                                        <MudCheckBox @bind-Checked="@_model.UseTakeProfit"
+                                                     For="@(() => _model.UseTakeProfit)"
+                                                     Color="@(IsReal?MudBlazor.Color.Secondary:MudBlazor.Color.Primary)"
+                                                     Dense="true"
+                                                     Style="@( _viewHelp ? "margin-top:-20px" : "")" />
+                                    </MudItem>
+                                    <MudItem xs="12" sm="6" Class="d-flex align-center">
+                                        <MudNumericField T="float"
+                                                         Label="@_localizer["AskTerms.StopLoss"]"
+                                                         @bind-Value="@_model.StopLoss"
+                                                         For="@(() => _model.StopLoss)"
+                                                         Min="-100" Max="-0.26F" Step="0.01F" Format="F2"
+                                                         Margin="Margin.Dense" Variant="Variant.Outlined"
+                                                         Disabled="@(!_model.UseStopLoss)"
+                                                         HelperText="@(_viewHelp ?  $"개별 코인 {_localizer["AskTerms.StopLoss"]}" : string.Empty )" />
+                                        <MudCheckBox @bind-Checked="@_model.UseStopLoss"
+                                                     For="@(() => _model.UseStopLoss)"
+                                                     Color="@(IsReal?MudBlazor.Color.Secondary:MudBlazor.Color.Primary)"
+                                                     Dense="true"
+                                                     Style="@( _viewHelp ? "margin-top:-20px" : "")" />
+                                    </MudItem>
+
+                                    @if (IsReal)
+                                    {
+                                        <MudItem xs="12" sm="6">
+                                            <MudField Label="@_localizer["AskTerms.LiquidatePositions"]"
+                                                      Variant="Variant.Outlined"
+                                                      Margin="Margin.Dense"
+                                                      HelperText="@(_viewHelp ?  $"거래가능 보유코인 {_localizer["AskTerms.LiquidatePositions"]}" : string.Empty )">
+                                                <MudCheckBox @bind-Checked="@_model.LiquidatePositions"
+                                                             For="@(() => _model.LiquidatePositions)"
+                                                             Color="@MudBlazor.Color.Secondary"
+                                                             Dense="true"
+                                                             Style="margin-top:-3px;margin-bottom:-8px" />
+                                            </MudField>
+                                        </MudItem>
+                                    }
+                                </MudGrid>
+                            </EditForm>
+                        </MudCardContent>
+                    </MudCard>
+
+                    @if (!IsReal)
+                    {
+                        <MudCard Elevation="25" Class="mb-2">
+                            <MudCardHeader>
+                                <CardHeaderContent>
+                                    <MudText>@_localizer["Trading.Period"]</MudText>
+                                </CardHeaderContent>
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <EditForm Model="@_model">
+                                    <FluentValidationValidator @ref="@_askTermsValidator" />
+                                    <MudGrid>
+                                        <MudItem xs="12" sm="4">
+                                            <MudDatePicker PickerVariant="PickerVariant.Dialog"
+                                                           Label="@_localizer["DateRange.Start"]"
+                                                           Margin="Margin.Dense" Variant="Variant.Outlined"
+                                                           DateFormat="yyyy-MM-dd"
+                                                           TitleDateFormat="MMM-dd(ddd)"
+                                                           AutoClose="false"
+                                                           @bind-Date="@_model.HeadDate"
+                                                           MinDate="@(new DateTime(2017, 09, 25))"
+                                                           MaxDate="@(DateTime.Now.AddDays(-7))"
+                                                           HelperText="@(_viewHelp ?  "투자 시작일" : string.Empty )" />
+                                        </MudItem>
+                                        <MudItem xs="12" sm="4">
+                                            <MudDatePicker PickerVariant="PickerVariant.Dialog"
+                                                           Label="@_localizer["DateRange.End"]"
+                                                           Margin="Margin.Dense" Variant="Variant.Outlined"
+                                                           DateFormat="yyyy-MM-dd"
+                                                           TitleDateFormat="MMM-dd(ddd)"
+                                                           AutoClose="false"
+                                                           @bind-Date="@_model.RearDate"
+                                                           MinDate="@(@Convert.ToDateTime(_model.HeadDate).AddDays(1))"
+                                                           MaxDate="@(DateTime.Now)"
+                                                           HelperText="@(_viewHelp ?  "투자 종료일" : string.Empty )" />
+                                        </MudItem>
+                                        <MudItem xs="12" sm="4">
+                                            <MudSelect T="TimeFrames"
+                                                       Label="@_localizer["TimeFrames"]"
+                                                       Dense="true"
+                                                       Variant="Variant.Outlined"
+                                                       Margin="Margin.Dense"
+                                                       MultiSelection="false"
+                                                       @bind-Value="@_model.TimeFrame"
+                                                       HelperText="@(_viewHelp ?  @_localizer["Trading.Signal"]: string.Empty )">
+                                                <MudSelectItem T="TimeFrames" Value="TimeFrames.Day">@TimeFrames.Day.ToDescriptionString()</MudSelectItem>
+                                                <MudSelectItem T="TimeFrames" Value="TimeFrames.Week">@TimeFrames.Week.ToDescriptionString()</MudSelectItem>
+                                            </MudSelect>
+                                        </MudItem>
+                                    </MudGrid>
+                                </EditForm>
+                            </MudCardContent>
+                        </MudCard>
+                    }
+                    else if (IsReal && _model.UPbitKey is not null)
+                    {
+                        <MudCard Elevation="25" Class="mb-2">
+                            <MudCardHeader>
+                                <CardHeaderContent>
+                                    <MudText>@_localizer["Trading.GeneralTerms"]</MudText>
+                                </CardHeaderContent>
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <MudGrid>
+                                    <MudItem xs="12" sm="4">
+                                        <MudField Label="@_localizer["Trading.MaximumAsset"]"
+                                                  Margin="Margin.Dense" Variant="Variant.Outlined"
+                                                  Disabled="true"
+                                                  HelperText="@(_viewHelp ?  $"회원등급에 따른 {_localizer["Trading.MaximumAsset"]}": string.Empty )">
+                                            <MudText Align="MudBlazor.Align.Right"> @($"{_model.MaximumAsset:N0}")</MudText>
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem xs="12" sm="4">
+                                        <MudField Label="@_localizer["Trading.AutoTrading"]"
+                                                  Margin="Margin.Dense" Variant="Variant.Outlined"
+                                                  HelperText="@(_viewHelp ?  $"{_localizer["UPbit.Open API"]}를 통한 {_localizer["Trading.AutoTrading"]}": string.Empty )">
+                                            <MudSwitch @bind-Checked="@_model.AutoTrading"
+                                                       Color="MudBlazor.Color.Secondary"
+                                                       Class="mb-n2 mt-n2" />
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem xs="12" sm="4">
+                                        <MudSelect T="TimeFrames"
+                                                   Label="@_localizer["TimeFrames"]"
+                                                   Dense="true"
+                                                   Variant="Variant.Outlined"
+                                                   Margin="Margin.Dense"
+                                                   MultiSelection="false"
+                                                   @bind-Value="@_model.TimeFrame"
+                                                   HelperText="@(_viewHelp ?  @_localizer["Trading.Signal"]: string.Empty )">
+                                            <MudSelectItem T="TimeFrames" Value="TimeFrames.Day">@TimeFrames.Day.ToDescriptionString()</MudSelectItem>
+                                            <MudSelectItem T="TimeFrames" Value="TimeFrames.Week">@TimeFrames.Week.ToDescriptionString()</MudSelectItem>
+                                        </MudSelect>
+                                    </MudItem>
+                                </MudGrid>
+
+                            </MudCardContent>
+                        </MudCard>
+
+                        <MudPaper Elevation="25" Class="d-flex justify-space-between align-center  pa-2">
+                            @*<MudButton DisableElevation
+                                           Variant="Variant.Filled"
+                                           StartIcon="@Icons.Material.Filled.PhotoCamera"
+                                           IconColor="MudBlazor.Color.Surface"
+                                           Color="MudBlazor.Color.Primary"
+                                           OnClick="ScreenshotAsync">
+                                    @_localizer["Screenshot"]
+                                </MudButton>*@
+                            <MudSpacer />
+                            <MudButton Variant="Variant.Filled"
+                                       Color="MudBlazor.Color.Secondary"
+                                       OnClick="UpdateTradingTermsAsync">
+                                @($"{_localizer["TradingTerms"]} {@_localizer["Save"]}")
+                            </MudButton>
+                        </MudPaper>
+                    }
+                </MudItem>
+
+                <MudItem xs="12" md="6">
+                    <MudAlert Severity="Severity.Info">
+                        @if (IsReal)
+                        {
+                            <MudText Class="mt-n1">
+                                전체 체크박스를 <MudIcon Icon="@Icons.Filled.CheckBoxOutlineBlank" Size="Size.Small" /> 상태로 두시면 자동으로 전체 선택되고, 향후 상장되는 코인들에도 적용됩니다.
+                            </MudText>
+                        }
+                        else
+                        {
+                            <MudText Class="mt-n1">
+                                전체 체크박스를 <MudIcon Icon="@Icons.Filled.CheckBoxOutlineBlank" Size="Size.Small" /> 상태로 두시면 자동으로 전체 선택됩니다.
+                            </MudText>
+                        }
+                    </MudAlert>
+                    <div id="@_divTableId">
+                        <MudTable T="SymbolDto"
+                                  Items="@_symbols"
+                                  Elevation="25"
+                                  Hover="true" Dense="true" Bordered="true" Striped="true"
+                                  FixedHeader="true" FixedFooter="true"
+                                  RowsPerPage="200"
+                                  MultiSelection="true"
+                                  SelectedItems="@_selectedSymbols"
+                                  SelectedItemsChanged="@((values)=>SelectedSymbolsChanged(values))"
+                                  Filter="new Func<SymbolDto, bool>(Search)"
+                                  Height="@_divTableHeight">
+                            <ToolBarContent>
+                                @{
+                                    <MudText Inline="true" Class="mt-4">
+                                        @($"{_localizer["Trading.ChosenSymbols"]} ({(_selectedSymbols==null ? _localizer["All"] : _selectedSymbols.Count() == 0 ? _localizer["All"] :  $"{_selectedSymbols.Count():N0}")})")
+                                    </MudText>
+                                }
+                                <MudSpacer />
+                                <MudTextField @bind-Value="@_searchString"
+                                              Immediate="false"
+                                              FullWidth="false"
+                                              Placeholder="@_localizer["Search"]"
+                                              Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small"
+                                              Class="ml-auto" />
+                            </ToolBarContent>
+                            <HeaderContent>
+                                <MudTh> @_localizer["Symbol.code"] </MudTh>
+                                <MudTh> @_localizer["Symbol.korean_name"] </MudTh>
+                                <MudTh> @_localizer["Symbol.marketCap"] </MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel=@_localizer["Symbol.code"]>
+                                    <CoinIcon Code=@($"{(context as SymbolDto).code}") />
+                                </MudTd>
+                                <MudTd DataLabel=@_localizer["Symbol.korean_name"]>
+                                    <MudHighlighter Text="@context.korean_name" HighlightedText="@_searchString" />
+                                </MudTd>
+                                <MudTd DataLabel=@_localizer["Symbol.marketCap"] Style="text-align:right">
+                                    @($"{context.marketCap:N0}")
+                                </MudTd>
+                            </RowTemplate>
+                            <PagerContent>
+                                <TablePager />
+                            </PagerContent>
+                        </MudTable>
+                    </div>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </div>
+}

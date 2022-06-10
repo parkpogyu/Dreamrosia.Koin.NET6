@@ -1,0 +1,156 @@
+﻿@using Dreamrosia.Koin.Application.DTO
+@using Dreamrosia.Koin.Application.Extensions
+@using Dreamrosia.Koin.Shared.Enums
+
+<style>
+    .mud-toolbar {
+        height: auto;
+    }
+</style>
+
+<div id="@_divTableId">
+    <MudTable Items="_items"
+              Elevation="25"
+              Hover="true" Dense="true" Bordered="true" Striped="true"
+              FixedHeader="true" FixedFooter="true"
+              @bind-RowsPerPage="@_rowsPerPage"
+              Filter="new Func<SymbolDto, bool>(Search)"
+              Class="mt-1"
+              Height="@_divTableHeight">
+        <ToolBarContent>
+            <div class="flex-x-scroll-container pa-2" style="width:100%">
+                <FullSpacer />
+                <MudSelect T="string"
+                           Label="@_localizer["Symbol.WeeklySignal"]"
+                           MultiSelection="true" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetSignalSelectionText))"
+                           Dense="true"
+                           SelectAll="true" SelectAllText="@_localizer["All"]"
+                           @bind-Value="@_selectedWeekly"
+                           SelectedValues="@_selectedWeeklys"
+                           SelectedValuesChanged="@((values) => WeeklySignalSelectionChanged(values))"
+                           Class="mud-multi-select-1">
+
+                    @foreach (var singal in (SeasonSignals[])Enum.GetValues(typeof(SeasonSignals)))
+                    {
+                        <MudSelectItem T="string" Value="@(singal.ToDescriptionString())">@(singal.ToDescriptionString())</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudSelect T="string"
+                           Label="@_localizer["Symbol.DailySignal"]"
+                           MultiSelection="true" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetSignalSelectionText))"
+                           Dense="true"
+                           SelectAll="true" SelectAllText="@_localizer["All"]"
+                           @bind-Value="@_selectedDaily"
+                           SelectedValues="@_selectedDailys"
+                           SelectedValuesChanged="@((values) => DailySignalSelectionChanged(values))"
+                           Class="mud-multi-select-1 ml-4">
+
+                    @foreach (var membership in (SeasonSignals[])Enum.GetValues(typeof(SeasonSignals)))
+                    {
+                        <MudSelectItem T="string" Value="@(membership.ToDescriptionString())">@(membership.ToDescriptionString())</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudTextField @bind-Value="@_searchString"
+                              Immediate="false"
+                              FullWidth="false"
+                              Placeholder="@_localizer["Search"]"
+                              Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small"
+                              Class="ml-4 search-box" />
+            </div>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<SymbolDto, object>(x => x.code)">@_localizer["Symbol.code"]</MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<SymbolDto, object>(x => x.korean_name)">@_localizer["Symbol.korean_name"]</MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<SymbolDto, object>(x => x.trade_price)">@_localizer["Symbol.trade_price"]</MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<SymbolDto, object>(x => x.signed_change_rate)">@_localizer["Symbol.signed_change_rate"]</MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<SymbolDto, object>(x => x.WeeklySignal)">@_localizer["Symbol.WeeklySignal"]</MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<SymbolDto, object>(x => x.DailySignal)">@_localizer["Symbol.DailySignal"]</MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<SymbolDto, object>(x => x.marketCap)">@_localizer["Symbol.marketCap"]</MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<SymbolDto, object>(x => x.accTradePrice24h)">@_localizer["Symbol.accTradePrice24h"]</MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<SymbolDto, object>(x => x.market_warning)">@_localizer["Symbol.market_warning"]</MudTableSortLabel>
+            </MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel=@_localizer["Symbol.code"]>
+                <CoinIcon Code=@($"{(context as SymbolDto).code}") Link="true" />
+            </MudTd>
+            <MudTd DataLabel=@_localizer["Symbol.korean_name"]>
+                <MudHighlighter Text="@context.korean_name" HighlightedText="@_searchString" />
+            </MudTd>
+            <MudTd DataLabel=@_localizer["Symbol.trade_price"] Style="text-align:right">
+                @(TickerDto.GetPriceText(Convert.ToDouble(context.trade_price)))
+            </MudTd>
+            <MudTd DataLabel=@_localizer["Symbol.signed_change_rate"] Style="text-align:right">
+                @{
+                    if (context.signed_change_rate < 0)
+                    {
+                        <div style="text-align:right; color:dodgerblue">
+                            @($"{context.signed_change_rate:N2}")
+                        </div>
+                    }
+                    else if (context.signed_change_rate == 0)
+                    {
+                        <div style="text-align:right">
+                            @($"{context.signed_change_rate:N2}")
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="text-align:right; color:orangered">
+                            @($"{context.signed_change_rate:N2}")
+                        </div>
+                    }
+                }
+            </MudTd>
+            <MudTd DataLabel=@_localizer["Symbol.WeeklySignal"] Style="@(GetSeasonSignalStyle(context.WeeklySignal))" Class="mud-text-align-center">
+                <MudTooltip Text="@context.WeeklySignal.ToDescriptionString()">
+                    <MudIcon Icon="@(GetSeasonSignalIcon(context.WeeklySignal))" Size="Size.Small" />
+                </MudTooltip>
+            </MudTd>
+            <MudTd DataLabel=@_localizer["Symbol.DailySignal"] Style="@(GetSeasonSignalStyle(context.DailySignal))" Class="mud-text-align-center">
+                <MudTooltip Text="@context.DailySignal.ToDescriptionString()">
+                    <MudIcon Icon="@(GetSeasonSignalIcon(context.DailySignal))" Size="Size.Small" />
+                </MudTooltip>
+            </MudTd>
+            <MudTd DataLabel=@_localizer["Symbol.marketCap"] Style="text-align:right">
+                @($"{context.marketCap:N0}")
+            </MudTd>
+            @{
+                <MudTd DataLabel=@_localizer["Symbol.accTradePrice24h"] Style="text-align:right">
+                    @($"{context.accTradePrice24h:N0}")
+                </MudTd>
+                if (context.market_warning == MarketAlert.None)
+                {
+                    <MudTd DataLabel=@_localizer["Symbol.market_warning"] Style="text-align:center" />
+                }
+                else
+                {
+                    <MudTd DataLabel=@_localizer["Symbol.market_warning"] Style="text-align:center">
+                        <MudIcon Icon="fas fa-exclamation-triangle" Size="Size.Small" Color="MudBlazor.Color.Warning" />
+                    </MudTd>
+                }
+            }
+        </RowTemplate>
+        <PagerContent>
+            <TablePager />
+        </PagerContent>
+    </MudTable>
+</div>

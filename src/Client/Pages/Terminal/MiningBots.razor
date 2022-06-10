@@ -1,0 +1,107 @@
+﻿@page "/terminal/bots"
+@attribute [Authorize(Policy = Permissions.MiningBots.View)]
+@using Dreamrosia.Koin.Application.DTO
+@using Dreamrosia.Koin.Client.Shared.Components
+
+<PageMenuTitle Menus="@(new []
+{
+    $"{_localizer["Administrator"]}",
+    $"{_localizer["Manage MiningBots"]}",
+})" />
+
+@if (!_loaded)
+{
+    <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudPaper Elevation="25" Class="d-flex pa-2 mb-1">
+        <FullSpacer/>
+        <MudButton OnClick="GetMiningBotsAsync"
+                   DisableElevation
+                   Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface" Color="MudBlazor.Color.Primary"
+                   Class="auto-min-width">
+            @_localizer["Reload"]
+        </MudButton>
+    </MudPaper>
+
+    <div id="@_divTableId">
+        <MudTable Items="_items"
+                  Elevation="25"
+                  Hover="true" Dense="true" Bordered="true" Striped="true"
+                  FixedHeader="true" FixedFooter="true"
+                  RowsPerPage="@TablePager.DefaultPageSize"
+                  Filter="new Func<MiningBotDto, bool>(Search)"
+                  Height="@_divTableHeight">
+            <ToolBarContent>
+                <div class="d-flex" style="width:100%">
+                    <FullSpacer />
+                    <MudTextField @bind-Value="@_searchString"
+                                  Immediate="false"
+                                  FullWidth=false
+                                  Placeholder="@_localizer["Search"]"
+                                  Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small"
+                                  Class="search-box" />
+                </div>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<MiningBotDto, object>(x => x.Id)">@_localizer["MiningBot.Id"]</MudTableSortLabel>
+                </MudTh>
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<MiningBotDto, object>(x => x.MachineName)">@_localizer["MiningBot.MachineName"]</MudTableSortLabel>
+                </MudTh>
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<MiningBotDto, object>(x => x.CurrentDirectory)">@_localizer["MiningBot.CurrentDirectory"]</MudTableSortLabel>
+                </MudTh>
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<MiningBotDto, object>(x => x.Version)">@_localizer["MiningBot.Version"]</MudTableSortLabel>
+                </MudTh>
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<MiningBotDto, object>(x => x.NickName)">@_localizer["Users"]</MudTableSortLabel>
+                </MudTh>
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<MiningBotDto, object>(x => x.Touched)">@_localizer["MiningBot.Touched"]</MudTableSortLabel>
+                </MudTh>
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<MiningBotDto, object>(x => x.Elapsed)">@_localizer["MiningBot.Elapsed"]</MudTableSortLabel>
+                </MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel=@_localizer["MiningBot.Id"] Class="mud-text-align-center">
+                    <MudHighlighter Text="@context.Id" HighlightedText="@_searchString" />
+                </MudTd>
+                <MudTd DataLabel=@_localizer["MiningBot.MachineName"]>
+                    <MudHighlighter Text="@context.MachineName" HighlightedText="@_searchString" />
+                </MudTd>
+                <MudTd DataLabel=@_localizer["MiningBot.CurrentDirectory"]>
+                    <MudTooltip Text="@context.CurrentDirectory">
+                        <MudHighlighter Text="@context.LastDirectory" HighlightedText="@_searchString" />
+                    </MudTooltip>
+                </MudTd>
+                <MudTd DataLabel=@_localizer["MiningBot.Version"]>
+                    <MudHighlighter Text="@context.Version" HighlightedText="@_searchString" />
+                </MudTd>
+                <MudTd DataLabel=@_localizer["MiningBot.NickName"]>
+                    <div class="d-flex justify-start align-center pl-1">
+                        @if (!string.IsNullOrEmpty(context.NickName))
+                        { 
+                            <UserAvatar Image="@context.ProfileImage" />
+                            <MudHighlighter Text="@context.NickName" HighlightedText="@_searchString" />
+                        }
+                    </div>
+                </MudTd>
+                <MudTd DataLabel=@_localizer["MiningBot.Touched"] Class="mud-text-align-center">
+                    @($"{context.Touched:yyyy-MM-dd HH:mm:ss}")
+                </MudTd>
+                <MudTd DataLabel=@_localizer["MiningBot.Elapsed"] Class="mud-text-align-center">
+                    @($"{context.Elapsed?.ToString("dd\\,hh\\:mm\\:ss")}")
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <TablePager />
+            </PagerContent>
+        </MudTable>
+    </div>
+}

@@ -1,0 +1,29 @@
+﻿@namespace Dreamrosia.Koin.Client.Shared.Components
+@using Dreamrosia.Koin.Shared.Constants.Coin
+
+
+<div class="d-flex justify-start align-center">
+
+    <MudAvatar Image="@ImageSource"
+               Style="height:1.32em; width: 1.32em; text-align:center; vertical-align:middle"
+               Class="mr-1" />
+    @if (Link)
+    {
+        <MudLink Href="@($"/market/candles/{Currency.Unit.KRW}-{Code}")"
+                 Underline="Underline.None">
+            @Code
+        </MudLink>
+    }
+    else
+    {
+        <MudText>@Code</MudText>
+    }
+</div>
+
+@code
+{
+    [Parameter] public string Code { get; set; }
+    [Parameter] public bool Link { get; set; } = false;
+
+    public string ImageSource => $"https://static.upbit.com/logos/{Code.ToUpper()}.png";
+}

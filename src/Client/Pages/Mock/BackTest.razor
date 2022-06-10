@@ -1,0 +1,82 @@
+﻿@page "/mock/backtest"
+@attribute [Authorize(Policy = Permissions.MockTradings.BackTest)]
+@using Dreamrosia.Koin.Client.Shared.Components
+
+<PageMenuTitle Menus="@(new []
+{
+    $"{_localizer["MockTrading"]}",
+    $"{_localizer["MockTrading.BackTest"]}",
+})" />
+
+<MudPaper Elevation="25" Class="d-flex justify-end align-center pa-2">
+
+    <MudCheckBox Label="@_localizer["Orders"]"
+                 @bind-Checked="@_model.IncludeOrders"
+                 Color="MudBlazor.Color.Primary" Dense="true" />
+
+    <MudCheckBox Label="@_localizer["Positions"]"
+                 @bind-Checked="@_model.IncludePositons"
+                 Color="MudBlazor.Color.Primary" Dense="true"
+                 Class="ml-2" />
+
+    <MudButton DisableElevation
+               Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Refresh"
+               IconColor="MudBlazor.Color.Surface"
+               Color="MudBlazor.Color.Primary"
+               @bind-Disabled="@_isProcessing"
+               OnClick="GetBackTestingAsync"
+               Class="ml-2">
+        @_localizer["MockTrading"]
+    </MudButton>
+
+</MudPaper>
+
+<MudProgressLinear Indeterminate="true" Color="MudBlazor.Color.Warning" Style="@_progressBarDisplay" />
+
+<MudTabs Elevation="25"
+         Color="MudBlazor.Color.Transparent"
+         Rounded="true"
+         PanelClass="mt-1">
+
+    <MudTabPanel Text="@_localizer["TradingTerms"]">
+        <CascadingValue Value="@_model" Name="TradingTerms">
+            <CascadingValue Value="@_viewHelp" Name="ViewHelp">
+                <TradingPreference IsReal="false" 
+                                   Symbols="@_symbols" />
+            </CascadingValue>
+        </CascadingValue>
+    </MudTabPanel>
+
+    <MudTabPanel Text="@_localizer["Asset.Report"]">
+        <CascadingValue Value="@_report" Name="Report">
+            <CascadingValue Value="@_viewHelp" Name="ViewHelp">
+                <AssetReport IsReal="false" />
+            </CascadingValue>
+        </CascadingValue>
+    </MudTabPanel>
+
+    <MudTabPanel Text="@_localizer["Assets"]">
+        <CascadingValue Value="@_report.Assets" Name="Assets">
+            <AssetTable IsReal="false" />
+        </CascadingValue>
+    </MudTabPanel>
+
+    <MudTabPanel Text="@_localizer["Chart"]">
+        <CascadingValue Value="@_report.Assets" Name="Assets">
+            <AssetChart IsReal="false" />
+        </CascadingValue>
+    </MudTabPanel>
+
+    <MudTabPanel Text="@_localizer["Orders"]">
+        <CascadingValue Value="@_report.Orders" Name="Orders">
+            <OrderTable IsReal="false" />
+        </CascadingValue>
+    </MudTabPanel>
+
+    <MudTabPanel Text="@_localizer["Positions"]">
+        <CascadingValue Value="@_report.Positions" Name="Positions">
+            <PositionTable IsReal="false" />
+        </CascadingValue>
+    </MudTabPanel>
+</MudTabs>

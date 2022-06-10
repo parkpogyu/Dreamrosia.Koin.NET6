@@ -1,0 +1,6 @@
+<MudTablePager RowsPerPageString="@_localizer["RowsPerPageString"]"
+               InfoFormat="@_localizer["InfoFormat"]"
+               PageSizeOptions="@(new int[] {10, 25, 50, 100, 200 })" />
+@code{
+    public static int DefaultPageSize => 25;
+}

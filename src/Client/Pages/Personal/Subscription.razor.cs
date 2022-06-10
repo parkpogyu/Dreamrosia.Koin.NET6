@@ -1,0 +1,230 @@
+﻿using AutoMapper;
+using Blazored.FluentValidation;
+using Dreamrosia.Koin.Application.DTO;
+using Dreamrosia.Koin.Application.Extensions;
+using Dreamrosia.Koin.Application.Mappings;
+using Dreamrosia.Koin.Application.Requests.Identity;
+using Dreamrosia.Koin.Client.Extensions;
+using Dreamrosia.Koin.Client.Shared.Dialogs;
+using Dreamrosia.Koin.Domain.Enums;
+using Dreamrosia.Koin.Shared.Constants.Application;
+using Microsoft.AspNetCore.Components;
+using MudBlazor;
+using System.Threading.Tasks;
+
+namespace Dreamrosia.Koin.Client.Pages.Personal
+{
+    public partial class Subscription
+    {
+        [Parameter] public string UserId { get; set; }
+
+        private bool _loaded;
+
+        private UserDetailDto _user = new();
+        private string _userId { get; set; }
+
+        private MembershipDto _model { get; set; }
+
+        private FluentValidationValidator _membershipValidator;
+
+        private IMapper _mapper;
+
+        private bool _membershipValidated => _membershipValidator.Validate(options => { options.IncludeAllRuleSets(); });
+
+        private async Task ToggleUserStatus()
+        {
+            var request = new ToggleUserStatusRequest { ActivateUser = _user.IsActive, UserId = UserId };
+
+            var result = await _userManager.ToggleUserStatusAsync(request);
+
+            if (result.Succeeded)
+            {
+                _snackBar.Add(_localizer["Updated User Status."], Severity.Success);
+
+                _navigationManager.NavigateTo("/identity/users");
+            }
+            else
+            {
+                foreach (var error in result.Messages)
+                {
+                    _snackBar.Add(error, Severity.Error);
+                }
+            }
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            _mapper = new MapperConfiguration(c =>
+            {
+                c.AddProfile<MembershipProfile>();
+            }).CreateMapper();
+
+
+            if (string.IsNullOrEmpty(UserId))
+            {
+                var user = await _authenticationManager.CurrentUser();
+
+                _userId = user.GetUserId();
+            }
+            else
+            {
+                var isAdmin = _stateProvider.IsAdministrator();
+
+                if (!isAdmin)
+                {
+                    _snackBar.Add(_localizer["You are not Authorized."], Severity.Error);
+                    _navigationManager.NavigateTo("/");
+                    return;
+                }
+
+                _userId = UserId;
+            }
+
+            await GetUserAsync();
+
+            _loaded = true;
+        }
+
+        private async Task GetUserAsync()
+        {
+            var result = await _userManager.GetDetailAsync(_userId);
+
+            _user = result.Data ?? new UserDetailDto();
+            _model = _mapper.Map<MembershipDto>(_user.Membership ?? new MembershipDto());
+
+            if (result.Succeeded) { return; }
+
+            foreach (var error in result.Messages)
+            {
+                _snackBar.Add(error, Severity.Error);
+            }
+        }
+
+        private async Task InvokeRecommenderModal()
+        {
+            var parameters = new DialogParameters();
+
+            parameters.Add("UserId", _userId);
+            parameters.Add("UserCode", _user.Recommender?.UserCode);
+
+            var options = new DialogOptions
+            {
+                CloseButton = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                DisableBackdropClick = true
+            };
+
+            var dialog = _dialogService.Show<RecommenderModal>(_localizer["Change"], parameters, options);
+
+            var result = await dialog.Result;
+
+            if (result.Cancelled) { return; }
+
+            await GetUserAsync();
+        }
+
+        private void MembershipLevelChanged(MembershipLevel value)
+        {
+            _model.Level = value;
+
+            if (_model.Level == MembershipLevel.Free)
+            {
+                _model.DailyDeductionPoint = DefaultValue.ChargingPoint.Free;
+                _model.MaximumAsset = DefaultValue.TradingTerms.MaximumAsset4Free;
+            }
+            else if (_model.Level == MembershipLevel.Basic)
+            {
+                _model.DailyDeductionPoint = DefaultValue.ChargingPoint.Basic;
+                _model.MaximumAsset = DefaultValue.TradingTerms.MaximumAsset4Basic;
+            }
+            else
+            {
+                if (_model.MaximumAsset < DefaultValue.TradingTerms.MinimumAsset4Advanced)
+                {
+                    _model.MaximumAsset = DefaultValue.TradingTerms.MinimumAsset4Advanced;
+                }
+
+                SetDailyDeductionPoint();
+            }
+
+            StateHasChanged();
+        }
+
+        private void MaximumAssetChanged(float value, bool update = true)
+        {
+            var solution = value / DefaultValue.ChargingPoint.Divider;
+
+            var integer = (long)solution;
+
+            var real = solution - integer;
+
+            if (real == 0)
+            {
+                _model.MaximumAsset = value;
+            }
+            else if (real < .5)
+            {
+                _model.MaximumAsset = integer * DefaultValue.ChargingPoint.Divider;
+            }
+            else
+            {
+                _model.MaximumAsset = (integer + 1) * DefaultValue.ChargingPoint.Divider;
+            }
+
+            SetDailyDeductionPoint();
+
+            if (update)
+            {
+                StateHasChanged();
+            }
+        }
+
+        private void SetDailyDeductionPoint()
+        {
+            _model.DailyDeductionPoint = _model.GetDailyDeductionPoint();
+        }
+
+        private async Task ChangeMembershipAsync()
+        {
+            var parameters = new DialogParameters();
+
+            parameters.Add("ContentText", $"{_localizer["Do you want to change membership level related information?"]}");
+
+            var options = new DialogOptions
+            {
+                CloseButton = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true,
+                DisableBackdropClick = true
+            };
+
+            var dialog = _dialogService.Show<Confirmation>($"{_localizer["Subscriptions"]} {_localizer["Change"]}", parameters, options);
+
+            var result = await dialog.Result;
+
+            if (result.Cancelled) { return; }
+
+            var response = await _userManager.ChangeMembershipAsync(_model);
+
+            if (response.Succeeded)
+            {
+                foreach (var message in response.Messages)
+                {
+                    _snackBar.Add(message, Severity.Success);
+
+                    _model = _mapper.Map<MembershipDto>(response.Data);
+
+                    //_mapper.Map(response.Data, _user.Subscription.Membership);
+                }
+            }
+            else
+            {
+                foreach (var message in response.Messages)
+                {
+                    _snackBar.Add(message, Severity.Error);
+                }
+            }
+        }
+    }
+}

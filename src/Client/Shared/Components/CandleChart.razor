@@ -1,0 +1,59 @@
+﻿@using Dreamrosia.Koin.Application.DTO
+
+<style>
+    .brush-chart {
+        position: relative;
+        top: -20px;
+    }
+</style>
+@if (!_loaded)
+{
+    <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudPaper Elevation="25">
+        <div id="@_divChartId" style="height:@_divChartHeight">
+            <div style="height:@_candleChartHeight">
+                <ApexChart TItem="CandleExtensionDto"
+                           XAxisType="XAxisType.Category"
+                           @ref="@_refCandleChart"
+                           Options="@_candleOptions"
+                           Height="@(" 100%")">
+                    <ApexCandleSeries TItem="CandleExtensionDto"
+                                      Items="_candles"
+                                      XValue="@(e => e.candle_date_time_utc.Date)"
+                                      Open="@(e => Convert.ToDecimal(e.opening_price))"
+                                      High="@(e => Convert.ToDecimal(e.high_price))"
+                                      Low="@(e => Convert.ToDecimal(e.low_price))"
+                                      Close="@(e => Convert.ToDecimal(e.trade_price))"
+                                      OrderBy="@(e=> e.X)" />
+                </ApexChart>
+            </div>
+            <div style="height:200px;" class="brush-chart">
+                <ApexChart TItem="CandleExtensionDto"
+                           XAxisType="XAxisType.Category"
+                           @ref="@_refRangeChart"
+                           Options="@_rangeOptions"
+                           Height="@(" 100%")">
+                    @*<ApexPointSeries TItem="CandleExtensionDto"
+                        Items="_candles"
+                        Name="@_localizer[" Candle.candle_acc_trade_volume"]"
+                        SeriesType="@SeriesType.Bar"
+                        XValue="@(e => e.candle_date_time_kst)"
+                        YAggregate="@(e => Convert.ToDecimal( e.Sum(e => e.candle_acc_trade_volume)))"
+                        OrderBy="@(e => e.X)" />*@
+
+                    <ApexPointSeries TItem="CandleExtensionDto"
+                                     Items="_candles"
+                                     Name="@_localizer[" Symbol.Signal"]"
+                                     SeriesType="@SeriesType.Area"
+                                     XValue="@(e => e.candle_date_time_utc.Date)"
+                                     YAggregate="@(e => Convert.ToDecimal( e.Sum(e => e.signal)))"
+                                     OrderBy="@(e => e.X)" />
+                </ApexChart>
+            </div>
+        </div>
+    </MudPaper>
+}
+

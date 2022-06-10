@@ -1,0 +1,111 @@
+﻿@using Dreamrosia.Koin.Application.DTO
+@using Dreamrosia.Koin.Application.Extensions
+@using Dreamrosia.Koin.Shared.Enums
+
+<style>
+    .mud-toolbar {
+        height: auto;
+    }
+</style>
+
+<div id="@_divTableId">
+    <MudTable Items="@_items"
+              SelectedItem="@_selectedItem"
+              Elevation="25"
+              Hover="true" Dense="true" Bordered="true" Striped="true"
+              FixedHeader="true" FixedFooter="true"
+              RowsPerPage="@TablePager.DefaultPageSize"
+              Filter="new Func<BankingTransactionDto, bool>(Search)"
+              Height="@_divTableHeight">
+        <ToolBarContent>
+            <div class="flex-x-scroll-container pa-2" style="width:100%">
+                <FullSpacer/>
+                <MudSelect T="string"
+                           Label="@_localizer["Transfer.type"]"
+                           MultiSelection="true" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetTransferTypeSelectionText))"
+                           Dense="true"
+                           SelectAll="true" SelectAllText="@_localizer["All"]"
+                           @bind-Value="@_selectedTransferType"
+                           SelectedValues="@_selectedTransferTypes"
+                           SelectedValuesChanged="@((values)=> TransferTypeSelectionChanged(values))"
+                           Class="mud-multi-select-1">
+
+                    @foreach (var transfer in (TransferType[])Enum.GetValues(typeof(TransferType)))
+                    {
+                        <MudSelectItem T="string" Value="@transfer.ToDescriptionString()">@(transfer.ToDescriptionString())</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudTextField @bind-Value="@_searchString"
+                              Immediate="false"
+                              FullWidth="false"
+                              Placeholder="@_localizer["Search"]"
+                              Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small"
+                              Class="ml-4 search-box" />
+            </div>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh> @_localizer["BankingTransaction.done_at"] </MudTh>
+            <MudTh> @_localizer["BankingTransaction.Contents"] </MudTh>
+            <MudTh> @_localizer["BankingTransaction.Deposit"] </MudTh>
+            <MudTh> @_localizer["BankingTransaction.Withdraw"] </MudTh>
+            <MudTh> @_localizer["BankingTransaction.Balance"] </MudTh>
+            <MudTh> @_localizer["BankingTransaction.Counterparty"] </MudTh>
+            <MudTh> @_localizer["BankingTransaction.Memo"] </MudTh>
+            <MudTh> @_localizer["Subscription.UserCode"] </MudTh>
+            @if (!IsUserView)
+            {
+                <MudTh> @_localizer["User.NickName"] </MudTh>
+                <MudTh> @_localizer["User.Email"] </MudTh>
+            }
+        </HeaderContent>
+        <RowTemplate>
+            @{
+                <MudTd DataLabel=@_localizer["BankingTransaction.done_at"] Style="text-align:center">
+                    @($"{context.done_at:yyyy-MM-dd HH:mm}")
+                </MudTd>
+                <MudTd DataLabel=@_localizer["BankingTransaction.Contents"]>
+                    <MudHighlighter Text="@context.Contents" HighlightedText="@_searchString" />
+                </MudTd>
+                <MudTd DataLabel=@_localizer["BankingTransaction.Deposit"] Style="text-align:right">
+                    @($"{context.Deposit:N0}")
+                </MudTd>
+                if (!IsUserView)
+                {
+                    <MudTd DataLabel=@_localizer["BankingTransaction.Withdraw"] Style="text-align:right">
+                        @($"{context.Withdraw:N0}")
+                    </MudTd>
+                    <MudTd DataLabel=@_localizer["BankingTransaction.Balance"] Style="text-align:right">
+                        @($"{context.Balance:N0}")
+                    </MudTd>
+                }
+                <MudTd DataLabel=@_localizer["BankingTransaction.Counterparty"]>
+                    <MudHighlighter Text="@context.Counterparty" HighlightedText="@_searchString" />
+                </MudTd>
+                <MudTd DataLabel=@_localizer["BankingTransaction.Memo"]>
+                    <MudHighlighter Text="@context.Memo" HighlightedText="@_searchString" />
+                </MudTd>
+                <MudTd DataLabel=@_localizer["Subscription.UserCode"] Style="text-align:center">
+                    <MudHighlighter Text="@context.UserCode" HighlightedText="@_searchString" />
+                </MudTd>
+                @if (!IsUserView)
+                {
+                    <MudTd DataLabel=@_localizer["User.NickName"]>
+                        @if (context.AccountHolder is not null)
+                        {
+                            <div class="d-flex justify-start align-center pl-1">
+                                <UserAvatar Image="@context.AccountHolder?.ProfileImage" />
+                                <MudHighlighter Text="@context.AccountHolder?.NickName" HighlightedText="@_searchString" />
+                            </div>
+                        }
+                    </MudTd>
+                    <MudTd DataLabel=@_localizer["User.Email"]>
+                        <MudHighlighter Text="@context.AccountHolder?.Email" HighlightedText="@_searchString" />
+                    </MudTd>
+                }
+            }
+        </RowTemplate>
+        <PagerContent>
+            <TablePager />
+        </PagerContent>
+    </MudTable>
+</div>

@@ -1,0 +1,259 @@
+﻿@using Dreamrosia.Koin.Application.DTO
+@using Dreamrosia.Koin.Application.Extensions
+@using Dreamrosia.Koin.Domain.Enums;
+@using Dreamrosia.Koin.Shared.Enums;
+
+<style>
+    .mud-toolbar {
+        height: auto;
+    }
+</style>
+
+<div id="@_divTableId">
+    <MudTable T="UserSummaryDto"
+              @ref="_table"
+              Items="@_items"
+              Elevation="25"
+              Hover="true" Dense="true" Bordered="true" Striped="true"
+              FixedHeader="true" FixedFooter="true"
+              RowsPerPage="@TablePager.DefaultPageSize"
+              Filter="new Func<UserSummaryDto, bool>(Search)"
+              Height="@_divTableHeight">
+        <ToolBarContent>
+            <div class="flex-x-scroll-container pa-2" style="width:100%">
+                <FullSpacer />
+                <MudSelect T="string"
+                           Label="@_localizer["Membership.Level"]"
+                           MultiSelection="true" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetSelectionText))"
+                           Dense="true"
+                           SelectAll="true" SelectAllText="@_localizer["All"]"
+                           @bind-Value="@_selectedMembership"
+                           SelectedValues="@_selectedMemberships"
+                           SelectedValuesChanged="@((values) => MembershipSelectionChanged(values))"
+                           Class="mud-multi-select-1">
+
+                    @foreach (var membership in (MembershipLevel[])Enum.GetValues(typeof(MembershipLevel)))
+                    {
+                        <MudSelectItem T="string" Value="@(membership.ToDescriptionString())">@(membership.ToDescriptionString())</MudSelectItem>
+                    }
+                </MudSelect>
+
+                @if (TableMode != UserTableMode.Boast)
+                {
+                    <MudCheckBox T="bool?" TriState="true"
+                                 Label="@_localizer["Trading.AutoTrading"]"
+                                 Checked="@_chkIsAutoTrading"
+                                 CheckedChanged="@((value) => CheckAutoTradingChanged(value))"
+                                 Color="MudBlazor.Color.Primary"
+                                 Class="auto-min-width align-self-end ml-4 mb-n2" />
+                }
+                <MudSelect T="string"
+                           Label="@_localizer["TimeFrames"]"
+                           MultiSelection="true" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetSelectionText))"
+                           Dense="true"
+                           SelectAll="true" SelectAllText="@_localizer["All"]"
+                           @bind-Value="@_selectedTimeFrame"
+                           SelectedValues="@_selectedTimeFrames"
+                           SelectedValuesChanged="@((values) => TimeFrameSelectionChanged(values))"
+                           Class="mud-multi-select-1 ml-4">
+
+                    <MudSelectItem T="string" Value="@(TimeFrames.Day.ToDescriptionString())">@(TimeFrames.Day.ToDescriptionString())</MudSelectItem>
+                    <MudSelectItem T="string" Value="@(TimeFrames.Week.ToDescriptionString())">@(TimeFrames.Week.ToDescriptionString())</MudSelectItem>
+                </MudSelect>
+
+                @if (TableMode != UserTableMode.Boast)
+                {
+                    <MudCheckBox T="bool?" TriState="true"
+                                 Label="@_localizer["User.IsAssignedBot"]"
+                                 Checked="@_chkIsAssignedBot"
+                                 CheckedChanged="@((value) => CheckAssignedBotChanged(value))"
+                                 Color="MudBlazor.Color.Primary"
+                                 Class="auto-min-width align-self-end ml-4 mb-n2" />
+                }
+                <MudTextField @bind-Value="@_searchString"
+                              Immediate="false"
+                              FullWidth=false
+                              Placeholder="@_localizer["Search"]"
+                              Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small"
+                              Class="ml-4 search-box" />
+            </div>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.UserCode)">@_localizer["Subscription.UserCode"]</MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.NickName)">@_localizer["User.NickName"]</MudTableSortLabel>
+            </MudTh>
+            @if (TableMode != UserTableMode.Boast)
+            {
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.Email)">@_localizer["User.Email"]</MudTableSortLabel>
+                </MudTh>
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.PhoneNumber)">@_localizer["User.PhoneNumber"]</MudTableSortLabel>
+                </MudTh>
+            }
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.CreatedOn)">@_localizer["User.SignupDate"]</MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.MembershipLevel)">@_localizer["Membership.Level"]</MudTableSortLabel>
+            </MudTh>
+            @if (TableMode == UserTableMode.Admin)
+            {
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.MaximumAsset)">@_localizer["Membership.MaximumAsset"]</MudTableSortLabel>
+                </MudTh>
+            }
+            @if (TableMode != UserTableMode.Boast)
+            {
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.AutoTrading)">@_localizer["Trading.AutoTrading"]</MudTableSortLabel>
+                </MudTh>
+            }
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.TimeFrame)">@_localizer["TimeFrames"]</MudTableSortLabel>
+            </MudTh>
+            @if (TableMode != UserTableMode.Boast)
+            {
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.IsAssignedBot)">@_localizer["User.IsAssignedBot"]</MudTableSortLabel>
+                </MudTh>
+            }
+            @if (TableMode == UserTableMode.Admin)
+            {
+                <MudTh>@_localizer["Roles"]</MudTh>
+                <MudTh></MudTh>
+            }
+            else
+            {
+                <MudTh>@_localizer["Assets"]</MudTh>
+            }
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel=@_localizer["Subscription.UserCode"] Class="mud-text-align-center">
+                <MudHighlighter Text="@context.UserCode" HighlightedText="@_searchString" />
+            </MudTd>
+            <MudTd DataLabel=@_localizer["User.NickName"]>
+                <div class="d-flex justify-start align-center pl-1">
+                    <UserAvatar Image="@context.ProfileImage" />
+                    <MudHighlighter Text="@context.NickName" HighlightedText="@_searchString" />
+                </div>
+            </MudTd>
+            @if (TableMode != UserTableMode.Boast)
+            {
+                <MudTd DataLabel=@_localizer["User.Email"]>
+                    <MudHighlighter Text="@context.Email" HighlightedText="@_searchString" />
+                </MudTd>
+                <MudTd DataLabel=@_localizer["User.PhoneNumber"]>
+                    <MudHighlighter Text="@context.PhoneNumber" HighlightedText="@_searchString" />
+                </MudTd>
+            }
+            <MudTd DataLabel=@_localizer["User.SignupDate"] Class="mud-text-align-center">
+                @($"{context.CreatedOn:yyyy-MM-dd}")
+            </MudTd>
+
+            @*<MudTd DataLabel=@_localizer["User.Duration"] Style="text-align:right">
+                    @($"{DateTime.Now.Subtract(context.Subscription.CreatedOn).TotalDays + .5D:N0}")
+                </MudTd>*@
+
+            <MudTd DataLabel=@_localizer["Membership.Level"] Class="mud-text-align-center">
+                @{
+                    var level = context.MembershipLevel;
+
+                    if (level == MembershipLevel.Free)
+                    {
+                        <MudText Class="winter" Align="MudBlazor.Align.Center"> @(level.ToDescriptionString()) </MudText>
+                    }
+                    else if (level == MembershipLevel.Basic)
+                    {
+                        <MudText Class="spring" Align="MudBlazor.Align.Center"> @(level.ToDescriptionString()) </MudText>
+                    }
+                    else if (level == MembershipLevel.Advanced)
+                    {
+                        <MudText Class="summer" Align="MudBlazor.Align.Center"> @(level.ToDescriptionString()) </MudText>
+                    }
+                }
+            </MudTd>
+            @if (TableMode == UserTableMode.Admin)
+            {
+                <MudTd DataLabel=@_localizer["Membership.MaximumAsset"] Style="text-align:right">
+                    @($"{context.MaximumAsset:N0}")
+                </MudTd>
+            }
+            @if (TableMode != UserTableMode.Boast)
+            {
+                <MudTd DataLabel=@_localizer["Trading.AutoTrading"] Style="text-align:center">
+                    <div class="mb-n2">
+                        <MudCheckBox Checked="@context.AutoTrading" ReadOnly></MudCheckBox>
+                    </div>
+                </MudTd>
+            }
+            <MudTd DataLabel=@_localizer["TimeFrames"] Style="text-align:center">
+                @(context.TimeFrame.ToDescriptionString())
+            </MudTd>
+            @if (TableMode != UserTableMode.Boast)
+            {
+                <MudTd DataLabel=@_localizer["User.IsAssignedBot"] Class="mud-text-align-center">
+                    <div class="mb-n2">
+                        <MudCheckBox Checked="@context.IsAssignedBot" ReadOnly></MudCheckBox>
+                    </div>
+                </MudTd>
+            }
+
+            @if (TableMode == UserTableMode.Admin)
+            {
+                <MudTd DataLabel=@_localizer["Roles"]>
+                    @(context.RolesDescription)
+                </MudTd>
+                <MudTd Style="text-align:center">
+                    <MudButton Variant="Variant.Filled"
+                               DisableElevation="true"
+                               EndIcon="@Icons.Filled.KeyboardArrowDown" IconColor="MudBlazor.Color.Primary"
+                               Size="Size.Small"
+                               OnClick="@(() => ShowBtnPress(context.Id))">
+                        @((context.ShowDetails == true)? _localizer["Hide"] : _localizer["Show"])
+                    </MudButton>
+                </MudTd>
+            }
+            else
+            {
+                <MudTd DataLabel=@_localizer["Assets"] Class="mud-text-align-center">
+                    <MudButton DisableElevation
+                               OnClick="(() => NavigateToAssets(context.Id))"
+                               Variant="Variant.Filled"
+                               Color="MudBlazor.Color.Info"
+                               Size="Size.Small">
+                        @_localizer["Shortcut"]
+                    </MudButton>
+                </MudTd>
+            }
+        </RowTemplate>
+        <ChildRowContent>
+            @if (context.ShowDetails)
+            {
+                <MudTr>
+                    <td colspan="12">
+                        <div class="flex-x-scroll-container pa-2" style="width:100%">
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Class="auto-min-width ml-1" OnClick="@(() => NavigateToProfile(context.Id))">@_localizer["Subscriptions"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Class="auto-min-width ml-1" OnClick="@(() => NavigateToPositions(context.Id))">@_localizer["Positions"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Class="auto-min-width ml-1" OnClick="@(() => NavigateToOrders(context.Id))">@_localizer["Orders"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Class="auto-min-width ml-1" OnClick="@(() => NavigateToTransfers(context.Id))">@_localizer["Transfers"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Class="auto-min-width ml-1" OnClick="@(() => NavigateToAssets(context.Id))">@_localizer["Assets"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Class="auto-min-width ml-1" OnClick="@(() => NavigateToTradingTerms(context.Id))">@_localizer["TradingTerms"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Class="auto-min-width ml-1" OnClick="@(() => NavigateToUPbitKey(context.Id))">@_localizer["UPbit.AuthKey"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Class="auto-min-width ml-1" OnClick="@(() => NavigateToFollowers(context.Id))">@_localizer["Follower"]</MudButton>
+                            <FullSpacer />
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Class="auto-min-width ml-1 mr-1" OnClick="@(() => NavigateToMangeRoles(context.Id, context.Email))">@_localizer["Manage Roles"]</MudButton>
+                        </div>
+                    </td>
+                </MudTr>
+            }
+        </ChildRowContent>
+        <PagerContent>
+            <TablePager />
+        </PagerContent>
+    </MudTable>
+
+</div>

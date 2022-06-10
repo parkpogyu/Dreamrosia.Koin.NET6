@@ -1,0 +1,24 @@
+﻿@page "/market/symbols"
+@attribute [Authorize(Policy = Permissions.Symbols.View)]
+@using Dreamrosia.Koin.Client.Shared.Components
+
+<PageMenuTitle Menus="@(new []
+{
+    $"{_localizer["Market"]}",
+    $"{_localizer["Symbols"]}",
+})" />
+
+@if (!_loaded)
+{
+    <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <CascadingValue Value="@_items" Name="Symbols">
+        <SymbolsSummary OnItemsChanged="OnItemsChanged" />
+    </CascadingValue>
+
+    <CascadingValue Value="@_items" Name="Symbols">
+        <SymbolTable />
+    </CascadingValue>
+}

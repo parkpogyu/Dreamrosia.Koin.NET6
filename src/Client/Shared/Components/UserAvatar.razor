@@ -1,0 +1,18 @@
+﻿@namespace Dreamrosia.Koin.Client.Shared.Components
+
+@if (string.IsNullOrEmpty(Image))
+{
+    <MudAvatar Size="@Size" Class="mr-1">
+        <MudIcon Icon="@Icons.Material.Filled.Person" />
+    </MudAvatar>
+}
+else
+{
+    <MudAvatar Image="@Image" Size="@Size" Class="mr-1" />
+}
+
+@code
+{
+    [Parameter] public string Image { get; set; }
+    [Parameter] public Size Size { get; set; } = Size.Small;
+}

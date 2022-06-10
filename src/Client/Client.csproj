@@ -1,0 +1,103 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
+		<RootNamespace>Dreamrosia.Koin.Client</RootNamespace>
+		<AssemblyName>Dreamrosia.Koin.Client</AssemblyName>
+		<ApplicationIcon />
+		<OutputType>Exe</OutputType>
+		<StartupObject />
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="Models\bin\**" />
+		<Compile Remove="Shared\Locales\**" />
+		<Compile Remove="wwwroot\css\bootstrap\**" />
+		<Compile Remove="wwwroot\css\open-iconic\**" />
+		<Compile Remove="wwwroot\lib\**" />
+		<Content Remove="Models\bin\**" />
+		<Content Remove="Shared\Locales\**" />
+		<Content Remove="wwwroot\css\bootstrap\**" />
+		<Content Remove="wwwroot\css\open-iconic\**" />
+		<Content Remove="wwwroot\lib\**" />
+		<EmbeddedResource Remove="Models\bin\**" />
+		<EmbeddedResource Remove="Shared\Locales\**" />
+		<EmbeddedResource Remove="wwwroot\css\bootstrap\**" />
+		<EmbeddedResource Remove="wwwroot\css\open-iconic\**" />
+		<EmbeddedResource Remove="wwwroot\lib\**" />
+		<None Remove="Models\bin\**" />
+		<None Remove="Shared\Locales\**" />
+		<None Remove="wwwroot\css\bootstrap\**" />
+		<None Remove="wwwroot\css\open-iconic\**" />
+		<None Remove="wwwroot\lib\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Pages\Identity\Subscription.razor.cs" />
+	  <Compile Remove="Pages\Mock\Assets2.razor.cs" />
+	  <Compile Remove="Pages\Content\Dashboard.razor.cs" />
+	  <Compile Remove="Pages\Settlement\AccountHolderModal.razor.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Remove="Pages\Identity\Account.razor" />
+		<Content Remove="Pages\Identity\Subscription.razor" />
+		<Content Remove="Pages\Mock\Assets2.razor" />
+		<Content Remove="Pages\Content\Dashboard.razor" />
+		<Content Remove="Pages\Settlement\AccountHolderModal.razor" />
+		<Content Remove="wwwroot\js\AssetsChart.js" />
+		<Content Remove="wwwroot\js\CandleStickChart.js" />
+		<Content Remove="wwwroot\js\Chart.Js_Label.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Blazor-ApexCharts" Version="0.8.2-beta" />
+		<PackageReference Include="Blazored.FluentValidation" Version="2.0.3" />
+		<PackageReference Include="BlazorPro.BlazorSize" Version="6.1.2" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.5" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Identity.Core" Version="6.0.5" />
+		<PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.5" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<UpToDateCheckInput Remove="Shared\Components\BlazorHeroLogo.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<_ContentIncludedByDefault Remove="Shared\Components\BlazorHeroLogo.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Include="Shared\Locales\ApexchartsLocales.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="Pages\Investment\Orders.razor" />
+		<None Include="Pages\Investment\Positions.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Client.Infrastructure\Client.Infrastructure.csproj" />
+		<ProjectReference Include="..\Shared\Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Update="wwwroot\images\fastlane.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\images\fastlane.svg">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Pages\Helps\Mock\" />
+	</ItemGroup>
+
+</Project>

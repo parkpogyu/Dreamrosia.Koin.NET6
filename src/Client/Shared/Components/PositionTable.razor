@@ -1,0 +1,176 @@
+﻿@using Dreamrosia.Koin.Application.DTO
+@using Dreamrosia.Koin.Shared.Constants.Coin
+
+<style>
+    .mud-toolbar {
+        height: auto;
+    }
+</style>
+
+<div id="@_divTableId">
+    <MudTable Items="@_items"
+              Elevation="25"
+              Virtualize="true"
+              Hover="true" Dense="true" Bordered="true" Striped="true"
+              FixedHeader="true" FixedFooter="true"
+              @bind-RowsPerPage="@_rowsPerPage"
+              Filter="new Func<PaperPositionDto, bool>(Search)"
+              Height="@_divTableHeight">
+        <ToolBarContent>
+            <div class="flex-x-scroll-container pa-2" style="width:100%">
+                <FullSpacer />
+                @if (IsReal)
+                {
+                    <MudCheckBox T="bool?" TriState="true"
+                                 Label="@_localizer["Symbols"]"
+                                 Checked="@_chkIsListed"
+                                 CheckedChanged="@((value)=> CheckIsListedChanged(value))"
+                                 Color="MudBlazor.Color.Primary"
+                                 Class="auto-min-width align-self-end mb-n2" />
+                }
+                <MudTextField @bind-Value="@_searchString"
+                              Immediate="false"
+                              FullWidth="false"
+                              Placeholder="@_localizer["Search"]"
+                              Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small"
+                              Class="ml-4 search-box" />
+            </div>
+        </ToolBarContent>
+        <HeaderContent>
+            @if (IsReal)
+            {
+                <MudTh> <MudTableSortLabel SortBy="new Func<PaperPositionDto, object>(x => x.unit_currency)">@_localizer["Market.unit_currency"]</MudTableSortLabel> </MudTh>
+                <MudTh> <MudTableSortLabel SortBy="new Func<PaperPositionDto, object>(x => x.code)">@_localizer["Symbol.code"]</MudTableSortLabel> </MudTh>
+                <MudTh> <MudTableSortLabel SortBy="new Func<PaperPositionDto, object>(x => x.balance)">@_localizer["Position.balance"]</MudTableSortLabel> </MudTh>
+                <MudTh> <MudTableSortLabel SortBy="new Func<PaperPositionDto, object>(x => x.avg_buy_price)">@_localizer["Position.avg_buy_price"]</MudTableSortLabel> </MudTh>
+                <MudTh> <MudTableSortLabel SortBy="new Func<PaperPositionDto, object>(x => x.trade_price)">@_localizer["Position.trade_price"]</MudTableSortLabel> </MudTh>
+                <MudTh> <MudTableSortLabel SortBy="new Func<PaperPositionDto, object>(x => x.PchsAmt)">@_localizer["Position.PchsAmt"]</MudTableSortLabel> </MudTh>
+                <MudTh> <MudTableSortLabel SortBy="new Func<PaperPositionDto, object>(x => x.BalEvalAmt)">@_localizer["Position.BalEvalAmt"]</MudTableSortLabel> </MudTh>
+                <MudTh> <MudTableSortLabel SortBy="new Func<PaperPositionDto, object>(x => x.EvalPnL)">@_localizer["Position.EvalPnL"]</MudTableSortLabel> </MudTh>
+                <MudTh> <MudTableSortLabel SortBy="new Func<PaperPositionDto, object>(x => x.PnLRat)">@_localizer["Position.PnLRat"]</MudTableSortLabel> </MudTh>
+            }
+            else
+            {
+                <MudTh> @_localizer["Date"] </MudTh>
+                <MudTh> @_localizer["Symbol.code"] </MudTh>
+                <MudTh> @_localizer["Position.balance"] </MudTh>
+                <MudTh> @_localizer["Position.avg_buy_price"] </MudTh>
+                <MudTh> @_localizer["Position.trade_price"] </MudTh>
+                <MudTh> @_localizer["Position.PchsAmt"] </MudTh>
+                <MudTh> @_localizer["Position.BalEvalAmt"] </MudTh>
+                <MudTh> @_localizer["Position.EvalPnL"] </MudTh>
+                <MudTh> @_localizer["Position.PnLRat"] </MudTh>
+            }
+        </HeaderContent>
+        <RowTemplate>
+            @if (IsReal)
+            {
+                <MudTd DataLabel=@_localizer["Market.unit_currency"] Style="text-align:center">
+                    @($"{context.unit_currency}")
+                </MudTd>
+            }
+            else
+            {
+                <MudTd DataLabel=@_localizer["Date"] Style="text-align:center">
+                    @($"{context.created_at:d}")
+                </MudTd>
+            }
+
+            <MudTd DataLabel=@_localizer["Symbol.code"]>
+                @if (context.unit_currency.Equals(Currency.Unit.KRW))
+                {
+                    <CoinIcon Code="@context.code" Link="true" />
+                }
+                else
+                {
+                    <CoinIcon Code="@context.code" />
+                }
+            </MudTd>
+
+            <MudTd DataLabel=@_localizer["Position.balance"] Style="text-align:right">
+                @($"{context.total_balance:N8}")
+            </MudTd>
+
+            @if (context.avg_buy_price > 0)
+            {
+                <MudTd DataLabel=@_localizer["Position.avg_buy_price"] Style="text-align:right">
+                    @(TickerDto.GetPriceText(context.avg_buy_price))
+                </MudTd>
+            }
+            else
+            {
+                <MudTd DataLabel=@_localizer["Position.avg_buy_price"] />
+            }
+
+            @if (context.trade_price > 0)
+            {
+                <MudTd DataLabel=@_localizer["Position.trade_price"] Style="text-align:right">
+                    @(TickerDto.GetPriceText(context.trade_price))
+                </MudTd>
+            }
+            else
+            {
+                <MudTd DataLabel=@_localizer["Position.trade_price"] />
+            }
+
+            @if (context.PchsAmt > 0)
+            {
+                <MudTd DataLabel=@_localizer["Position.PchsAmt"] Style="text-align:right">
+                    @($"{ context.PchsAmt:N0}")
+                </MudTd>
+            }
+            else
+            {
+                <MudTd DataLabel=@_localizer["Position.PchsAmt"] />
+            }
+
+            @if (context.BalEvalAmt > 0)
+            {
+                <MudTd DataLabel=@_localizer["Position.BalEvalAmt"] Style="text-align:right">
+                    @($"{ context.BalEvalAmt:N0}")
+                </MudTd>
+            }
+            else
+            {
+                <MudTd DataLabel=@_localizer["Position.BalEvalAmt"] />
+            }
+
+            @if (context.EvalPnL < 0)
+            {
+                <MudTd DataLabel=@_localizer["Position.EvalPnL"] Style="text-align:right;color:dodgerblue">
+                    @($"{ context.EvalPnL:N0}")
+                </MudTd>
+            }
+            else if (context.EvalPnL == 0)
+            {
+                <MudTd DataLabel=@_localizer["Position.EvalPnL"] />
+            }
+            else
+            {
+                <MudTd DataLabel=@_localizer["Position.EvalPnL"] Style="text-align:right;color:orangered">
+                    @($"{ context.EvalPnL:N0}")
+                </MudTd>
+            }
+
+            @if (context.PnLRat < 0)
+            {
+                <MudTd DataLabel=@_localizer["Position.PnLRat"] Style="text-align:right;color:dodgerblue">
+                    @($"{ context.PnLRat:N2}")
+                </MudTd>
+            }
+            else if (context.PnLRat == 0)
+            {
+                <MudTd DataLabel=@_localizer["Position.PnLRat"] />
+            }
+            else
+            {
+                <MudTd DataLabel=@_localizer["Position.PnLRat"] Style="text-align:right;color:orangered">
+                    @($"{ context.PnLRat:N2}")
+                </MudTd>
+            }
+        </RowTemplate>
+        <PagerContent>
+            <TablePager />
+        </PagerContent>
+    </MudTable>
+</div>

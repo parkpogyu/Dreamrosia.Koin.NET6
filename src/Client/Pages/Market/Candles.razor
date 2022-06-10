@@ -1,0 +1,90 @@
+﻿@page "/market/candles"
+@page "/market/candles/{market}"
+@attribute [Authorize(Policy = Permissions.Candles.View)]
+@using Dreamrosia.Koin.Application.DTO
+@using Dreamrosia.Koin.Application.Extensions
+@using Dreamrosia.Koin.Client.Shared.Components
+@using Dreamrosia.Koin.Shared.Enums
+
+<PageMenuTitle Menus="@(new []
+{
+    $"{_localizer["Market"]}",
+    $"{_localizer["Candles"]}",
+})" />
+
+@if (!_loaded)
+{
+    <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudPaper Elevation="25" Class="flex-x-scroll-container pa-2 mb-1 ">
+        <FullSpacer/>
+        <MudAutocomplete T="SymbolDto"
+                         Label="@($"{_localizer["Symbol.korean_name"]}, {_localizer["Symbol.code"]}")"
+                         @bind-Value="_symbol"
+                         SearchFunc="@AutoCompleteSearch"
+                         ToStringFunc="@(e=> e is null ? null : $"{e.korean_name}")"
+                         Margin="Margin.Dense"
+                         Dense="true"
+                         Variant="Variant.Outlined"
+                         Class="symbol-autocomplete mb-n1" >
+            <ItemTemplate Context="e">
+                <div class="d-flex align-center" style="text-align:center">
+                    <CoinIcon Code=@($"{e.code}") />
+                    <MudText Style="text-align:center">&nbsp;@($"{e.korean_name}") </MudText>
+                </div>
+            </ItemTemplate>
+            <ItemSelectedTemplate Context="e">
+                <div class="d-flex align-center" style="text-align:center">
+                    <CoinIcon Code=@($"{e.code}") />
+                    <MudText Style="text-align:center">&nbsp;@($"{e.korean_name}") </MudText>
+                </div>
+            </ItemSelectedTemplate>
+        </MudAutocomplete>
+        <MudSelect T="TimeFrames"
+                   Label="@_localizer["TimeFrames"]"
+                   Dense="true"
+                   Margin="Margin.None"
+                   FullWidth="false"
+                   Style="max-width:112px;min-width:112px;"
+                   Class="mud-select-1 ml-4 mr-4"
+                   MultiSelection="false"
+                   @bind-Value="@_selectedTimeFrame"
+                   SelectedValuesChanged="@((value)=> TimeFrameSelectionChanged(value))">
+            <MudSelectItem T="TimeFrames" Value="TimeFrames.Day">@TimeFrames.Day.ToDescriptionString()</MudSelectItem>
+            <MudSelectItem T="TimeFrames" Value="TimeFrames.Week">@TimeFrames.Week.ToDescriptionString()</MudSelectItem>
+            <MudSelectItem T="TimeFrames" Value="TimeFrames.Month">@TimeFrames.Month.ToDescriptionString()</MudSelectItem>
+        </MudSelect>
+
+        <DateRangePicker DateRange="@_dateRange"
+                         @bind-SelectedTerm="@_dateRangeTerm" />
+
+        <MudButton DisableElevation
+                   OnClick="GetCandlesAsync"
+                   Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface"
+                   Color="MudBlazor.Color.Primary"
+                   Size="Size.Small"
+                   Class="align-self-end-button ml-4">
+            @_localizer["Reload"]
+        </MudButton>
+    </MudPaper>
+
+    <MudTabs Elevation="25"
+             Color="MudBlazor.Color.Transparent"
+             Rounded="true"
+             PanelClass="mt-1">
+        <MudTabPanel Text="@_localizer["Chart"]">
+            <CascadingValue Value="@_items" Name="Candles">
+                <CandleChart />
+            </CascadingValue>
+        </MudTabPanel>
+        <MudTabPanel Text="@_localizer["Candle.MarketPrice"]">
+            <CascadingValue Value="@_items" Name="Candles">
+                <CandleTable />
+            </CascadingValue>
+        </MudTabPanel>
+    </MudTabs>
+
+}

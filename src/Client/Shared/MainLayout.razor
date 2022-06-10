@@ -1,0 +1,68 @@
+@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="_currentTheme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<AuthorizeView>
+    <NotAuthorized>
+        @*<MudAppBar Elevation="4" Color="MudBlazor.Color.Primary">
+                <MudAppBarSpacer />
+                <MudTooltip Text="@_localizer["Toggle Dark Mode"]">
+                    <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="MudBlazor.Color.Inherit" OnClick="@((e) => DarkMode())" />
+                </MudTooltip>
+            </MudAppBar>*@
+
+        <MudContainer MaxWidth="MaxWidth.Small" Class="d-flex align-center" Style="height: 100vh;">
+            <MudPaper Elevation="25" Class="pa-8" Style="width: 500px;">
+                <CascadingValue Value="_hubConnection">
+                    @Body
+                </CascadingValue>
+            </MudPaper>
+        </MudContainer>
+    </NotAuthorized>
+    <Authorized>
+        @( (string.Format("", LoadDataAsync())))
+        <MudLayout>
+            <MudAppBar Elevation="25" Color="MudBlazor.Color.Dark">
+                <MudToolBar DisableGutters="true">
+                    <MudIconButton Icon="@Icons.Material.Outlined.Menu"
+                                   Color="MudBlazor.Color.Inherit"
+                                   OnClick="@((e) => DrawerToggle())" />
+                </MudToolBar>
+                <MudIcon Icon="@CustomIcons.Fastlane" Size="Size.Medium" ViewBox="0 0 256 256" />
+                <MudText Typo="Typo.inherit"
+                         Class="header-title-hidden ml-2">
+                    @_localizer["Title"]
+                </MudText>
+                <MudSpacer />
+                <MudSwitch @bind-Checked="@_viewHelp"
+                           Label="@_localizer["Help"]"
+                           Class="ml-2 auto-min-width"
+                           Color="MudBlazor.Color.Primary" />
+
+                <MudButton StartIcon="@Icons.Material.Filled.Logout"
+                           Color="MudBlazor.Color.Primary"
+                           Variant="Variant.Filled"
+                           Size="Size.Small"
+                           Class="ml-2 auto-min-width"
+                           OnClick="Logout">
+                    @_localizer["Logout"]
+                </MudButton>
+
+                @*</div>*@
+            </MudAppBar>
+            <MudDrawer @bind-Open="_drawerOpen" Elevation="25" ClipMode="DrawerClipMode.Always">
+                <NavMenu />
+            </MudDrawer>
+            <MudMainContent>
+                <MudContainer MaxWidth="MaxWidth.False" Class="mt-4">
+                    <CascadingValue Value="_hubConnection">
+                        <CascadingValue Value="@_viewHelp" Name="ViewHelp">
+                            @Body
+                        </CascadingValue>
+                    </CascadingValue>
+                </MudContainer>
+            </MudMainContent>
+        </MudLayout>
+    </Authorized>
+</AuthorizeView>

@@ -1,0 +1,119 @@
+﻿@page "/investment/positions"
+@page "/investment/positions/{userId}"
+@attribute [Authorize(Policy = Permissions.Positions.View)]
+@using Dreamrosia.Koin.Client.Shared.Components
+
+<PageMenuTitle Menus="@(new []
+{
+    $"{_localizer["Investments"]}",
+    $"{_localizer["Positions"]}",
+})" UserId="@UserId" />
+
+@if (!_loaded)
+{
+    <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudPaper Elevation="25" Class="pa-2 mb-1">
+        <MudGrid Class="mt-1">
+            <MudItem xs="12" sm="4">
+                <MudField Label="@_localizer["Position.KRW"]"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          Style="text-align:right">
+                    <MudText Class="pe-1" Style="font-weight:bold"> @($"{TotalKRW:N0}") </MudText>
+                </MudField>
+            </MudItem>
+            <MudItem xs="12" sm="4">
+                <MudField Label="@_localizer["Position.TotalBalEvalAmt"]"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          Style="text-align:right">
+                    <MudText Class="pe-1" Style="font-weight:bold"> @($"{TotalBalEvalAmt:N0}") </MudText>
+                </MudField>
+            </MudItem>
+
+            <MudItem xs="12" sm="4">
+                <MudField Label="@_localizer["Position.TotalAsset"]"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          Style="text-align:right">
+                    <MudText Class="pe-1" Style="font-weight:bold"> @($"{TotalAsset:N0}") </MudText>
+                </MudField>
+            </MudItem>
+
+            <MudItem xs="12" sm="4">
+                <MudField Label="@_localizer["Position.TotalPchsAmt"]"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          Style="text-align:right">
+                    <MudText Class="pe-1" Style="font-weight:bold"> @($"{TotalPchsAmt:N0}") </MudText>
+                </MudField>
+            </MudItem>
+
+            <MudItem xs="12" sm="4">
+                <MudField Label="@_localizer["Position.TotalEvalPnL"]"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          Style="text-align:right">
+                    @{
+                        if (TotalEvalPnL < 0)
+                        {
+                            <MudText Class="pe-1 negative" Style="font-weight:bold">@($"{TotalEvalPnL:N0}")</MudText>
+                        }
+                        else if (TotalEvalPnL == 0)
+                        {
+                            <MudText Class="pe-1" />
+                        }
+                        else
+                        {
+                            <MudText Class="pe-1 positive" Style="font-weight:bold">@($"{TotalEvalPnL:N0}")</MudText>
+                        }
+                    }
+                </MudField>
+            </MudItem>
+
+            <MudItem xs="12" sm="4">
+                <MudField Label="@_localizer["Position.TotalPnLRat"]"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          Style="text-align:right">
+                    @{
+                        if (TotalPnLRat < 0)
+                        {
+                            <MudText Class="pe-1 negative" Style="font-weight:bold">@($"{TotalPnLRat:N2}")</MudText>
+                        }
+                        else if (TotalPnLRat == 0)
+                        {
+                            <MudText Class="pe-1" />
+                        }
+                        else
+                        {
+                            <MudText Class="pe-1 positive" Style="font-weight:bold">@($"{TotalPnLRat:N2}")</MudText>
+                        }
+                    }
+                </MudField>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    <MudTabs Elevation="25"
+             Color="MudBlazor.Color.Transparent"
+             Rounded="true"
+             PanelClass="mt-1"
+             @bind-ActivePanelIndex="@_activePanelIndex">
+
+        <MudTabPanel Text="@_localizer["Positions"]">
+            <CascadingValue Value="@_items" Name="Positions">
+                <PositionTable IsReal="true" />
+            </CascadingValue>
+        </MudTabPanel>
+
+        <MudTabPanel Text="@_localizer["Unpositions"]">
+            <CascadingValue Value="@_unpositions" Name="Symbols">
+                <SymbolTable />
+            </CascadingValue>
+        </MudTabPanel>
+    </MudTabs>
+}

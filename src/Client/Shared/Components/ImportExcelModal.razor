@@ -1,0 +1,47 @@
+﻿
+<EditForm Model="@UploadRequest" OnValidSubmit="SaveAsync">
+    <FluentValidationValidator @ref="_fluentValidationValidator" />
+    <MudDialog>
+        <TitleContent>
+            @_localizer["Import"] - @ModelName
+        </TitleContent>
+        <DialogContent>
+            <MudGrid>
+                <MudItem xs="12" Class="d-flex flex-row">
+                    <InputFile id="fileInput" hidden OnChange="UploadFiles" accept=".xlsx" />
+                    @if (_file != null)
+                    {
+                        <MudAlert Style="width:100%" ShowCloseIcon="true" CloseIconClicked="(() => _file = null)" OnClick="(() => _file = null)">@_file.Name</MudAlert>
+                    }
+                    else
+                    {
+                        <MudAlert Style="width:100%" Severity="Severity.Info">@_localizer["Please select excel file!"]</MudAlert>
+                    }
+                    <MudButton HtmlTag="label"
+                               Variant="Variant.Filled"
+                               Color="MudBlazor.Color.Primary"
+                               Size="Size.Medium"
+                               StartIcon="@Icons.Filled.CloudUpload"
+                               for="fileInput"
+                               Class="ml-2"
+                               Style="width:128px">
+                        @_localizer["Upload"]
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
+        </DialogContent>
+        <DialogActions>
+            <MudButton DisableElevation Variant="Variant.Filled" OnClick="Cancel">@_localizer["Cancel"]</MudButton>
+            <MudButton DisableElevation Variant="Variant.Filled"
+                       ButtonType="ButtonType.Submit"
+                       Disabled="@(_file == null)"
+                       Color="MudBlazor.Color.Secondary"
+                       Class="mr-4">
+                @_localizer["Import"]
+            </MudButton>
+        </DialogActions>
+    </MudDialog>
+    <MudOverlay Visible="_uploading" LightBackground="true" Absolute="true">
+        <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+    </MudOverlay>
+</EditForm>

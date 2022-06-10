@@ -1,0 +1,212 @@
+﻿@page "/help"
+@using Dreamrosia.Koin.Client.Shared.Components
+
+<PageMenuTitle Menus="@(new []
+{
+    $"{_localizer["Help"]}",
+})" />
+
+@if (!_loaded)
+{
+    <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudPaper Elevation="25" Class="pa-2 mb-2">
+        <MudPaper Elevation="25" Class="pa-2">
+            <div class="d-flex ml-2 align-center">
+                <MudIcon Icon="@Icons.Filled.CheckBoxOutlineBlank" Size="Size.Small" Class="mr-1" />
+                <MudText Typo="Typo.h6"> @_localizer["Title"] </MudText>
+            </div>
+            <MudText Class="ml-4 ma-2" Typo="Typo.body1">- Fastlane은 업비트 Open API를 통해 코인 자동거래를 제공하는 서비스입니다.</MudText>
+            <MudText Class="ml-4 ma-2" Typo="Typo.body1">- Fastlane은 추세추종 전략을 기반으로 누적수익을 추구하는 서비스입니다.</MudText>
+            <MudText Class="ml-4 ma-2" Typo="Typo.body1">- Fastlane 서비스 이용 전 <MudLink Href="/mock/backtest">@_localizer["MockTrading.BackTest"]</MudLink>를 통해 본인의 투자성향에 적합한지 확인 후 이용하시기 바랍니다.</MudText>
+            <MudText Class="ml-4 ma-2" Typo="Typo.body1" Style="color:darkred;font-weight:bold">- Fastlane은 고위험 자산인 디지털 자산에 투자하는 서비스로 투자 손실이 발생할 수 있습니다.</MudText>
+        </MudPaper>
+
+        <MudPaper Elevation="25" Class="mt-2 pa-2">
+            <div class="d-flex ml-2 align-center">
+                <MudIcon Icon="@Icons.Filled.CheckBoxOutlineBlank" Size="Size.Small" Class="mr-1" />
+                <MudText Typo="Typo.h6"> @_localizer["Procedure of usage"] </MudText>
+            </div>
+
+
+            <div class="flex-x-scroll-container align-start justify-space-between mt-2 pa-2">
+                <MudPaper>
+                    <div class="rounded mud-theme-info pa-2 ma-2">
+                        <MudText Align="MudBlazor.Align.Center">@_localizer["Sign Up"]</MudText>
+                    </div>
+                </MudPaper>
+
+                <MudIcon Icon="@Icons.Material.Outlined.ArrowForward" Size="Size.Small" Class="ma-4" />
+
+                <MudPaper class="d-flex flex-column">
+                    <div class="rounded mud-theme-info pa-2 ma-2">
+                        <MudText Align="MudBlazor.Align.Center">@_localizer["MockTrading.BackTest"]</MudText>
+                    </div>
+                    <MudText Class="ma-2" Typo="Typo.body1">- <MudLink Href="/mock/backtest">@_localizer["Shortcut"]</MudLink></MudText>
+                </MudPaper>
+
+                <MudIcon Icon="@Icons.Material.Outlined.ArrowForward" Size="Size.Small" Class="ma-4" />
+
+                <MudPaper class="d-flex flex-column">
+                    <div class="rounded  pa-2 ma-2" style="background-color:#093687;color:whitesmoke">
+                        <MudText Align="MudBlazor.Align.Center">@($"{_localizer["UPbit"]} { _localizer["Sign Up"]}")</MudText>
+                    </div>
+                    <MudText Class="ma-2" Typo="Typo.body1">- <MudLink Href="https://upbitcs.zendesk.com/hc/ko/sections/900000942326-%EA%B0%80%EC%9E%85" Target="_blank">@($"{_localizer["UPbit"]} {_localizer["Sign Up"]} {_localizer["Guidance"]}")</MudLink></MudText>
+                    <MudText Class="ma-2" Typo="Typo.body1">- <MudLink Href="https://upbit.com/signin?pathname=%2Fsignup" Target="_blank">@_localizer["Shortcut"]</MudLink></MudText>
+                </MudPaper>
+
+                <MudIcon Icon="@Icons.Material.Outlined.ArrowForward" Size="Size.Small" Class="ma-4" />
+
+                <MudPaper class="d-flex flex-column">
+                    <div class="rounded  pa-2 ma-2" style="background-color:#093687;color:whitesmoke">
+                        <MudText Align="MudBlazor.Align.Center">@($"{_localizer["UPbit.Open API"]} {_localizer["Manage"]}")</MudText>
+                    </div>
+                    <MudText Class="ma-2" Typo="Typo.body1">- <MudLink Href="https://upbitcs.zendesk.com/hc/ko/articles/4403180359705-Open-API%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B3%A0-%EC%8B%B6%EC%96%B4%EC%9A%94-" Target="_blank">@($"{_localizer["UPbit.Open API"]} {_localizer["Usage"]} {_localizer["Guidance"]}")</MudLink></MudText>
+                    <MudText Class="ma-2" Typo="Typo.body1">- <MudLink Href="https://upbitcs.zendesk.com/hc/ko/articles/4403171965081-API%EB%9E%80-%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80%EC%9A%94-" Target="_blank">@($"{_localizer["UPbit.Open API"]} {_localizer["Guidance"]}")</MudLink></MudText>
+                    <MudText Class="ma-2" Typo="Typo.body1">- <MudLink Href="/personal/upbitkey" Color="MudBlazor.Color.Warning">@_localizer["UPbit.Open API Key Caution"]</MudLink></MudText>
+                    <MudText Class="ma-2" Typo="Typo.body1">- <MudLink Href="https://upbit.com/mypage/open_api_management" Target="_blank">@_localizer["Shortcut"]</MudLink></MudText>
+                </MudPaper>
+
+                <MudIcon Icon="@Icons.Material.Outlined.ArrowForward" Size="Size.Small" Class="ma-4" />
+
+                <MudPaper class="d-flex flex-column">
+                    <div class="rounded mud-theme-info pa-2 ma-2">
+                        <MudText Align="MudBlazor.Align.Center">@($"{_localizer["UPbit.AuthKey"]} {_localizer["Register"]}")</MudText>
+                    </div>
+                    <MudText Class="ma-2" Typo="Typo.body1">- <MudLink Href="/personal/upbitkey">@_localizer["Shortcut"]</MudLink></MudText>
+                </MudPaper>
+
+                <MudIcon Icon="@Icons.Material.Outlined.ArrowForward" Size="Size.Small" Class="ma-4" />
+
+                <MudPaper class="d-flex flex-column">
+                    <div class="rounded mud-theme-info pa-2 ma-2">
+                        <MudText Align="MudBlazor.Align.Center">@_localizer["Trading.AutoTrading Turn on"]</MudText>
+                    </div>
+                    <MudText Class="ma-2" Typo="Typo.body1">- <MudLink Href="/order/tradingterms">@_localizer["Shortcut"]</MudLink></MudText>
+                </MudPaper>
+            </div>
+
+        </MudPaper>
+
+        <MudPaper Elevation="25" Class="mt-2 pa-2">
+            <div class="d-flex ml-2 align-center">
+                <MudIcon Icon="@Icons.Filled.CheckBoxOutlineBlank" Size="Size.Small" Class="mr-1" />
+                <MudText Typo="Typo.h6"> @_localizer["MockTrading.BackTest"] </MudText>
+            </div>
+            <MudText Class="ml-4 ma-2" Typo="Typo.body1">- 백테스트는 과거 데이터를 통해 Fastlane 투자전략을 확인 과정입니다.</MudText>
+            <MudText Class="ml-4 ma-2" Typo="Typo.body1">- 백테스트는 코인 가격의 변동에 따라 어떤 결과를 보여주는지 가늠하는 용도이며, Fastalne 투자전략이 향후 동일한 수익을 보장하지 않습니다. </MudText>
+            <MudText Class="ml-4 ma-2" Typo="Typo.body1">- 백테스트는 현재 상장된 코인을 기반으로 동작하여, 상장폐지된 코인에 대한 누락오차가 발생합니다.</MudText>
+            <MudText Class="ml-4 ma-2" Typo="Typo.body1">- 백테스트는 실시간 투자가 아님으로 체결가격에 대한 오차(슬리피지)가 발생합니다.</MudText>
+        </MudPaper>
+
+        <MudPaper Elevation="25" Class="mt-2 pa-2">
+            <div class="d-flex ml-2 align-center">
+                <MudIcon Icon="@Icons.Filled.CheckBoxOutlineBlank" Size="Size.Small" Class="mr-1" />
+                <MudText Typo="Typo.h6"> @_localizer["SeasonSignals"] </MudText>
+            </div>
+            <MudText Class="ml-4 ma-2" Typo="Typo.body1">- 매매신호는 주간, 일간 시세를 기반으로 Fastlane에서 생성하는 매수/매도 신호와 사용자 설정에 따른 매도신호가 있습니다.</MudText>
+            <img src="/images/SeasonSignals.png" style=" width:100%;height:auto" class="ma-2" />
+            <div class="flex-x-scroll-container">
+                <table border="1" align="center" width="100%" class="ma-2">
+                    <tr align="center">
+                        <td>
+                            <MudText Class="ma-2">구분</MudText>
+                        </td>
+                        <td colspan="3">
+                            <MudText Class="ma-2">내용</MudText>
+                        </td>
+                        <td>
+                            <MudText Class="ma-2">비고</MudText>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center" rowspan="2">
+                            <MudText Class="ma-2" Style="color:orangered">매수</MudText>
+                        </td>
+                        <td align="center" rowspan="2">
+                            <MudText Class="ma-2">매매신호 주기</MudText>
+                        </td>
+                        <td align="center">
+                            <MudText Class="ma-2">주간</MudText>
+                        </td>
+                        <td>
+                            <MudText Class="ma-2">봄(주간), 여름(주간) & 봄(일간)</MudText>
+                        </td>
+                        <td align="center" rowspan="2">
+                            <MudText Class="ma-2">미 보유시</MudText>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center">
+                            <MudText Class="ma-2">일간</MudText>
+                        </td>
+                        <td>
+                            <MudText Class="ma-2">봄(일간)</MudText>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center" rowspan="4">
+                            <MudText Class="ma-2" Style="color:dodgerblue">매도</MudText>
+                        </td>
+                        <td align="center" rowspan="2">
+                            <MudText Class="ma-2">매매신호 주기</MudText>
+                        </td>
+                        <td align="center">
+                            <MudText Class="ma-2">주간</MudText>
+                        </td>
+                        <td>
+                            <MudText Class="ma-2"> 가을(주간), 겨울(주간)</MudText>
+                        </td>
+                        <td align="center" rowspan="4">
+                            <MudText Class="ma-2"> 보유시</MudText>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center">
+                            <MudText Class="ma-2">일간</MudText>
+                        </td>
+                        <td>
+                            <MudText Class="ma-2"> 가을(일간), 겨울(일간)</MudText>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="3">
+                            <MudText Class="ma-2">목표 수익 도달 시 (주문설정: @(_localizer["AskTerms.TakeProfit"]))</MudText>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <MudText Class="ma-2">한계 손실 발생 시 (주문설정: @(_localizer["AskTerms.StopLoss"]))</MudText>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center">
+                            <MudText Class="ma-2">주간</MudText>
+                        </td>
+                        <td colspan="3">
+                            <MudText Class="ma-2">월요일 ~ 일요일</MudText>
+                        </td>
+                        <td> </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <MudText Class="ma-2">일간</MudText>
+                        </td>
+                        <td colspan="3">
+                            <MudText Class="ma-2">오늘 09:00:00 ~ 내일 08:59:59</MudText>
+                        </td>
+                        <td> </td>
+                    </tr>
+                </table>
+            </div>
+        </MudPaper>
+    </MudPaper>
+}

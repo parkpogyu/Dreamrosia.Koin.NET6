@@ -1,0 +1,41 @@
+@page "/"
+@page "/home"
+
+@if (!_loaded)
+{
+    <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudContainer>
+        <MudGrid>
+            <MudItem xs="12">
+                <div class="d-flex justify-center mt-4">
+                    <MudIcon Icon="@CustomIcons.Fastlane" Color="MudBlazor.Color.Primary" Size=Size.Large ViewBox="0 0 256 256" Style="width: 256px; height: 256px;" />
+                </div>
+            </MudItem>
+            <MudItem xs="12" Style="justify-content:center">
+                <MudAlert Severity="Severity.Warning">베타 테스트 버전입니다.  </MudAlert>
+            </MudItem>
+
+            @*@if (!_loaded)
+                {
+                    <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+                }
+                else*@
+            @{
+                <MudItem xs="12">
+                    <CascadingValue Value="@_items" Name="Symbols">
+                        <SymbolsSummary />
+                    </CascadingValue>
+                </MudItem>
+                <MudSpacer />
+                <MudItem xs="12" Class="d-flex justify-center">
+                    <MudText Color="MudBlazor.Color.Info" Typo="Typo.h6">
+                        문의사항은<MudIcon Icon="far fa-hand-point-right" Size="Size.Small" Class="ml-2" /> <MudLink Href="@(@"https://band.us/@fastlane")" Target="_blank"><img src="/images/band.png" style="height:32px;vertical-align:bottom" /></MudLink>
+                    </MudText>
+                </MudItem>
+            }
+        </MudGrid>
+    </MudContainer>
+}

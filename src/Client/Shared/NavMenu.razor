@@ -1,0 +1,133 @@
+@using System.Security.Claims
+
+<UserCard />
+<MudNavMenu>
+    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home">@_localizer["Home"]</MudNavLink>
+    <MudNavLink Href="/help" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.HelpOutline">@_localizer["Help"]</MudNavLink>
+
+    @if (_canEditUsers || _canViewRoles || _canViewBots || _canViewAuditTrails)
+    {
+        <MudListSubheader Class="mt-2 mb-n2">@_localizer["Administrator"]</MudListSubheader>
+
+        @if (_canEditUsers)
+        {
+            <MudNavLink Href="/identity/users" Icon="@Icons.Material.Outlined.ManageAccounts">
+                @_localizer["Manage Users"]
+            </MudNavLink>
+        }
+
+        @if (_canViewRoles)
+        {
+            <MudNavLink Href="/identity/roles" Icon="@Icons.Material.Outlined.CheckCircleOutline">
+                @_localizer["Manage Roles"]
+            </MudNavLink>
+        }
+
+        @if (_canViewBots)
+        {
+            <MudNavLink Href="/terminal/bots" Icon="@Icons.Material.Outlined.AutoAwesome">
+                @_localizer["Manage MiningBots"]
+            </MudNavLink>
+        }
+
+        @if (_canViewAuditTrails)
+        {
+            <MudNavLink Href="/audit-trails" Icon="@Icons.Material.Outlined.Security">
+                @_localizer["Audit Trails"]
+            </MudNavLink>
+        }
+    }
+
+    @if (_canViewSettlements)
+    {
+        <MudListSubheader Class="mt-2 mb-n2">@_localizer["Settlements"]</MudListSubheader>
+
+        <MudNavLink Href="/settlement/bankingtransactions" Icon="@Icons.Material.Outlined.AccountBalance">
+            @_localizer["Transfers"]
+        </MudNavLink>
+    }
+
+    @*<MudNavLink Href="/tests" Icon="@Icons.Material.Outlined.SupervisorAccount">
+            @_localizer["Test"]
+        </MudNavLink>*@
+
+    <MudListSubheader Class="mt-2 mb-n2">@_localizer["Personal"]</MudListSubheader>
+    @*<MudNavLink Href="/dashboard" Icon="@Icons.Material.Outlined.Dashboard">
+            @_localizer["Dashboard"]
+        </MudNavLink>*@
+
+    <MudNavLink Href="/personal/subscription" Icon="@Icons.Material.Outlined.AccountCircle">
+        @_localizer["Subscriptions"]
+    </MudNavLink>
+
+    <MudNavLink Href="/personal/upbitkey" Icon="@Icons.Material.Outlined.Key">
+        @_localizer["UPbit.AuthKey"]
+    </MudNavLink>
+
+    <MudNavLink Href="/personal/followers" Icon="@Icons.Material.Outlined.Groups">
+        @_localizer["Follower"]
+    </MudNavLink>
+
+    <MudNavLink Href="/personal/points" Icon="@Icons.Material.Outlined.ReceiptLong">
+        @_localizer["Settlement.Points"]
+    </MudNavLink>
+
+    <MudListSubheader Class="mt-2 mb-n2">@_localizer["Market"]</MudListSubheader>
+    <MudNavLink Href="/market/symbols" Icon="@Icons.Material.Outlined.ArrowCircleUp">
+        @_localizer["Symbols"]
+    </MudNavLink>
+
+    <MudNavLink Href="/market/candles" Icon="@Icons.Material.Outlined.CandlestickChart">
+        @_localizer["Candles"]
+    </MudNavLink>
+
+    <MudNavLink Href="/market/boasters" Icon="@Icons.Material.Outlined.Campaign">
+        @_localizer["Open Account"]
+    </MudNavLink>
+
+    <MudListSubheader Class="mt-2 mb-n2">@_localizer["Investments"]</MudListSubheader>
+    <MudNavLink Href="/investment/positions" Icon="@Icons.Material.Outlined.AccountBalanceWallet">
+        @_localizer["Positions"]
+    </MudNavLink>
+    <MudNavLink Href="/investment/orders" Icon="@Icons.Material.Outlined.ShoppingCart">
+        @_localizer["Orders"]
+    </MudNavLink>
+    <MudNavLink Href="/investment/transfers" Icon="@Icons.Material.Outlined.AccountBalance">
+        @_localizer["Transfers"]
+    </MudNavLink>
+    <MudNavLink Href="/investment/assets" Icon="fas fa-chart-line">
+        @_localizer["Assets"]
+    </MudNavLink>
+
+    <MudListSubheader Class="mt-2 mb-n2">@_localizer["Order"]</MudListSubheader>
+    <MudNavLink Href="/order/tradingterms" Icon="@Icons.Material.Outlined.SettingsSuggest">
+        @_localizer["TradingTerms"]
+    </MudNavLink>
+
+    <MudListSubheader Class="mt-2 mb-n2">@_localizer["MockTrading"]</MudListSubheader>
+    @*<MudDivider Class="ml-5" />*@
+    <MudNavLink Href="/mock/backtest" Icon="@Icons.Material.Outlined.Science">
+        @_localizer["MockTrading.BackTest"]
+    </MudNavLink>
+</MudNavMenu>
+
+@code {
+    private ClaimsPrincipal _authenticationStateProviderUser;
+
+    private bool _canEditUsers;
+    private bool _canViewRoles;
+    private bool _canViewBots;
+    private bool _canViewAuditTrails;
+    private bool _canViewSettlements;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _authenticationStateProviderUser = await _stateProvider.GetAuthenticationStateProviderUserAsync();
+
+        _canViewRoles = (await _authorizationService.AuthorizeAsync(_authenticationStateProviderUser, Permissions.Roles.View)).Succeeded;
+        _canEditUsers = (await _authorizationService.AuthorizeAsync(_authenticationStateProviderUser, Permissions.Users.Edit)).Succeeded;
+        _canViewBots = (await _authorizationService.AuthorizeAsync(_authenticationStateProviderUser, Permissions.MiningBots.View)).Succeeded;
+        _canViewAuditTrails = (await _authorizationService.AuthorizeAsync(_authenticationStateProviderUser, Permissions.AuditTrails.View)).Succeeded;
+        _canViewSettlements = (await _authorizationService.AuthorizeAsync(_authenticationStateProviderUser, Permissions.BankingTransactions.View)).Succeeded;
+    }
+}

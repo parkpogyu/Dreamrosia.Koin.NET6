@@ -1,0 +1,234 @@
+﻿@using Dreamrosia.Koin.Application.DTO
+@using Dreamrosia.Koin.Application.Extensions
+@using Dreamrosia.Koin.Shared.Constants.Coin
+@using Dreamrosia.Koin.Shared.Enums
+
+<style>
+    .mud-toolbar {
+        height: auto;
+    }
+</style>
+
+<div id="@_divTableId">
+    <MudTable Items="@_items"
+              Elevation="25"
+              Hover="true" Dense="true" Bordered="true" Striped="true"
+              FixedHeader="true" FixedFooter="true"
+              RowsPerPage="@TablePager.DefaultPageSize"
+              Filter="new Func<PaperOrderDto, bool>(Search)"
+              Height="@_divTableHeight">
+        <ToolBarContent>
+            <div class="flex-x-scroll-container pa-2" style="width:100%">
+                <FullSpacer />
+                <MudSelect T="string"
+                           Label="@_localizer["Market.unit_currency"]"
+                           MultiSelection="true" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetCurrencySelectionText))"
+                           Dense="true"
+                           SelectAll="true" SelectAllText="@_localizer["All"]"
+                           @bind-Value="@_selectedCurrency"
+                           SelectedValues="@_selectedCurrencies"
+                           SelectedValuesChanged="@((values)=> CurrencySelectionChanged(values))"
+                           Class="mud-multi-select-1">
+
+                    <MudSelectItem T="string" Value="@(Currency.Unit.KRW)">@(Currency.Unit.KRW)</MudSelectItem>
+                    <MudSelectItem T="string" Value="@(Currency.Unit.BTC)">@(Currency.Unit.BTC)</MudSelectItem>
+                    <MudSelectItem T="string" Value="@(Currency.Unit.USDT)">@(Currency.Unit.USDT)</MudSelectItem>
+                </MudSelect>
+                <MudSelect T="string"
+                           Label="@_localizer["Order.side"]"
+                           MultiSelection="true" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetOrderSideSelectionText))"
+                           Dense="true"
+                           SelectAll="true" SelectAllText="@_localizer["All"]"
+                           @bind-Value="@_selectedOrderSide"
+                           SelectedValues="@_selectedOrderSides"
+                           SelectedValuesChanged="@((values)=> OrderSideSelectionChanged(values))"
+                           Class="mud-multi-select-1 ml-4">
+
+                    <MudSelectItem T="string" Value="@(OrderSide.bid.ToDescriptionString())">@(OrderSide.bid.ToDescriptionString())</MudSelectItem>
+                    <MudSelectItem T="string" Value="@(OrderSide.ask.ToDescriptionString())">@(OrderSide.ask.ToDescriptionString())</MudSelectItem>
+                </MudSelect>
+                <MudTextField @bind-Value="@_searchString"
+                              Immediate="false"
+                              FullWidth="false"
+                              Placeholder="@_localizer["Search"]"
+                              Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small"
+                              Class="ml-4 search-box" />
+            </div>
+        </ToolBarContent>
+        <HeaderContent>
+            @{
+                <MudTh> @_localizer["Order.created_at"] </MudTh>
+                if (IsReal)
+                {
+                    <MudTh> @_localizer["Market.unit_currency"] </MudTh>
+                }
+                <MudTh> @_localizer["Symbol.code"] </MudTh>
+                <MudTh> @_localizer["Order.side"] </MudTh>
+                <MudTh> @_localizer["Order.avg_price"] </MudTh>
+                <MudTh> @_localizer["Order.executed_volume"] </MudTh>
+                <MudTh> @_localizer["Order.exec_amount"] </MudTh>
+                <MudTh> @_localizer["Order.paid_fee"] </MudTh>
+                if (IsReal)
+                {
+                    <MudTh> @_localizer["Order.state"] </MudTh>
+                }
+                else
+                {
+                    <MudTh> @_localizer["Order.PnL"] </MudTh>
+                    <MudTh> @_localizer["Order.PnLRat"] </MudTh>
+                    <MudTh> @_localizer["Remark"] </MudTh>
+                }
+            }
+        </HeaderContent>
+        <RowTemplate>
+            @{
+                if (IsReal)
+                {
+                    <MudTd DataLabel=@_localizer["Order.created_at"] Style="text-align:center">
+                        @($"{context.created_at:yyyy-MM-dd HH:mm:ss}")
+                    </MudTd>
+                }
+                else
+                {
+                    <MudTd DataLabel=@_localizer["Order.created_at"] Style="text-align:center">
+                        @($"{context.created_at:yyyy-MM-dd}")
+                    </MudTd>
+                }
+
+                if (IsReal)
+                {
+                    <MudTd DataLabel=@_localizer["Market.unit_currency"] Style="text-align:center">
+                        @($"{context.unit_currency}")
+                    </MudTd>
+                }
+
+        <MudTd DataLabel=@_localizer["Symbol.code"]>
+            @if (context.unit_currency.Equals(Currency.Unit.KRW))
+            {
+                <CoinIcon Code="@context.code" Link="true" />
+            }
+            else
+            {
+                <CoinIcon Code="@context.code" />
+            }
+        </MudTd>
+
+                if (context.side == OrderSide.ask)
+                {
+                    <MudTd DataLabel=@_localizer["Order.side"] Style="text-align:center;color:dodgerblue">
+                        @($"{context.side.ToDescriptionString()}")
+                    </MudTd>
+                }
+                else
+                {
+                    <MudTd DataLabel=@_localizer["Order.side"] Style="text-align:center;color:orangered">
+                        @($"{context.side.ToDescriptionString()}")
+                    </MudTd>
+                }
+
+                if (context.avg_price > 0)
+                {
+                    <MudTd DataLabel=@_localizer["Order.avg_price"] Style="text-align:right">
+                        @(TickerDto.GetPriceText((context as OrderDto).avg_price))
+                    </MudTd>
+                }
+                else
+                {
+                    <MudTd DataLabel=@_localizer["Order.avg_price"] />
+                }
+
+                if (context.executed_volume > 0)
+                {
+                    <MudTd DataLabel=@_localizer["Order.executed_volume"] Style="text-align:right">
+                        @($"{context.executed_volume:N8}")
+                    </MudTd>
+
+                }
+                else
+                {
+                    <MudTd DataLabel=@_localizer["Order.executed_volume"] />
+                }
+
+                if (context.exec_amount > 0)
+                {
+                    <MudTd DataLabel=@_localizer["Order.exec_amount"] Style="text-align:right">
+                        @($"{context.exec_amount:N0}")
+                    </MudTd>
+                }
+                else
+                {
+                    <MudTd DataLabel=@_localizer["Order.exec_amount"] />
+                }
+
+                if (context.paid_fee > 0)
+                {
+                    <MudTd DataLabel=@_localizer["Order.paid_fee"] Style="text-align:right">
+                        @($"{context.paid_fee:N2}")
+                    </MudTd>
+                }
+                else
+                {
+                    <MudTd DataLabel=@_localizer["Order.paid_fee"] />
+                }
+
+                if (IsReal)
+                {
+                    if (context.ConvertedState == OrderState.done)
+                    {
+                        <MudTd DataLabel=@_localizer["Order.state"] Style="text-align:center">
+                            @($"{context.ConvertedState.ToDescriptionString()}")
+                        </MudTd>
+                    }
+                    else
+                    {
+                        <MudTd DataLabel=@_localizer["Order.state"] Style="text-align:center;color:deeppink">
+                            @($"{context.state.ToDescriptionString()}")
+                        </MudTd>
+                    }
+                }
+                else
+                {
+                    if (context.PnL < 0)
+                    {
+                        <MudTd DataLabel=@_localizer["Order.PnL"] Style="text-align:right;color:dodgerblue">
+                            @($"{context.PnL:N0}")
+                        </MudTd>
+                    }
+                    else if (context.PnL == 0)
+                    {
+                        <MudTd DataLabel=@_localizer["Order.PnL"] />
+                    }
+                    else
+                    {
+                        <MudTd DataLabel=@_localizer["Order.PnL"] Style="text-align:right;color:orangered">
+                            @($"{context.PnL:N0}")
+                        </MudTd>
+                    }
+
+                    if (context.PnLRat < 0)
+                    {
+                        <MudTd DataLabel=@_localizer["Order.PnLRat"] Style="text-align:right;color:dodgerblue">
+                            @($"{context.PnLRat:N2}")
+                        </MudTd>
+                    }
+                    else if (context.PnL == 0)
+                    {
+                        <MudTd DataLabel=@_localizer["Order.PnLRat"] />
+                    }
+                    else
+                    {
+                        <MudTd DataLabel=@_localizer["Order.PnLRat"] Style="text-align:right;color:orangered">
+                            @($"{context.PnLRat:N2}")
+                        </MudTd>
+                    }
+                    <MudTd DataLabel=@_localizer["Remark"] Style="text-align:center">
+                        @($"{context.Remark}")
+                    </MudTd>
+                }
+            }
+        </RowTemplate>
+        <PagerContent>
+            <TablePager />
+        </PagerContent>
+    </MudTable>
+</div>

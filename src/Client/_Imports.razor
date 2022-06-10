@@ -1,0 +1,62 @@
+﻿@*Libraries*@
+@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Components.WebAssembly.Http
+@using Microsoft.Extensions.Localization
+@using Microsoft.JSInterop
+@using Microsoft.AspNetCore.Identity
+@using ApexCharts;
+@using MudBlazor
+@using Blazored.LocalStorage
+@using Blazored.FluentValidation
+@using BlazorPro.BlazorSize
+
+@*Client Services*@
+@using Dreamrosia.Koin.Client.Infrastructure.Managers
+@using Dreamrosia.Koin.Client.Infrastructure.Managers.Audit
+@using Dreamrosia.Koin.Client.Infrastructure.Managers.Identity.Account
+@using Dreamrosia.Koin.Client.Infrastructure.Managers.Identity.Authentication
+@using Dreamrosia.Koin.Client.Infrastructure.Managers.Identity.Roles
+@using Dreamrosia.Koin.Client.Infrastructure.Managers.Identity.RoleClaims
+@using Dreamrosia.Koin.Client.Infrastructure.Managers.Identity.Users
+@using Dreamrosia.Koin.Client.Infrastructure.Managers.Interceptors
+@using Dreamrosia.Koin.Client.Infrastructure.Managers.Preferences
+
+@*Shared Libraries*@
+@using Dreamrosia.Koin.Application.Requests.Identity
+@using Dreamrosia.Koin.Application.Responses
+@using Dreamrosia.Koin.Shared.Constants.Permission
+@using Dreamrosia.Koin.Shared.Localization
+@using Dreamrosia.Koin.Shared.Interfaces.Services
+@using Dreamrosia.Koin.Client
+@using Dreamrosia.Koin.Client.Extensions
+@using Dreamrosia.Koin.Client.Infrastructure.Settings
+@using Dreamrosia.Koin.Client.Infrastructure.Authentication
+@using Dreamrosia.Koin.Client.Pages.Authentication
+@using Dreamrosia.Koin.Client.Shared
+@using Dreamrosia.Koin.Client.Shared.Components
+@using Dreamrosia.Koin.Client.Shared.Dialogs
+
+@attribute [Authorize]
+@inject IAuthenticationManager _authenticationManager
+@inject IAccountManager _accountManager
+@inject IUserManager _userManager
+@inject NavigationManager _navigationManager
+@inject BlazorHeroStateProvider _stateProvider
+@inject IAuthorizationService _authorizationService
+@inject ISnackbar _snackBar
+@inject IDialogService _dialogService
+@inject HttpClient _httpClient
+@inject IHttpInterceptorManager _interceptor
+@inject ClientPreferenceManager _clientPreferenceManager
+@inject ILocalStorageService _localStorage
+@inject IJSRuntime _jsRuntime
+@inject ResizeListener _resizeListener
+@inject IStringLocalizer<SharedLocalizerResources> _localizer
+@inject IExcelService _excelService 

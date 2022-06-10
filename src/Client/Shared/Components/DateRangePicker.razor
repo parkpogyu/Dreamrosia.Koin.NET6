@@ -1,0 +1,133 @@
+﻿@namespace Dreamrosia.Koin.Client.Shared.Components
+
+@using System.ComponentModel
+@using Dreamrosia.Koin.Application.Extensions
+
+<div class="d-flex align-center">
+    <MudDatePicker @bind-Date="@DateRange.Start"
+                   Label="@_localizer["DateRange.Start"]"
+                   PickerVariant="PickerVariant.Dialog"
+                   DateFormat="yyyy-MM-dd"
+                   TitleDateFormat="MM-dd(ddd)"
+                   AutoClose="false"
+                   Class="mud-date-picker" />
+
+    <MudText Align="MudBlazor.Align.Center" 
+             Class="ml-4 mr-4 pt-5">
+        @("~")
+    </MudText>
+
+    <MudDatePicker @bind-Date="@DateRange.End"
+                   PickerVariant="PickerVariant.Dialog"
+                   Label="@_localizer["DateRange.End"]"
+                   DateFormat="yyyy-MM-dd"
+                   TitleDateFormat="MMM-dd(ddd)"
+                   AutoClose="false"
+                   Class="mud-date-picker"/>
+
+    <MudSelect T="DateRangeTerms"
+               @bind-Value="@SelectedTerm"
+               Label="@_localizer["TimeTerms"]"
+               Dense="true"
+               Margin="Margin.None"
+               FullWidth="false"
+               MultiSelection="false"
+               Class="mud-select-1 ml-4" >
+
+        @foreach (var term in (DateRangeTerms[])Enum.GetValues(typeof(DateRangeTerms)))
+        {
+            <MudSelectItem T="DateRangeTerms" Value="@term">@(term.ToDescriptionString())</MudSelectItem>
+        }
+    </MudSelect>
+</div>
+
+@code
+{
+    [Parameter]
+    public DateRange DateRange { get; set; } = new DateRange(DateTime.Now.AddMonths(-1).AddDays(1).Date, DateTime.Now.Date);
+
+    [Parameter]
+    public DateRangeTerms SelectedTerm
+    {
+        get => _selectedTerm;
+        set
+        {
+            if (_selectedTerm == value) { return; }
+
+            _selectedTerm = value;
+
+            SelectedTermChanged.InvokeAsync(_selectedTerm);
+
+            OnDateRangeTermValueChanged();
+        }
+    }
+
+    [Parameter]
+    public EventCallback<DateRangeTerms> SelectedTermChanged { get; set; }
+
+    private DateRangeTerms _selectedTerm { get; set; } = DateRangeTerms._1M;
+
+    private void OnDateRangeTermValueChanged()
+    {
+        var now = DateTime.Now;
+
+        DateRange range = new DateRange();
+
+        range.End = now.Date;
+
+        switch (_selectedTerm)
+        {
+            case DateRangeTerms._1W:
+                range.Start = now.Date.AddDays(-6);
+                break;
+            case DateRangeTerms._1M:
+                range.Start = now.Date.AddMonths(-1).AddDays(1);
+                break;
+            case DateRangeTerms._3M:
+                range.Start = now.Date.AddMonths(-3).AddDays(1);
+                break;
+            case DateRangeTerms._6M:
+                range.Start = now.Date.AddMonths(-6).AddDays(1);
+                break;
+            case DateRangeTerms._1Y:
+                range.Start = now.Date.AddYears(-1).AddDays(1);
+                break;
+            case DateRangeTerms._YTD:
+                range.Start = new DateTime(now.Year, 1, 1);
+                break;
+            case DateRangeTerms._All:
+            default:
+                range.Start = null;
+                break;
+        }
+
+        DateRange.Start = range.Start;
+        DateRange.End = range.End;
+
+        StateHasChanged();
+    }
+
+    public enum DateRangeTerms
+    {
+        [Description("일주")]
+        _1W,
+
+        [Description("한달")]
+        _1M,
+
+        [Description("세달")]
+        _3M,
+
+        [Description("여섯달")]
+        _6M,
+
+        [Description("일년")]
+        _1Y,
+
+        [Description("올해")]
+        _YTD,
+
+        [Description("모두")]
+        _All
+    }
+}

@@ -1,0 +1,27 @@
+﻿@page "/tests"
+
+<style>
+    .mud-table-container {
+        overflow: auto;
+    }
+</style>
+
+<HeroTitle Title="@_localizer["Test"]" />
+@if (!_loaded)
+{
+    <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <div class="justify-center mud-text-align-center">
+        <MudButton DisableElevation Variant="Variant.Filled" OnClick="GetSymbolsAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface" Color="MudBlazor.Color.Secondary">@_localizer["Symbols"]</MudButton>
+        <MudButton DisableElevation Variant="Variant.Filled" OnClick="GetCrixesAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface" Color="MudBlazor.Color.Secondary">@_localizer["Crixes"]</MudButton>
+        <MudButton DisableElevation Variant="Variant.Filled" OnClick="GetCandlesAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface" Color="MudBlazor.Color.Secondary">@_localizer["Candles"]</MudButton>
+        <MudButton DisableElevation Variant="Variant.Filled" OnClick="GetPositionsAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface" Color="MudBlazor.Color.Secondary">@_localizer["Positions"]</MudButton>
+        <MudButton DisableElevation Variant="Variant.Filled" OnClick="GetOrdersAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface" Color="MudBlazor.Color.Secondary">@_localizer["Orders"]</MudButton>
+        <MudButton DisableElevation Variant="Variant.Filled" OnClick="GetDepositsAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface" Color="MudBlazor.Color.Secondary">@_localizer["Deposits"]</MudButton>
+        <MudButton DisableElevation Variant="Variant.Filled" OnClick="GetWithdrawsAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface" Color="MudBlazor.Color.Secondary">@_localizer["Withdraws"]</MudButton>
+        <MudButton DisableElevation Variant="Variant.Filled" OnClick="GetSeasonSignalsAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface" Color="MudBlazor.Color.Secondary">@_localizer["SeasonSignals"]</MudButton>
+        <MudButton DisableElevation Variant="Variant.Filled" OnClick="UpdateSeasonSignalsAsync" StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface" Color="MudBlazor.Color.Secondary">@_localizer["SeasonSignals"]</MudButton>
+    </div>
+}

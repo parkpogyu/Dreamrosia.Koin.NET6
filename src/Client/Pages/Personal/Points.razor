@@ -1,0 +1,37 @@
+﻿@page "/personal/points"
+@page "/personal/points/{userId}"
+@attribute [Authorize(Policy = Permissions.Points.View)]
+@using Dreamrosia.Koin.Client.Shared.Components
+
+<PageMenuTitle Menus="@(new []
+{
+    $"{_localizer["Personal"]}",
+    $"{_localizer["Settlement.Points"]}",
+})" />
+
+@if (!_loaded)
+{
+    <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudPaper Elevation="25" Class="flex-x-scroll-container pa-2 mb-1">
+        <MudSpacer />
+        <DateRangePicker DateRange="@_dateRange"
+                         @bind-SelectedTerm="@_dateRangeTerm" />
+
+        <MudButton DisableElevation
+                   OnClick="GetPointsAsync"
+                   Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface"
+                   Color="MudBlazor.Color.Primary"
+                   Size="Size.Small"
+                   Class="align-self-end-button ml-4">
+            @_localizer["Reload"]
+        </MudButton>
+    </MudPaper>
+
+    <CascadingValue Value="@_items" Name="Points">
+        <PointTable />
+    </CascadingValue>
+}

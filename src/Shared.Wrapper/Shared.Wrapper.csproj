@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>Dreamrosia.Koin.Shared.Wrapper</AssemblyName>
+    <RootNamespace>Dreamrosia.Koin.Shared.Wrapper</RootNamespace>
+  </PropertyGroup>
+
+</Project>

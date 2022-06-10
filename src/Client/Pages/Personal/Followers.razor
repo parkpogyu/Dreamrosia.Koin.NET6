@@ -1,0 +1,36 @@
+﻿@page "/personal/followers"
+@page "/personal/followers/{userId}"
+@attribute [Authorize(Policy = Permissions.Users.View)]
+
+<PageMenuTitle Menus="@(new []
+{
+    $"{_localizer["Personal"]}",
+    $"{_localizer["Follower"]}",
+})" UserId="@UserId" />
+
+@if (!_loaded)
+{
+    <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudPaper Elevation="25" Class="flex-x-scroll-container pa-2 mb-1">
+        <FullSpacer />
+        <DateRangePicker DateRange="@_dateRange"
+                         @bind-SelectedTerm="@_dateRangeTerm" />
+
+        <MudButton DisableElevation
+                   OnClick="GetFollowersAsync"
+                   Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface"
+                   Color="MudBlazor.Color.Primary"
+                   Size="Size.Small"
+                   Class="align-self-end-button ml-4">
+            @_localizer["Reload"]
+        </MudButton>
+    </MudPaper>
+
+    <CascadingValue Value="@_items" Name="Users">
+        <UserTable TableMode="UserTable.UserTableMode.Follower" />
+    </CascadingValue>
+}
