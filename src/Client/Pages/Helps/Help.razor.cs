@@ -13,7 +13,6 @@ namespace Dreamrosia.Koin.Client.Pages.Helps
         protected override async Task OnInitializedAsync()
         {
             _loaded = true;
-
         }
     }
 }

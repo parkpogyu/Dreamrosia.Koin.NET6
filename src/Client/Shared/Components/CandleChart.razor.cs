@@ -2,12 +2,14 @@
 using AutoMapper;
 using BlazorPro.BlazorSize;
 using Dreamrosia.Koin.Application.DTO;
+using Dreamrosia.Koin.Application.Interfaces.Services;
 using Dreamrosia.Koin.Application.Mappings;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
@@ -31,18 +33,14 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
         [Parameter] public bool IsReal { get; set; } = true;
 
+        [Inject] private IMACDService MACDService { get; set; }
+
         private IMapper _mapper;
 
         private bool _loaded;
 
         private IEnumerable<CandleDto> _items { get; set; }
         private IEnumerable<CandleExtensionDto> _candles { get; set; } = new List<CandleExtensionDto>();
-
-        //private MovingAverageConvergenceDivergence macd = new MovingAverageConvergenceDivergence()
-        //{
-        //    Short = 2,
-        //    Long = 10,
-        //};
 
         private bool _isDivChartRendered { get; set; } = false;
         private string _divChartHeight { get; set; } = "100%";
@@ -83,7 +81,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
                 DrawChart(setData: true);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }
@@ -186,8 +184,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                 Tooltip = new AxisTooltip()
                 {
                     Enabled = true,
-                }
-
+                },
             });
             #endregion
 
@@ -292,18 +289,18 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
         private void SetChartData()
         {
-            //macd.Generate(_items);
+            var containers = MACDService.Generate(_items);
 
-            //_candles = (from lt in _items
-            //            from rt in macd.Containers.Where(f => f.Source.candle_date_time_utc == lt.candle_date_time_utc).DefaultIfEmpty()
-            //            select ((Func<CandleExtensionDto>)(() =>
-            //            {
-            //                var item = _mapper.Map<CandleExtensionDto>(lt);
+            _candles = (from lt in _items
+                        from rt in containers.Where(f => f.Source.candle_date_time_utc == lt.candle_date_time_utc).DefaultIfEmpty()
+                        select ((Func<CandleExtensionDto>)(() =>
+                        {
+                            var item = _mapper.Map<CandleExtensionDto>(lt);
 
-            //                item.signal = Convert.ToDouble(rt?.Histogram);
+                            item.signal = Convert.ToDouble(rt?.Histogram);
 
-            //                return item;
-            //            }))()).ToArray();
+                            return item;
+                        }))()).ToArray();
         }
 
         public void DrawChart(bool setData)

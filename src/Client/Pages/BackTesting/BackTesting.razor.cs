@@ -6,7 +6,7 @@ using MudBlazor;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Dreamrosia.Koin.Client.Pages.Mock
+namespace Dreamrosia.Koin.Client.Pages.BackTesting
 {
     public partial class BackTesting
     {
@@ -17,7 +17,7 @@ namespace Dreamrosia.Koin.Client.Pages.Mock
         private bool _viewHelp { get; set; }
 
         private readonly BackTestingRequestDto _model = new BackTestingRequestDto();
-        private BackTestReportDto _report { get; set; } = new BackTestReportDto();
+        private BackTestingReportDto _report { get; set; } = new BackTestingReportDto();
         private IEnumerable<SymbolDto> _symbols { get; set; } = new List<SymbolDto>();
 
         private static string _hidden => "Visibility:hidden";
@@ -55,7 +55,7 @@ namespace Dreamrosia.Koin.Client.Pages.Mock
 
             if (response.Succeeded)
             {
-                _report = await ObjectGZip.DecompressAsync<BackTestReportDto>(response.Data);
+                _report = await ObjectGZip.DecompressAsync<BackTestingReportDto>(response.Data);
             }
             else
             {

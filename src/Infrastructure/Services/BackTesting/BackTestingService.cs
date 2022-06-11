@@ -97,7 +97,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                 assets.Add(asset);
             }
 
-            BackTestReportDto report = new BackTestReportDto();
+            BackTestingReportDto report = new BackTestingReportDto();
 
             report.Assets = assets;
             report.InvsAmt = model.SeedMoney;

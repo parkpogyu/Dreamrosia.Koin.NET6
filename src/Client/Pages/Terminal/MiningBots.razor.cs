@@ -50,7 +50,7 @@ namespace Dreamrosia.Koin.Client.Pages.Terminal
 
                 await SetDivHeightAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }

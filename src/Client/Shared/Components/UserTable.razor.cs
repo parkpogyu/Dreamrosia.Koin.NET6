@@ -78,7 +78,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
                 await SetDivHeightAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }

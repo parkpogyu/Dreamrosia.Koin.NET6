@@ -565,12 +565,12 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
 
                 entity.Property(p => p.DailySignal)
                       .IsRequired(true)
-                      .HasDefaultValue(Shared.Enums.SeasonSignals.Indeterminate)
+                      .HasDefaultValue(Koin.Shared.Enums.SeasonSignals.Indeterminate)
                       .HasComment("일간신호");
 
                 entity.Property(p => p.WeeklySignal)
                       .IsRequired(true)
-                      .HasDefaultValue(Shared.Enums.SeasonSignals.Indeterminate)
+                      .HasDefaultValue(Koin.Shared.Enums.SeasonSignals.Indeterminate)
                       .HasComment("주간신호");
 
                 entity.Property(p => p.UpdatedAt)

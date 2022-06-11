@@ -118,7 +118,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                     await SetDivHeightAsync(_divTableId);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }

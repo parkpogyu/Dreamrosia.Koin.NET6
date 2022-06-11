@@ -124,7 +124,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             using var scope = _serviceProvider.CreateScope();
 
             var _candleService = scope.ServiceProvider.GetRequiredService<ICandleService>();
-            var _macdService = scope.ServiceProvider.GetRequiredService<MACDService>();
+            var _macdService = scope.ServiceProvider.GetRequiredService<IMACDService>();
 
             var result = await _candleService.GetCandlesAsync(signal.market,
                                                               new DateTime().ToUniversalDate(),

@@ -79,7 +79,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
                 DrawChart(setData: true);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }

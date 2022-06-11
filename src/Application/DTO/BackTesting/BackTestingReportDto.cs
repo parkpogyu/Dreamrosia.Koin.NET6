@@ -2,7 +2,7 @@
 
 namespace Dreamrosia.Koin.Application.DTO
 {
-    public class BackTestReportDto : AssetReportDto
+    public class BackTestingReportDto : AssetReportDto
     {
         public IEnumerable<PaperOrderDto> Orders { get; set; } = new List<PaperOrderDto>();
 

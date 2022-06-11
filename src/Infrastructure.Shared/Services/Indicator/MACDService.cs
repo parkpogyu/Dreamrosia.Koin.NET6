@@ -9,7 +9,7 @@ using System.Data;
 using System.Linq;
 using TALib;
 
-namespace Dreamrosia.Koin.Infrastructure.Services
+namespace Dreamrosia.Koin.Infrastructure.Shared.Services
 {
     /// <summary>
     /// MACD 지표
@@ -43,10 +43,6 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
         [Display(Name = "지표이름")]
         public string Name { get; private set; }
-
-        [Display(Name = "기준가격")]
-        [DefaultValue(BasePrices.Close)]
-        public BasePrices BasePrice { get; set; } = BasePrices.Close;
 
         [Display(Name = "단기")]
         [DisplayFormat(DataFormatString = "{0:N0}")]

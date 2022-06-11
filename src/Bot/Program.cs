@@ -18,8 +18,7 @@ namespace Dreamrosia.Koin.Bot
                                                       .AddEnvironmentVariables()
                                                       .Build();
 
-            CreateHostBuilder(args).Build()
-                                   .RunMining();
+            CreateHostBuilder(args).Build().Run();
         }
 
         static IHostBuilder CreateHostBuilder(string[] args) =>

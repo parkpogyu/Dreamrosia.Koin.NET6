@@ -1,8 +1,10 @@
 ﻿using Blazored.LocalStorage;
 using BlazorPro.BlazorSize;
+using Dreamrosia.Koin.Application.Interfaces.Services;
 using Dreamrosia.Koin.Client.Infrastructure.Authentication;
 using Dreamrosia.Koin.Client.Infrastructure.Managers;
 using Dreamrosia.Koin.Client.Infrastructure.Managers.Preferences;
+using Dreamrosia.Koin.Infrastructure.Shared.Services;
 using Dreamrosia.Koin.Shared.Constants.Permission;
 using Dreamrosia.Koin.Shared.Interfaces.Services;
 using Dreamrosia.Koin.Shared.Services;
@@ -60,6 +62,7 @@ namespace Dreamrosia.Koin.Client.Extensions
                 .AddScoped<BlazorHeroStateProvider>()
                 .AddScoped<AuthenticationStateProvider, BlazorHeroStateProvider>()
                 .AddScoped<IExcelService, ExcelService>()
+                .AddScoped<IMACDService, MACDService>()
                 .AddManagers()
                 .AddTransient<AuthenticationHeaderHandler>()
                 .AddScoped(sp => sp

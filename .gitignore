@@ -66,7 +66,6 @@
 /src/Shared.Wrapper/obj
 /src/Shared.Enums/bin/Debug/net5.0
 /src/Shared.Enums/obj
-/.vs
 /src/Application/bin/Debug/net6.0
 /src/Client/bin/Debug/net6.0
 /src/Client.Infrastructure/bin/Debug/net6.0
@@ -74,6 +73,6 @@
 /src/Infrastructure/bin/Debug/net6.0
 /src/Infrastructure.Shared/bin/Debug/net6.0
 /src/Shared/bin/Debug/net6.0
+/src/UPbit.Infrastructure/bin/Debug/net6.0
 /src/Shared.Enums/bin/Debug/net6.0
 /src/Shared.Wrapper/bin/Debug/net6.0
-/src/UPbit.Infrastructure/bin/Debug/net6.0

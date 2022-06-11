@@ -75,7 +75,7 @@ namespace Dreamrosia.Koin.Client.Shared
                         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     _snackBar.Add(_localizer["You are Logged Out."], Severity.Error);
                     await _authenticationManager.Logout();

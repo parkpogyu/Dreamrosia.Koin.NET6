@@ -13,14 +13,14 @@ using System.Threading.Tasks;
 namespace Test
 {
     [TestClass]
-    public class UnitTestMockTrading
+    public class UnitTestBackTesting
     {
         private ILogger _logger;
         private IMapper _mapper;
 
         private string ConnectionString => "Server=localhost;Database=fastlane;Uid=fastlane;Pwd=totoro79;";
 
-        public UnitTestMockTrading()
+        public UnitTestBackTesting()
         {
             IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json")
                                                                      .AddEnvironmentVariables()

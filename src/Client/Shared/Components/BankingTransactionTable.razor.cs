@@ -73,7 +73,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
                 await SetDivHeightAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }
@@ -163,7 +163,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                     MimeType = ApplicationConstants.MimeTypes.OpenXml
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }

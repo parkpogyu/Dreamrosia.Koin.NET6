@@ -2,13 +2,13 @@
 
 namespace Dreamrosia.Koin.Application.Interfaces.Services
 {
-    public interface IIndicator<TSource, TContainer>
+    public interface IIndicator<TSource, TResult>
     {
         /// <summary>
         /// 지표이름
         /// </summary>
         string Name { get; }
 
-        IEnumerable<TContainer> Generate(IEnumerable<TSource> source);
+        IEnumerable<TResult> Generate(IEnumerable<TSource> source);
     }
 }
