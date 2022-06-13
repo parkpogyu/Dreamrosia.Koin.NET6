@@ -6,9 +6,6 @@ namespace Dreamrosia.Koin.Domain.Entities
     public class MiningBot : AuditableEntity<string>
     {
         //[StringLength(36)]
-        public string UserId { get; set; }
-
-        //[StringLength(36)]
         public string Ticket { get; set; }
 
         //[StringLength(256)]
@@ -21,8 +18,6 @@ namespace Dreamrosia.Koin.Domain.Entities
         public string CurrentDirectory { get; set; }
 
         public DateTime? Touched { get; set; }
-
-        public IDomainUser User { get; set; }
 
         public MiningBotTicket MiningBotTicket { get; set; }
     }

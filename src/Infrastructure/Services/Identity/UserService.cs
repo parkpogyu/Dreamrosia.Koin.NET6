@@ -109,7 +109,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                                                 .Where(f => f.Id.Equals(userId))
                                                 .Include(i => i.Subscription)
                                                 .Include(i => i.Memberships)
-                                                .Include(i => i.MiningBot)
+                                                .Include(i => i.MiningBotTicket)
                                                 .Include(i => i.TradingTerms)
                                                 .AsEnumerable()
                             from usrcode in _context.UserLogins
@@ -135,7 +135,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
 
                                 item.AutoTrading = usr.TradingTerms.AutoTrading;
                                 item.TimeFrame = usr.TradingTerms.TimeFrame;
-                                item.IsAssignedBot = usr.MiningBot is null ? false : true;
+                                item.IsAssignedBot = usr.MiningBotTicket is null ? false : true;
 
                                 item.Recommender = _mapper.Map<UserSummaryDto>(rec);
 
@@ -168,7 +168,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                                              .AsNoTracking()
                                              .Include(i => i.Subscription)
                                              .Include(i => i.Memberships)
-                                             .Include(i => i.MiningBot)
+                                             .Include(i => i.MiningBotTicket)
                                              .Include(i => i.TradingTerms)
                                              .Where(f => (string.IsNullOrEmpty(userId) ? true : userId.Equals(f.Subscription.RecommenderId)) &&
                                                          (head.Date <= f.CreatedOn && f.CreatedOn < rear.Date.AddDays(1)) &&
@@ -191,7 +191,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
 
                              item.AutoTrading = usr.TradingTerms.AutoTrading;
                              item.TimeFrame = usr.TradingTerms.TimeFrame;
-                             item.IsAssignedBot = usr.MiningBot is null ? false : true;
+                             item.IsAssignedBot = usr.MiningBotTicket is null ? false : true;
 
                              return item;
                          }))()).ToArray();

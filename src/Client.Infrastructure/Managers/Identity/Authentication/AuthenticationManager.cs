@@ -54,6 +54,8 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers.Identity.Authentication
             {
                 await TokenToStorage(result.Data);
 
+                await _authenticationStateProvider.GetAuthenticationStateAsync();
+
                 return await Result.SuccessAsync();
             }
             else
@@ -86,14 +88,10 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers.Identity.Authentication
             await _localStorage.SetItemAsync(StorageConstants.Local.RefreshToken, response.RefreshToken);
 
             ((BlazorHeroStateProvider)this._authenticationStateProvider).MarkUserAsAuthenticated(response.Email);
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", response.Token);
         }
 
         public async Task<IResult> Logout()
         {
-            await _httpClient.GetAsync(TokenEndpoints.Signout);
-
             await _localStorage.RemoveItemAsync(StorageConstants.Local.Token);
             await _localStorage.RemoveItemAsync(StorageConstants.Local.RefreshToken);
 

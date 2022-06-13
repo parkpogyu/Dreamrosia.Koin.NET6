@@ -45,6 +45,27 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared.Wrapper", "src\Share
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared.Enums", "src\Shared.Enums\Shared.Enums.csproj", "{7E45AD79-5659-430D-87DB-679583D9FB5A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bot", "Bot", "{D5FB9993-3F2E-4C48-AA96-46C8E612E2FA}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Bot\1_stop_bots.sh = ..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Bot\1_stop_bots.sh
+		..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Bot\2_backup_bots.sh = ..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Bot\2_backup_bots.sh
+		..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Bot\3_unzip_publish.sh = ..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Bot\3_unzip_publish.sh
+		..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Bot\4_rsync_bots.sh = ..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Bot\4_rsync_bots.sh
+		..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Bot\5_start_bots.sh = ..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Bot\5_start_bots.sh
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{F0FD079C-28F2-4902-B4AC-ED99774761A1}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Server\1_stop_server.sh = ..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Server\1_stop_server.sh
+		..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Server\2_backup_server.sh = ..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Server\2_backup_server.sh
+		..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Server\3_unzip_publish.sh = ..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Server\3_unzip_publish.sh
+		..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Server\4_rsync_server.sh = ..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Server\4_rsync_server.sh
+		..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Server\5_start_server.sh = ..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Server\5_start_server.sh
+		..\..\..\Temp\default = ..\..\..\Temp\default
+		..\..\..\10. Career\000. 드림로시아\fastlane-server setting.txt = ..\..\..\10. Career\000. 드림로시아\fastlane-server setting.txt
+		..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Server\fastlane-server.service = ..\..\..\10. Career\000. 드림로시아\Fastlane\Shell\Server\fastlane-server.service
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -126,6 +147,8 @@ Global
 		{44B9657B-8A87-44CD-9E0F-69C6E32A404F} = {D83F4876-E6EE-49C0-BCB6-91153EAB2A60}
 		{8BC479F9-776F-41A5-BA05-C630DACEBD36} = {CCCCE958-578E-44AC-B8A7-98686124E964}
 		{7E45AD79-5659-430D-87DB-679583D9FB5A} = {CCCCE958-578E-44AC-B8A7-98686124E964}
+		{D5FB9993-3F2E-4C48-AA96-46C8E612E2FA} = {275B08FA-6837-4A32-B890-0ADE2DE4C3F7}
+		{F0FD079C-28F2-4902-B4AC-ED99774761A1} = {275B08FA-6837-4A32-B890-0ADE2DE4C3F7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ED3E6669-AEC5-4A3B-9E57-2A81DE87BAAF}

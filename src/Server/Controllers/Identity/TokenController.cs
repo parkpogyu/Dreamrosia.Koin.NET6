@@ -73,14 +73,6 @@ namespace Dreamrosia.Koin.Server.Controllers.Identity
             return Ok(response);
         }
 
-        [HttpGet("signout")]
-        public async Task<ActionResult> Signout()
-        {
-            await _signInManager.SignOutAsync();
-
-            return Ok();
-        }
-
         [HttpGet("kakao-signin")]
         public IActionResult KakaoSignin()
         {

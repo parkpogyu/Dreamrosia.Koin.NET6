@@ -1561,7 +1561,7 @@
     <value>년</value>
   </data>
   <data name="MiningBot.Ticket" xml:space="preserve">
-    <value>티켓</value>
+    <value>티켓 아이디</value>
   </data>
   <data name="{0} UPbit error occurred." xml:space="preserve">
     <value>{0} 에러가 발생하였습니다. 인증키를 다시 발급받으신 후 저장하세요</value>

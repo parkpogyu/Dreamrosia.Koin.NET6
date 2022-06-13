@@ -1,7 +1,6 @@
 ﻿using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Infrastructure.Routes;
-using Microsoft.AspNetCore.Components.Authorization;
-using System.Security.Claims;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Pages.Authentication
@@ -12,11 +11,13 @@ namespace Dreamrosia.Koin.Client.Pages.Authentication
         {
             var state = await _stateProvider.GetAuthenticationStateAsync();
 
-            if (state != new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity())))
+            if (state.User.Claims.Any())
             {
-                var user = state.User;
-
-                var id = user?.GetUserId();
+                _navigationManager.NavigateTo("/");
+            }
+            else
+            {
+                var id = state.User?.GetUserId();
 
                 if (string.IsNullOrEmpty(id))
                 {
@@ -25,11 +26,8 @@ namespace Dreamrosia.Koin.Client.Pages.Authentication
                     if (result.Succeeded)
                     {
                         _navigationManager.NavigateTo("/", forceLoad: true);
+                        //_navigationManager.NavigateTo("/");
                     }
-                }
-                else
-                {
-                    _navigationManager.NavigateTo("/");
                 }
             }
         }

@@ -76,3 +76,15 @@
 /src/UPbit.Infrastructure/bin/Debug/net6.0
 /src/Shared.Enums/bin/Debug/net6.0
 /src/Shared.Wrapper/bin/Debug/net6.0
+/src/Client/wwwroot/js/chart/ohlc.js
+/src/Application/bin/Release/net6.0
+/src/Client/bin/Release/net6.0
+/src/Client.Infrastructure/bin/Release/net6.0
+/src/Domain/bin/Release/net6.0
+/src/Infrastructure/bin/Release/net6.0
+/src/Infrastructure.Shared/bin/Release/net6.0
+/src/Shared/bin/Release/net6.0
+/src/Shared.Enums/bin/Release/net6.0
+/src/Shared.Wrapper/bin/Release/net6.0
+/src/Test/bin/Release/net6.0
+/src/UPbit.Infrastructure/bin/Release/net6.0

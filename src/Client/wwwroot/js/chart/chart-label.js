@@ -60,5 +60,5 @@ var func_chart_label = {
             '<div>C: <span class="value">' + func_chart_label.AxisRealNumberFormatter(c) + '</span></div>' +
             '</div>'
         )
-    }
+    },
 }

@@ -29,7 +29,7 @@ namespace Dreamrosia.Koin.Bot.Extentions
 
             ServerConstants.HubUrl = configuration[$"{environment}HubUrl"];
 
-            Terminal.Ticket = Guid.NewGuid().ToString();
+            Terminal.Id = Guid.NewGuid().ToString();
             Terminal.MachineName = Environment.MachineName;
             Terminal.Version = configuration["BotVersion"];
             Terminal.CurrentDirectory = Environment.CurrentDirectory;

@@ -87,7 +87,8 @@ namespace Dreamrosia.Koin.Client.Pages.Terminal
         {
             if (string.IsNullOrWhiteSpace(_searchString)) return true;
 
-            return (item.Id.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true ||
+            return (item.Ticket?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true ||
+                    item.Id?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true ||
                     item.NickName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true ||
                     item.MachineName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true ||
                     item.Version?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true ||

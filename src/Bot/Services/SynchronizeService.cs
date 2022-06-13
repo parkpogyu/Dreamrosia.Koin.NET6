@@ -49,7 +49,7 @@ namespace Dreamrosia.Koin.Bot.Services
 
                 if (connection.State == HubConnectionState.Connected)
                 {
-                    _logger.LogInformation($"<== SynchronizeHub connected: {Terminal.Ticket} <-> {connection.ConnectionId}");
+                    _logger.LogInformation($"<== SynchronizeHub connected: {Terminal.Id} <-> {connection.ConnectionId}");
 
                     await GetTickerAsync();
                     await GetTradingTermsAsync();
@@ -103,7 +103,7 @@ namespace Dreamrosia.Koin.Bot.Services
             {
                 var bot = new MiningBotDto()
                 {
-                    Ticket = Terminal.Ticket,
+                    Id = Terminal.Id,
                     Version = Terminal.Version,
                     MachineName = Terminal.MachineName,
                     CurrentDirectory = Terminal.CurrentDirectory,
@@ -120,11 +120,11 @@ namespace Dreamrosia.Koin.Bot.Services
 
                 if (result is TradingTermsDto)
                 {
-                    if (Terminal.Id != result.BotId || Depot.UserId != result.UserId)
+                    if (Terminal.Ticket != result.Ticket || Depot.UserId != result.UserId)
                     {
-                        Terminal.Id = result.BotId;
+                        Terminal.Ticket = result.Ticket;
 
-                        _logger.LogInformation($"<== Received Id: {bot.Ticket} <-> {result.BotId}:{result.UserId}");
+                        _logger.LogInformation($"<== Received Id: {bot.Id} <-> {result.Ticket}: {result.UserId}");
                     }
 
                     Depot.SetTradingTerms(result);

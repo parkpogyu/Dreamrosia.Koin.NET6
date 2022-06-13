@@ -721,10 +721,6 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
             {
                 entity.ToTable("MiningBots").HasComment("마이닝 봇");
 
-                entity.Property(p => p.UserId)
-                      .HasMaxLength(36)
-                      .HasComment("사용자 아이디");
-
                 entity.Property(p => p.Ticket)
                       .HasMaxLength(36)
                       .HasComment("티켓 아이디");
@@ -744,11 +740,6 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                 entity.Property(p => p.Touched)
                       .HasComment("갱신일시");
 
-                entity.HasOne(p => p.User as BlazorHeroUser)
-                      .WithOne(p => p.MiningBot)
-                      .HasForeignKey<MiningBot>(p => p.UserId)
-                      .OnDelete(DeleteBehavior.SetNull);
-
                 entity.HasOne(p => p.MiningBotTicket)
                       .WithOne(p => p.MiningBot)
                       .HasForeignKey<MiningBot>(p => p.Ticket)
@@ -765,8 +756,14 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                 entity.Property(p => p.Id)
                       .HasMaxLength(36);
 
-                entity.Property(p => p.Touched)
-                      .HasComment("갱신일시");
+                entity.Property(p => p.UserId).HasComment("사용자 아이디")
+                      .HasMaxLength(36);
+
+                entity.HasOne(p => p.User as BlazorHeroUser)
+                      .WithOne(p => p.MiningBotTicket)
+                      .HasForeignKey<MiningBotTicket>(p => p.UserId)
+                      .OnDelete(DeleteBehavior.SetNull);
+
             });
             #endregion
 

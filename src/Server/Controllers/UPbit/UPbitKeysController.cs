@@ -36,15 +36,6 @@ namespace Dreamrosia.Koin.Server.Controllers
         }
 
         [Authorize(Policy = Permissions.UPbitKeys.View)]
-        [HttpGet("bots/{botId}")]
-        public async Task<IActionResult> GetUPbitKeyByTerminalId(string botId)
-        {
-            var response = await _upbitKeyService.GetUPbitKeyByTerminalIdAsync(botId);
-
-            return Ok(response);
-        }
-
-        [Authorize(Policy = Permissions.UPbitKeys.View)]
         [HttpGet("allowedips")]
         public async Task<IActionResult> GetAllowdIPs()
         {

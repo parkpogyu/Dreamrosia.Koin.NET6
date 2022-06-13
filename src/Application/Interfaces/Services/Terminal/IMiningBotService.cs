@@ -9,8 +9,6 @@ namespace Dreamrosia.Koin.Application.Interfaces.Services
     {
         Task<IResult<IEnumerable<MiningBotDto>>> GetMiningBotsAsync();
 
-        Task<IResult<IEnumerable<MiningBotDto>>> GetTestMiningBotsAsync();
-
         Task<IResult<TradingTermsExtensionDto>> GetTradingTermsAsync(MiningBotDto model);
 
         Task<IResult<TradingTermsExtensionDto>> GetTestTradingTermsAsync(MiningBotDto model, string userId);

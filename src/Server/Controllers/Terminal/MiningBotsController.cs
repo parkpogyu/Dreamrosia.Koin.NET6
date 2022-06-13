@@ -48,7 +48,7 @@ namespace Dreamrosia.Koin.Server.Controllers
         [HttpGet("test")]
         public async Task<ContentResult> GetTestMiningBots()
         {
-            var response = await _miningBotService.GetTestMiningBotsAsync();
+            var response = await _miningBotService.GetMiningBotsAsync();
 
             if (response.Succeeded)
             {
@@ -74,12 +74,12 @@ namespace Dreamrosia.Koin.Server.Controllers
                     <th>{_localizer["MiningBot.Ticket"]}</th>
                     <th>{_localizer["MiningBot.MachineName"]}</th>
                     <th>{_localizer["MiningBot.CurrentDirectory"]}</th>
+                    <th>{_localizer["Users"]}</th>
                     <th>{_localizer["MiningBot.Touched"]}</th>
                     <th>{_localizer["MiningBot.Elapsed"]}</th>");
 
                 foreach (var bot in response.Data)
                 {
-
                     builder.AppendLine("<tr>");
 
                     builder.AppendLine("<td align='center'>");
@@ -93,6 +93,9 @@ namespace Dreamrosia.Koin.Server.Controllers
                     builder.AppendLine("</td>");
                     builder.AppendLine("<td>");
                     builder.AppendLine($"{bot.CurrentDirectory}");
+                    builder.AppendLine("</td>");
+                    builder.AppendLine("<td>");
+                    builder.AppendLine($"{bot.NickName}");
                     builder.AppendLine("</td>");
                     builder.AppendLine("<td align='center'>");
                     if (bot.Touched is null)

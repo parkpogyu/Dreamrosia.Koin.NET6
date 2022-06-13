@@ -7,7 +7,7 @@ namespace Dreamrosia.Koin.Bot.DTO
     [Display(Name = "매매조건 정보")]
     public class TradingTermsDto
     {
-        public string BotId { get; set; }
+        public string Ticket { get; set; }
 
         public string UserId { get; set; }
 

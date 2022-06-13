@@ -61,6 +61,7 @@ namespace Dreamrosia.Koin.Client.Extensions
                 .AddScoped<ClientPreferenceManager>()
                 .AddScoped<BlazorHeroStateProvider>()
                 .AddScoped<AuthenticationStateProvider, BlazorHeroStateProvider>()
+                //.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<BlazorHeroStateProvider>())
                 .AddScoped<IExcelService, ExcelService>()
                 .AddScoped<IMACDService, MACDService>()
                 .AddManagers()

@@ -4,9 +4,6 @@
     <ShowAllFiles>true</ShowAllFiles>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Resources\Localization\SharedLocalizerResources.en.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Localization\SharedLocalizerResources.ko.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

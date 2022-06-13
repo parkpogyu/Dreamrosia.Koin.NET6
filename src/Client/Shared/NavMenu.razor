@@ -112,7 +112,7 @@
 </MudNavMenu>
 
 @code {
-    private ClaimsPrincipal _authenticationStateProviderUser;
+    private ClaimsPrincipal _user;
 
     private bool _canEditUsers;
     private bool _canViewRoles;
@@ -122,12 +122,12 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        _authenticationStateProviderUser = await _stateProvider.GetAuthenticationStateProviderUserAsync();
+        _user = await _stateProvider.GetAuthenticationStateProviderUserAsync();
 
-        _canViewRoles = (await _authorizationService.AuthorizeAsync(_authenticationStateProviderUser, Permissions.Roles.View)).Succeeded;
-        _canEditUsers = (await _authorizationService.AuthorizeAsync(_authenticationStateProviderUser, Permissions.Users.Edit)).Succeeded;
-        _canViewBots = (await _authorizationService.AuthorizeAsync(_authenticationStateProviderUser, Permissions.MiningBots.View)).Succeeded;
-        _canViewAuditTrails = (await _authorizationService.AuthorizeAsync(_authenticationStateProviderUser, Permissions.AuditTrails.View)).Succeeded;
-        _canViewSettlements = (await _authorizationService.AuthorizeAsync(_authenticationStateProviderUser, Permissions.BankingTransactions.View)).Succeeded;
+        _canViewRoles = (await _authorizationService.AuthorizeAsync(_user, Permissions.Roles.View)).Succeeded;
+        _canEditUsers = (await _authorizationService.AuthorizeAsync(_user, Permissions.Users.Edit)).Succeeded;
+        _canViewBots = (await _authorizationService.AuthorizeAsync(_user, Permissions.MiningBots.View)).Succeeded;
+        _canViewAuditTrails = (await _authorizationService.AuthorizeAsync(_user, Permissions.AuditTrails.View)).Succeeded;
+        _canViewSettlements = (await _authorizationService.AuthorizeAsync(_user, Permissions.BankingTransactions.View)).Succeeded;
     }
 }

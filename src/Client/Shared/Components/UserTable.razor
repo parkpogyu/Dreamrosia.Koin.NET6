@@ -12,6 +12,7 @@
 <div id="@_divTableId">
     <MudTable T="UserSummaryDto"
               @ref="_table"
+              OnRowClick="RowClickEvent"
               Items="@_items"
               Elevation="25"
               Hover="true" Dense="true" Bordered="true" Striped="true"
@@ -41,11 +42,11 @@
                 @if (TableMode != UserTableMode.Boast)
                 {
                     <MudCheckBox T="bool?" TriState="true"
-                                 Label="@_localizer["Trading.AutoTrading"]"
-                                 Checked="@_chkIsAutoTrading"
-                                 CheckedChanged="@((value) => CheckAutoTradingChanged(value))"
-                                 Color="MudBlazor.Color.Primary"
-                                 Class="auto-min-width align-self-end ml-4 mb-n2" />
+                             Label="@_localizer["Trading.AutoTrading"]"
+                             Checked="@_chkIsAutoTrading"
+                             CheckedChanged="@((value) => CheckAutoTradingChanged(value))"
+                             Color="MudBlazor.Color.Primary"
+                             Class="auto-min-width align-self-end ml-4 mb-n2" />
                 }
                 <MudSelect T="string"
                            Label="@_localizer["TimeFrames"]"
@@ -64,11 +65,11 @@
                 @if (TableMode != UserTableMode.Boast)
                 {
                     <MudCheckBox T="bool?" TriState="true"
-                                 Label="@_localizer["User.IsAssignedBot"]"
-                                 Checked="@_chkIsAssignedBot"
-                                 CheckedChanged="@((value) => CheckAssignedBotChanged(value))"
-                                 Color="MudBlazor.Color.Primary"
-                                 Class="auto-min-width align-self-end ml-4 mb-n2" />
+                             Label="@_localizer["User.IsAssignedBot"]"
+                             Checked="@_chkIsAssignedBot"
+                             CheckedChanged="@((value) => CheckAssignedBotChanged(value))"
+                             Color="MudBlazor.Color.Primary"
+                             Class="auto-min-width align-self-end ml-4 mb-n2" />
                 }
                 <MudTextField @bind-Value="@_searchString"
                               Immediate="false"
@@ -124,7 +125,6 @@
             @if (TableMode == UserTableMode.Admin)
             {
                 <MudTh>@_localizer["Roles"]</MudTh>
-                <MudTh></MudTh>
             }
             else
             {
@@ -155,7 +155,7 @@
             </MudTd>
 
             @*<MudTd DataLabel=@_localizer["User.Duration"] Style="text-align:right">
-                    @($"{DateTime.Now.Subtract(context.Subscription.CreatedOn).TotalDays + .5D:N0}")
+                @($"{DateTime.Now.Subtract(context.Subscription.CreatedOn).TotalDays + .5D:N0}")
                 </MudTd>*@
 
             <MudTd DataLabel=@_localizer["Membership.Level"] Class="mud-text-align-center">
@@ -207,24 +207,15 @@
                 <MudTd DataLabel=@_localizer["Roles"]>
                     @(context.RolesDescription)
                 </MudTd>
-                <MudTd Style="text-align:center">
-                    <MudButton Variant="Variant.Filled"
-                               DisableElevation="true"
-                               EndIcon="@Icons.Filled.KeyboardArrowDown" IconColor="MudBlazor.Color.Primary"
-                               Size="Size.Small"
-                               OnClick="@(() => ShowBtnPress(context.Id))">
-                        @((context.ShowDetails == true)? _localizer["Hide"] : _localizer["Show"])
-                    </MudButton>
-                </MudTd>
             }
             else
             {
                 <MudTd DataLabel=@_localizer["Assets"] Class="mud-text-align-center">
                     <MudButton DisableElevation
-                               OnClick="(() => NavigateToAssets(context.Id))"
-                               Variant="Variant.Filled"
-                               Color="MudBlazor.Color.Info"
-                               Size="Size.Small">
+                           OnClick="(() => NavigateToAssets(context.Id))"
+                           Variant="Variant.Filled"
+                           Color="MudBlazor.Color.Info"
+                           Size="Size.Small">
                         @_localizer["Shortcut"]
                     </MudButton>
                 </MudTd>
@@ -235,17 +226,16 @@
             {
                 <MudTr>
                     <td colspan="12">
-                        <div class="flex-x-scroll-container pa-2" style="width:100%">
-                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Class="auto-min-width ml-1" OnClick="@(() => NavigateToProfile(context.Id))">@_localizer["Subscriptions"]</MudButton>
-                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Class="auto-min-width ml-1" OnClick="@(() => NavigateToPositions(context.Id))">@_localizer["Positions"]</MudButton>
-                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Class="auto-min-width ml-1" OnClick="@(() => NavigateToOrders(context.Id))">@_localizer["Orders"]</MudButton>
-                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Class="auto-min-width ml-1" OnClick="@(() => NavigateToTransfers(context.Id))">@_localizer["Transfers"]</MudButton>
-                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Class="auto-min-width ml-1" OnClick="@(() => NavigateToAssets(context.Id))">@_localizer["Assets"]</MudButton>
-                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Class="auto-min-width ml-1" OnClick="@(() => NavigateToTradingTerms(context.Id))">@_localizer["TradingTerms"]</MudButton>
-                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Class="auto-min-width ml-1" OnClick="@(() => NavigateToUPbitKey(context.Id))">@_localizer["UPbit.AuthKey"]</MudButton>
-                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Class="auto-min-width ml-1" OnClick="@(() => NavigateToFollowers(context.Id))">@_localizer["Follower"]</MudButton>
-                            <FullSpacer />
-                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Class="auto-min-width ml-1 mr-1" OnClick="@(() => NavigateToMangeRoles(context.Id, context.Email))">@_localizer["Manage Roles"]</MudButton>
+                        <div class="flex-x-scroll-container pa-2 justify-center" style="width:100%">
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToProfile(context.Id))">@_localizer["Subscriptions"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToPositions(context.Id))">@_localizer["Positions"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToOrders(context.Id))">@_localizer["Orders"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToTransfers(context.Id))">@_localizer["Transfers"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToAssets(context.Id))">@_localizer["Assets"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToTradingTerms(context.Id))">@_localizer["TradingTerms"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToUPbitKey(context.Id))">@_localizer["UPbit.AuthKey"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToFollowers(context.Id))">@_localizer["Follower"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1 mr-1" OnClick="@(() => NavigateToMangeRoles(context.Id, context.Email))">@_localizer["Manage Roles"]</MudButton>
                         </div>
                     </td>
                 </MudTr>

@@ -74,41 +74,6 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             }
         }
 
-        public async Task<IResult<UPbitKeyDto>> GetUPbitKeyByTerminalIdAsync(string botId)
-        {
-            try
-            {
-                var keys = _context.UPbitKeys.AsNoTracking();
-                var bots = _context.MiningBots.AsNoTracking();
-
-                var item = await (from lt in keys
-                                  from rt in bots.Where(f => f.UserId.Equals(lt.Id) &&
-                                                             f.Id.Equals(botId))
-                                  select lt).SingleOrDefaultAsync();
-
-                if (item is null)
-                {
-                    return await Result<UPbitKeyDto>.FailAsync(_localizer["User Not Found!"]);
-                }
-
-                var mapped = _mapper.Map<UPbitKeyDto>(item);
-
-                var key = mapped.UserId.Replace("-", string.Empty);
-
-                mapped.access_key = EncryptProvider.AESDecrypt(mapped.access_key, key);
-                mapped.secret_key = EncryptProvider.AESDecrypt(mapped.secret_key, key);
-
-                return await Result<UPbitKeyDto>.SuccessAsync(mapped);
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-
-                return await Result<UPbitKeyDto>.FailAsync(_localizer["An unhandled error has occurred."]);
-            }
-        }
-
         public async Task<IResult> UpdateUPbitKeyAsync(UPbitKeyDto model)
         {
             try

@@ -6,7 +6,7 @@ namespace Dreamrosia.Koin.Application.DTO
     [Display(Name = "매매조건 정보")]
     public class TradingTermsExtensionDto : TradingTermsDto
     {
-        public string BotId { get; set; }
+        public string Ticket { get; set; }
 
         public IEnumerable<SeasonSignalDto> Signals { get; set; }
 

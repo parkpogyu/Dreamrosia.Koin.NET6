@@ -1,3 +1,5 @@
+using Dreamrosia.Koin.Application.Configurations;
+using Dreamrosia.Koin.Application.Enums;
 using Dreamrosia.Koin.Application.Extensions;
 using Dreamrosia.Koin.Infrastructure.Extensions;
 using Dreamrosia.Koin.Server.Extensions;
@@ -69,9 +71,14 @@ namespace Dreamrosia.Koin.Server
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IStringLocalizer<SharedLocalizerResources> localizer)
         {
+            var section = _configuration.GetSection(nameof(ServerConfiguration));
+            var serverConfig = section.Get<ServerConfiguration>();
 
+            if (serverConfig.Mode != ServerModes.Test)
+            {
+                app.UseHttpsRedirection();
+            }
             app.UseExceptionHandling(env);
-            app.UseHttpsRedirection();
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();

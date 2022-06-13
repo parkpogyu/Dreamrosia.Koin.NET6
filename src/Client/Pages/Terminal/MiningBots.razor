@@ -47,6 +47,9 @@ else
             </ToolBarContent>
             <HeaderContent>
                 <MudTh>
+                    <MudTableSortLabel SortBy="new Func<MiningBotDto, object>(x => x.Ticket)">@_localizer["MiningBot.Ticket"]</MudTableSortLabel>
+                </MudTh>
+                <MudTh>
                     <MudTableSortLabel SortBy="new Func<MiningBotDto, object>(x => x.Id)">@_localizer["MiningBot.Id"]</MudTableSortLabel>
                 </MudTh>
                 <MudTh>
@@ -69,6 +72,9 @@ else
                 </MudTh>
             </HeaderContent>
             <RowTemplate>
+                <MudTd DataLabel=@_localizer["MiningBot.Ticket"] Class="mud-text-align-center">
+                    <MudHighlighter Text="@context.Ticket" HighlightedText="@_searchString" />
+                </MudTd>
                 <MudTd DataLabel=@_localizer["MiningBot.Id"] Class="mud-text-align-center">
                     <MudHighlighter Text="@context.Id" HighlightedText="@_searchString" />
                 </MudTd>

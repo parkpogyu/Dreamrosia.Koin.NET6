@@ -38,7 +38,7 @@ namespace Dreamrosia.Koin.Infrastructure.Models.Identity
 
         public Subscription Subscription { get; set; }
 
-        public MiningBot MiningBot { get; set; }
+        public MiningBotTicket MiningBotTicket { get; set; }
 
         public UPbitKey UPbitKey { get; set; }
 
