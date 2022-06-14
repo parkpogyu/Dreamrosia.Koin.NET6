@@ -47,7 +47,7 @@
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel=@_localizer["Date"] Style="text-align:center">
-                @($"{context.created_at:yyyy-MM-dd}")
+                @($"{context.created_at:d}")
             </MudTd>
             @{
                 if (IsReal)

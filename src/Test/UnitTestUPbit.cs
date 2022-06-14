@@ -369,6 +369,14 @@ namespace Test
         [TestMethod]
         public async Task TestTruncate()
         {
+
+            DateTime touched = new DateTime();
+            TimeSpan? elapsed = null;
+
+            System.Diagnostics.Debug.WriteLine($"touched: {touched:t}");
+            System.Diagnostics.Debug.WriteLine($"elapsed: {elapsed:c}");
+
+
         }
     }
 }

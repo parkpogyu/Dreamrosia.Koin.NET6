@@ -182,11 +182,11 @@ namespace Dreamrosia.Koin.Application.DTO
 
                     if (yy > 0)
                     {
-                        left = $"{yy:D2}-{mm:D2}-{dd:D2}";
+                        left = $"{yy:D2},{mm:D2},{dd:D2}";
                     }
                     else if (mm > 0)
                     {
-                        left = $"{mm:D2}-{dd:D2}";
+                        left = $"{mm:D2},{dd:D2}";
                     }
                     else
                     {

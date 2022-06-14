@@ -169,7 +169,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                         {
                            Label = new Label
                            {
-                                Text = $"{_localizer["User.SignupDate"]}:{SignUpDate:yyyy-MM-dd}",
+                                Text = $"{_localizer["User.SignupDate"]}:{SignUpDate:d}",
                                 Style = new Style{ Background="red" },
                                 Orientation = "horizontal",
                            },
@@ -324,7 +324,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                     {
                        Label = new Label
                        {
-                            Text = $"{_localizer["User.SignupDate"]}:{SignUpDate:yyyy-MM-dd}",
+                            Text = $"{_localizer["User.SignupDate"]}:{SignUpDate:d}",
                             Orientation = "horizontal",
 
                             Style = new Style()
@@ -339,7 +339,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                             }
                        },
 
-                       X = $"{approximate.created_at:yyyy-MM-dd}",
+                       X = $"{approximate.created_at:d}",
                        BorderWidth = 3,
                        StrokeDashArray = 0,
                     } ,

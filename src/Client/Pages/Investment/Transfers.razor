@@ -87,10 +87,10 @@ else
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel=@_localizer["Transfer.created_at"] Style="text-align:center">
-                    @($"{context.created_at:yyyy-MM-dd HH:mm:ss}")
+                    @($"{context.created_at:g}")
                 </MudTd>
                 <MudTd DataLabel=@_localizer["Transfer.done_at"] Style="text-align:center">
-                    @($"{context.done_at:HH:mm:ss}")
+                    @($"{context.done_at:t}")
                 </MudTd>
                 <MudTd DataLabel=@_localizer["Symbol.code"]>
                     <CoinIcon Code="@context.code" Link="true" />

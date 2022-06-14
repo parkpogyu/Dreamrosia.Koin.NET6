@@ -95,7 +95,7 @@ else
                                 <MudField Label=@_localizer["User.SignupDate"]
                                           Variant="Variant.Outlined"
                                           Margin="Margin.Dense">
-                                    <MudText> @($"{_user.CreatedOn:yyyy-MM-dd}") </MudText>
+                                    <MudText> @($"{_user.CreatedOn:d}") </MudText>
                                 </MudField>
                             </MudItem>
                             <MudItem xs="12" sm="6">

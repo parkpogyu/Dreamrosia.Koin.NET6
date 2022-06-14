@@ -31,7 +31,7 @@ namespace Dreamrosia.Koin.Bot.Extentions
 
             Terminal.Id = Guid.NewGuid().ToString();
             Terminal.MachineName = Environment.MachineName;
-            Terminal.Version = configuration["BotVersion"];
+            Terminal.Version = configuration["Version"];
             Terminal.CurrentDirectory = Environment.CurrentDirectory;
 
             return builder;

@@ -85,13 +85,13 @@
                 if (IsReal)
                 {
                     <MudTd DataLabel=@_localizer["Order.created_at"] Style="text-align:center">
-                        @($"{context.created_at:yyyy-MM-dd HH:mm:ss}")
+                        @($"{context.created_at:g}")
                     </MudTd>
                 }
                 else
                 {
                     <MudTd DataLabel=@_localizer["Order.created_at"] Style="text-align:center">
-                        @($"{context.created_at:yyyy-MM-dd}")
+                        @($"{context.created_at:d}")
                     </MudTd>
                 }
 

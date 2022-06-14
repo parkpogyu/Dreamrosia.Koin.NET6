@@ -93,7 +93,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                     await _unitOfWork.Repository<UPbitKey>().AddAsync(mapped);
 
-                    _context.Database.ExecuteSqlRaw($"CALL PRC_Assign_MiningBot('{model.UserId}')");
+                    _context.Database.ExecuteSqlRaw($"CALL PRC_Assign_MiningBotTicket('{model.UserId}')");
                 }
                 else
                 {

@@ -16,17 +16,17 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Routes
 
         public static string GetSummarise(DateTime? head, DateTime? rear)
         {
-            return $"api/identity/user?head={head?.ToString("yyyy-MM-dd")}&rear={rear?.ToString("yyyy-MM-dd")}";
+            return $"api/identity/user?head={head?.ToString("d")}&rear={rear?.ToString("d")}";
         }
 
         public static string GetFollowers(string userId, DateTime? head, DateTime? rear)
         {
-            return $"api/identity/user/followers/?id={userId}&head={head?.ToString("yyyy-MM-dd")}&rear={rear?.ToString("yyyy-MM-dd")}";
+            return $"api/identity/user/followers/?id={userId}&head={head?.ToString("d")}&rear={rear?.ToString("d")}";
         }
 
         public static string GetBoasters(DateTime? head, DateTime? rear)
         {
-            return $"api/identity/user/boasters/?head={head?.ToString("yyyy-MM-dd")}&rear={rear?.ToString("yyyy-MM-dd")}";
+            return $"api/identity/user/boasters/?head={head?.ToString("d")}&rear={rear?.ToString("d")}";
         }
 
         public static string GetRecommender(string userId)

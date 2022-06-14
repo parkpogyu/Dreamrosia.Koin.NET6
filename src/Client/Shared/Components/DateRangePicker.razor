@@ -7,7 +7,7 @@
     <MudDatePicker @bind-Date="@DateRange.Start"
                    Label="@_localizer["DateRange.Start"]"
                    PickerVariant="PickerVariant.Dialog"
-                   DateFormat="yyyy-MM-dd"
+                   DateFormat="d"
                    TitleDateFormat="MM-dd(ddd)"
                    AutoClose="false"
                    Class="mud-date-picker" />
@@ -20,7 +20,7 @@
     <MudDatePicker @bind-Date="@DateRange.End"
                    PickerVariant="PickerVariant.Dialog"
                    Label="@_localizer["DateRange.End"]"
-                   DateFormat="yyyy-MM-dd"
+                   DateFormat="d"
                    TitleDateFormat="MMM-dd(ddd)"
                    AutoClose="false"
                    Class="mud-date-picker"/>

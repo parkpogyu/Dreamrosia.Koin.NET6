@@ -84,7 +84,7 @@ else
                         {
                             <MudText Class="pe-1 negative" Style="font-weight:bold">@($"{TotalPnLRat:N2}")</MudText>
                         }
-                        else if (TotalPnLRat == 0)
+                        else if (TotalPnLRat == 0 || double.IsNaN(TotalPnLRat))
                         {
                             <MudText Class="pe-1" />
                         }

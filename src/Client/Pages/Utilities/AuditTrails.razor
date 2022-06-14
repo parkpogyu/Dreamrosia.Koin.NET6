@@ -64,7 +64,7 @@ else
                 <MudItem>
                     <MudChip Icon="@Icons.Material.Filled.Watch" IconColor="MudBlazor.Color.Secondary" 
                              Label="true" 
-                             Color="MudBlazor.Color.Surface">@($"{context.LocalTime:yyyy-MM-dd HH:mm:ss}")</MudChip>
+                             Color="MudBlazor.Color.Surface">@($"{context.LocalTime:g}")</MudChip>
                 </MudItem>
                 @*<MudItem>
                     <MudChip Icon="@Icons.Material.Filled.Watch" IconColor="MudBlazor.Color.Secondary" Label="true" Color="MudBlazor.Color.Surface">@_localizer["UTC"] : @context.DateTime.ToString("G", CultureInfo.CurrentCulture)</MudChip>
