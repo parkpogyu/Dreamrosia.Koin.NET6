@@ -59,6 +59,7 @@ namespace Dreamrosia.Koin.Server.Controllers
                 builder.AppendLine("<head>");
                 builder.AppendLine("<meta charset='utf-8'>");
                 builder.AppendLine("<meta lang = 'ko'/>");
+                builder.AppendLine("<meta http-equiv='refresh' content='5'>");
                 builder.AppendLine(@"
 <style type ='text/css'>
     body {
@@ -72,6 +73,7 @@ namespace Dreamrosia.Koin.Server.Controllers
                  <table border = '1' align = 'center' width = '100%'>
                     <th>{_localizer["MiningBot.Id"]}</th>
                     <th>{_localizer["MiningBot.Ticket"]}</th>
+                    <th>{_localizer["MiningBot.Version"]}</th>
                     <th>{_localizer["MiningBot.MachineName"]}</th>
                     <th>{_localizer["MiningBot.CurrentDirectory"]}</th>
                     <th>{_localizer["Users"]}</th>
@@ -86,7 +88,10 @@ namespace Dreamrosia.Koin.Server.Controllers
                     builder.AppendLine($"{bot.Id}");
                     builder.AppendLine("</td>");
                     builder.AppendLine("<td align='center'>");
-                    builder.AppendLine($"{bot.Ticket ?? string.Empty}");
+                    builder.AppendLine($"{bot.Ticket}");
+                    builder.AppendLine("</td>");
+                    builder.AppendLine("<td align='center'>");
+                    builder.AppendLine($"{bot.Version}");
                     builder.AppendLine("</td>");
                     builder.AppendLine("<td align='center'>");
                     builder.AppendLine($"{bot.MachineName}");
@@ -98,29 +103,14 @@ namespace Dreamrosia.Koin.Server.Controllers
                     builder.AppendLine($"{bot.NickName}");
                     builder.AppendLine("</td>");
                     builder.AppendLine("<td align='center'>");
-                    if (bot.Touched is null)
-                    {
-                        builder.AppendLine(string.Empty);
-                    }
-                    else
-                    {
-                        builder.AppendLine($"{Convert.ToDateTime(bot.Touched):yyyy-MM-dd HH:mm:ss}");
-                    }
+                    builder.AppendLine($"{bot.Touched:t}");
                     builder.AppendLine("</td>");
                     builder.AppendLine("<td align='center'>");
-                    if (bot.Touched is null)
-                    {
-                        builder.AppendLine(string.Empty);
-                    }
-                    else
-                    {
-                        builder.AppendLine($"{bot.Elapsed:c}");
-                    }
+                    builder.AppendLine($"{bot.Elapsed:dd\\,hh\\:mm\\:ss}");
                     builder.AppendLine("</td>");
 
                     builder.AppendLine("</tr>");
                 }
-
                 builder.AppendLine("</table>");
                 builder.AppendLine("</body>");
                 builder.AppendLine("</html>");
