@@ -1,0 +1,1 @@
+find . -name "FILE-TO-FIND" -exec rm -rf {} \;
