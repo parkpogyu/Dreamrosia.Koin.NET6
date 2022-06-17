@@ -39,7 +39,6 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private bool _isDivTableRendered { get; set; } = false;
         private string _divTableHeight { get; set; } = "100%";
         private readonly string _divTableId = Guid.NewGuid().ToString();
-
         private int _rowsPerPage { get; set; } = 25;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

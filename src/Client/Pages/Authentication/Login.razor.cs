@@ -1,6 +1,5 @@
 ﻿using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Infrastructure.Routes;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Pages.Authentication
@@ -9,25 +8,24 @@ namespace Dreamrosia.Koin.Client.Pages.Authentication
     {
         protected override async Task OnInitializedAsync()
         {
-            var state = await _stateProvider.GetAuthenticationStateAsync();
+            var user = _authenticationManager.CurrentUser();
 
-            if (state.User.Claims.Any())
+            var id = user.GetUserId();
+
+            if (string.IsNullOrEmpty(id))
             {
-                _navigationManager.NavigateTo("/");
+                var result = await _authenticationManager.KakaoLogin();
+
+                if (result.Succeeded)
+                {
+                    _navigationManager.NavigateTo("/");
+                }
             }
             else
             {
-                var id = state.User?.GetUserId();
-
-                if (string.IsNullOrEmpty(id))
+                if (user.Identity?.IsAuthenticated == true)
                 {
-                    var result = await _authenticationManager.KakaoLogin();
-
-                    if (result.Succeeded)
-                    {
-                        _navigationManager.NavigateTo("/", forceLoad: true);
-                        //_navigationManager.NavigateTo("/");
-                    }
+                    _navigationManager.NavigateTo("/");
                 }
             }
         }

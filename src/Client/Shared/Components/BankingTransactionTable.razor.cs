@@ -27,7 +27,6 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                 SetItems();
             }
         }
-
         [Parameter] public bool IsUserView { get; set; } = false;
 
         private IEnumerable<BankingTransactionDto> _sources { get; set; }
@@ -36,20 +35,16 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private bool _isDivTableRendered { get; set; } = false;
         private string _divTableHeight { get; set; } = "100%";
         private readonly string _divTableId = Guid.NewGuid().ToString();
-
         private string _selectedTransferType { get; set; }
         private IEnumerable<string> _selectedTransferTypes { get; set; }
-
         private string _searchString { get; set; } = string.Empty;
-
         private bool _canEditBankingTransaction { get; set; } = false;
 
         protected override async Task OnInitializedAsync()
         {
-            var _currentUser = await _authenticationManager.CurrentUser();
+            var user = _authenticationManager.CurrentUser();
 
-            _canEditBankingTransaction = (await _authorizationService.AuthorizeAsync(_currentUser, Permissions.BankingTransactions.Edit)).Succeeded;
-
+            _canEditBankingTransaction = (await _authorizationService.AuthorizeAsync(user, Permissions.BankingTransactions.Edit)).Succeeded;
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

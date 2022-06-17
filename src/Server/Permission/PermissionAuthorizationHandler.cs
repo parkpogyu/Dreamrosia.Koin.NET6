@@ -18,8 +18,8 @@ namespace Dreamrosia.Koin.Server.Permission
             }
 
             var permissions = context.User.Claims.Where(x => x.Type == ApplicationClaimTypes.Permission &&
-                                                                x.Value == requirement.Permission &&
-                                                                x.Issuer == "LOCAL AUTHORITY");
+                                                             x.Value == requirement.Permission &&
+                                                             x.Issuer == "LOCAL AUTHORITY");
             if (permissions.Any())
             {
                 context.Succeed(requirement);

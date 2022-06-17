@@ -4,6 +4,7 @@ using Dreamrosia.Koin.Application.Extensions;
 using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Infrastructure.Managers;
 using Dreamrosia.Koin.Client.Shared.Components;
+using Dreamrosia.Koin.Shared.Constants.Role;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.JSInterop;
@@ -39,15 +40,11 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
         {
             if (string.IsNullOrEmpty(UserId))
             {
-                var user = await _authenticationManager.CurrentUser();
-
-                _userId = user.GetUserId();
+                _userId = _authenticationManager.CurrentUser().GetUserId();
             }
             else
             {
-                var isAdmin = _stateProvider.IsAdministrator();
-
-                if (!isAdmin)
+                if (!_stateProvider.IsInRole(RoleConstants.AdministratorRole))
                 {
                     _snackBar.Add(_localizer["You are not Authorized."], Severity.Error);
                     _navigationManager.NavigateTo("/");

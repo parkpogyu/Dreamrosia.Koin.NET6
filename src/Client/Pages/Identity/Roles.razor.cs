@@ -22,26 +22,23 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
 
         [CascadingParameter] private HubConnection HubConnection { get; set; }
 
-        private ClaimsPrincipal _currentUser;
+        private bool _loaded;
+        private ClaimsPrincipal _user { get; set; }
         private bool _canCreateRoles;
         private bool _canEditRoles;
         private bool _canDeleteRoles;
         private bool _canViewRoleClaims;
-
         private IEnumerable<RoleResponse> _items = new List<RoleResponse>();
         private RoleResponse _item = new();
-
-        private bool _loaded;
         private string _searchString = "";
 
         protected override async Task OnInitializedAsync()
         {
-            _currentUser = await _authenticationManager.CurrentUser();
-
-            _canCreateRoles = (await _authorizationService.AuthorizeAsync(_currentUser, Permissions.Roles.Create)).Succeeded;
-            _canEditRoles = (await _authorizationService.AuthorizeAsync(_currentUser, Permissions.Roles.Edit)).Succeeded;
-            _canDeleteRoles = (await _authorizationService.AuthorizeAsync(_currentUser, Permissions.Roles.Delete)).Succeeded;
-            _canViewRoleClaims = (await _authorizationService.AuthorizeAsync(_currentUser, Permissions.RoleClaims.View)).Succeeded;
+            _user = _authenticationManager.CurrentUser();
+            _canCreateRoles = (await _authorizationService.AuthorizeAsync(_user, Permissions.Roles.Create)).Succeeded;
+            _canEditRoles = (await _authorizationService.AuthorizeAsync(_user, Permissions.Roles.Edit)).Succeeded;
+            _canDeleteRoles = (await _authorizationService.AuthorizeAsync(_user, Permissions.Roles.Delete)).Succeeded;
+            _canViewRoleClaims = (await _authorizationService.AuthorizeAsync(_user, Permissions.RoleClaims.View)).Succeeded;
 
             await GetRolesAsync();
 

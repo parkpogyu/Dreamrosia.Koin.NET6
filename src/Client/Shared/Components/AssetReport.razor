@@ -390,10 +390,9 @@
             _viewHelp = value;
         }
     }
-
     private bool _viewHelp { get; set; }
 
-    private AssetReportDto _report => Report;
-
     [Parameter] public bool IsReal { get; set; } = true;
+
+    private AssetReportDto _report => Report;
 }

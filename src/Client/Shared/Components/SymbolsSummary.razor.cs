@@ -15,6 +15,8 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 {
     public partial class SymbolsSummary : IDisposable
     {
+        [Inject] private IMarketManager MarketManager { get; set; }
+
         [CascadingParameter(Name = "Symbols")]
         public IEnumerable<SymbolDto> Symbols
         {
@@ -24,30 +26,23 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
         [Parameter] public Action<IEnumerable<SymbolDto>> OnItemsChanged { get; set; }
 
-        [Inject] private IMarketManager MarketManager { get; set; }
-
         private bool _loaded;
-
+        private HubConnection _synchronizeHubConnection { get; set; }
         private IEnumerable<SymbolDto> _items { get; set; } = new List<SymbolDto>();
         private int _weeklySpring => _items.Any() ? _items.Count(f => f.WeeklySignal == SeasonSignals.GoldenCross) : 0;
         private int _weeklySummer => _items.Any() ? _items.Count(f => f.WeeklySignal == SeasonSignals.Above) : 0;
         private int _weeklyAutumn => _items.Any() ? _items.Count(f => f.WeeklySignal == SeasonSignals.DeadCross) : 0;
         private int _weeklyWinter => _items.Any() ? _items.Count(f => f.WeeklySignal == SeasonSignals.Below) : 0;
-
         private int _dailySpring => _items.Any() ? _items.Count(f => f.DailySignal == SeasonSignals.GoldenCross) : 0;
         private int _dailySummer => _items.Any() ? _items.Count(f => f.DailySignal == SeasonSignals.Above) : 0;
         private int _dailyAutumn => _items.Any() ? _items.Count(f => f.DailySignal == SeasonSignals.DeadCross) : 0;
         private int _dailyWinter => _items.Any() ? _items.Count(f => f.DailySignal == SeasonSignals.Below) : 0;
-
         private int _riseCount => _items.Any() ? _items.Count(f => f.signed_change_rate > 0) : 0;
         private int _fallCount => _items.Any() ? _items.Count(f => f.signed_change_rate < 0) : 0;
         private int _evenCount => _items.Any() ? _items.Count(f => f.signed_change_rate == 0) : 0;
         private double _avgChangeRate => _items.Any() ? _items.Average(f => f.signed_change_rate) : 0;
-
         private DateTime _receivedTickerTime { get; set; } = DateTime.Now;
         private bool _isReceiveTicker { get; set; } = false;
-
-        private HubConnection SynchronizeHubConnection { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -60,9 +55,9 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
             //var _currentUser = await _authenticationManager.CurrentUser();
 
-            SynchronizeHubConnection = SynchronizeHubConnection.TryInitializeToSynchronize(_navigationManager, Guid.NewGuid().ToString());
+            _synchronizeHubConnection = _synchronizeHubConnection.TryInitializeToSynchronize(_navigationManager, Guid.NewGuid().ToString());
 
-            SynchronizeHubConnection.On<TickerDto>(ApplicationConstants.SynchronizeSignalR.ReceiveTicker, (ticker) =>
+            _synchronizeHubConnection.On<TickerDto>(ApplicationConstants.SynchronizeSignalR.ReceiveTicker, (ticker) =>
             {
                 var symbol = _items.SingleOrDefault(f => f.market.Equals(ticker.market));
 
@@ -84,9 +79,9 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                 _isReceiveTicker = false;
             });
 
-            if (SynchronizeHubConnection.State == HubConnectionState.Disconnected)
+            if (_synchronizeHubConnection.State == HubConnectionState.Disconnected)
             {
-                await SynchronizeHubConnection.StartAsync();
+                await _synchronizeHubConnection.StartAsync();
             }
         }
 
@@ -116,9 +111,9 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         {
             Task.Run(async () =>
             {
-                SynchronizeHubConnection.Remove(ApplicationConstants.SynchronizeSignalR.ReceiveTicker);
+                _synchronizeHubConnection.Remove(ApplicationConstants.SynchronizeSignalR.ReceiveTicker);
 
-                await SynchronizeHubConnection.StopAsync();
+                await _synchronizeHubConnection.StopAsync();
             });
         }
     }

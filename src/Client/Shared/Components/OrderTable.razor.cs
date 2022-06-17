@@ -34,7 +34,6 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private bool _isDivTableRendered { get; set; } = false;
         private string _divTableHeight { get; set; } = "100%";
         private readonly string _divTableId = Guid.NewGuid().ToString();
-
         private string _selectedOrderSide { get; set; }
         private IEnumerable<string> _selectedOrderSides { get; set; }
         private string _selectedCurrency { get; set; }

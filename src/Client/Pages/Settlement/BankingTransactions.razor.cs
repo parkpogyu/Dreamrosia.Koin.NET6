@@ -19,7 +19,6 @@ namespace Dreamrosia.Koin.Client.Pages.Settlement
         private IEnumerable<BankingTransactionDto> _items { get; set; }
         private DateRange _dateRange { get; set; } = new DateRange(DateTime.Now.AddMonths(-1).Date.AddDays(1), DateTime.Now.Date);
         private DateRangePicker.DateRangeTerms _dateRangeTerm { get; set; } = DateRangePicker.DateRangeTerms._1M;
-
         private readonly BankingTransactionsRequestDto _model = new BankingTransactionsRequestDto();
 
         protected override async Task OnInitializedAsync()

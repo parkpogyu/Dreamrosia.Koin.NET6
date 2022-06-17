@@ -15,18 +15,15 @@ namespace Dreamrosia.Koin.Client.Pages.Market
     public partial class Candles
     {
         [Inject] private IMarketManager MarketManager { get; set; }
-
         [Parameter] public string Market { get; set; }
 
         private bool _loaded;
-
         private IEnumerable<CandleDto> _sources { get; set; }
         private IEnumerable<CandleDto> _items { get; set; }
         private IEnumerable<SymbolDto> _symbols { get; set; } = new List<SymbolDto>();
         private SymbolDto _symbol { get; set; }
         private DateRange _dateRange { get; set; } = new DateRange(DateTime.Now.AddMonths(-6).AddDays(1).Date, DateTime.Now.Date);
         private DateRangePicker.DateRangeTerms _dateRangeTerm { get; set; } = DateRangePicker.DateRangeTerms._6M;
-
         private TimeFrames _selectedTimeFrame { get; set; } = TimeFrames.Week;
 
         protected override async Task OnInitializedAsync()

@@ -9,7 +9,6 @@ using MudBlazor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Pages.Utilities
@@ -18,8 +17,8 @@ namespace Dreamrosia.Koin.Client.Pages.Utilities
     {
         [Inject] private IAuditManager AuditManager { get; set; }
 
+        private bool _loaded;
         public List<RelatedAuditTrail> Trails = new();
-
         private RelatedAuditTrail _trail = new();
         private string _searchString = "";
         private bool _dense = true;
@@ -30,9 +29,7 @@ namespace Dreamrosia.Koin.Client.Pages.Utilities
         private MudDateRangePicker _dateRangePicker;
         private DateRange _dateRange;
 
-        private ClaimsPrincipal _currentUser;
         private bool _canExportAuditTrails;
-        private bool _loaded;
 
         private bool Search(AuditResponse response)
         {
@@ -74,8 +71,9 @@ namespace Dreamrosia.Koin.Client.Pages.Utilities
 
         protected override async Task OnInitializedAsync()
         {
-            _currentUser = await _authenticationManager.CurrentUser();
-            _canExportAuditTrails = (await _authorizationService.AuthorizeAsync(_currentUser, Permissions.AuditTrails.Export)).Succeeded;
+            var user = _authenticationManager.CurrentUser();
+
+            _canExportAuditTrails = (await _authorizationService.AuthorizeAsync(user, Permissions.AuditTrails.Export)).Succeeded;
 
             await GetDataAsync();
             _loaded = true;

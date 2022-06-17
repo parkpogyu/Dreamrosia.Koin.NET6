@@ -71,8 +71,8 @@ namespace Dreamrosia.Koin.Server.Controllers
                 builder.AppendLine("<body>");
                 builder.AppendLine(@$"
                  <table border = '1' align = 'center' width = '100%'>
-                    <th>{_localizer["MiningBot.Id"]}</th>
                     <th>{_localizer["MiningBot.Ticket"]}</th>
+                    <th>{_localizer["MiningBot.Id"]}</th>
                     <th>{_localizer["MiningBot.Version"]}</th>
                     <th>{_localizer["MiningBot.MachineName"]}</th>
                     <th>{_localizer["MiningBot.CurrentDirectory"]}</th>
@@ -85,10 +85,10 @@ namespace Dreamrosia.Koin.Server.Controllers
                     builder.AppendLine("<tr>");
 
                     builder.AppendLine("<td align='center'>");
-                    builder.AppendLine($"{bot.Id}");
+                    builder.AppendLine($"{bot.Ticket}");
                     builder.AppendLine("</td>");
                     builder.AppendLine("<td align='center'>");
-                    builder.AppendLine($"{bot.Ticket}");
+                    builder.AppendLine($"{bot.Id}");
                     builder.AppendLine("</td>");
                     builder.AppendLine("<td align='center'>");
                     builder.AppendLine($"{bot.Version}");
@@ -103,7 +103,7 @@ namespace Dreamrosia.Koin.Server.Controllers
                     builder.AppendLine($"{bot.NickName}");
                     builder.AppendLine("</td>");
                     builder.AppendLine("<td align='center'>");
-                    builder.AppendLine($"{bot.Touched:t}");
+                    builder.AppendLine($"{bot.Touched:HH:mm:ss}");
                     builder.AppendLine("</td>");
                     builder.AppendLine("<td align='center'>");
                     builder.AppendLine($"{bot.Elapsed:dd\\,hh\\:mm\\:ss}");

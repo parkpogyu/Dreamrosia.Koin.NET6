@@ -4,6 +4,7 @@ using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Mappings;
 using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Infrastructure.Managers;
+using Dreamrosia.Koin.Shared.Constants.Role;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Threading.Tasks;
@@ -12,42 +13,32 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
 {
     public partial class UPbitKey
     {
-        private FluentValidationValidator _fluentValidationValidator;
-        private bool Validated => _fluentValidationValidator.Validate(options => { options.IncludeAllRuleSets(); });
-        private readonly UPbitKeyDto _model = new();
-        private readonly UPbitKeyTestDto _testModel = new();
-        private IMapper _mapper;
-
         [Inject] private IUPbitKeyManager UPbitKeyManager { get; set; }
-
         [Parameter] public string UserId { get; set; }
 
+        private FluentValidationValidator _fluentValidationValidator;
+        private bool Validated => _fluentValidationValidator.Validate(options => { options.IncludeAllRuleSets(); });
         private bool _loaded;
         public string _userId { get; private set; }
-
+        private readonly UPbitKeyDto _model = new();
+        private readonly UPbitKeyTestDto _testModel = new();
         private bool _access_keyVisibility;
         private InputType _access_keyInput = InputType.Password;
         private string _access_keyInputIcon = Icons.Material.Filled.VisibilityOff;
-
         private bool _secret_keyVisibility;
         private InputType _secret_keyInput = InputType.Password;
         private string _secret_keyInputIcon = Icons.Material.Filled.VisibilityOff;
-
         private string _allowedIPs { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
             if (string.IsNullOrEmpty(UserId))
             {
-                var user = await _authenticationManager.CurrentUser();
-
-                _userId = user.GetUserId();
+                _userId = _authenticationManager.CurrentUser().GetUserId();
             }
             else
             {
-                var isAdmin = _stateProvider.IsAdministrator();
-
-                if (!isAdmin)
+                if (!_stateProvider.IsInRole(RoleConstants.AdministratorRole))
                 {
                     _snackBar.Add(_localizer["You are not Authorized."], Severity.Error);
                     _navigationManager.NavigateTo("/");

@@ -10,7 +10,6 @@ using MudBlazor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
@@ -33,19 +32,14 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
         private MudTable<UserSummaryDto> _table;
 
-
-        private ClaimsPrincipal _currentUser;
         private bool _canViewRoles;
 
         private IEnumerable<UserSummaryDto> _items = new List<UserSummaryDto>();
         private IEnumerable<UserSummaryDto> _sources;
-
         private bool _isDivTableRendered { get; set; } = false;
         private string _divTableHeight { get; set; } = "100%";
         private readonly string _divTableId = Guid.NewGuid().ToString();
-
         private string _searchString { get; set; } = string.Empty;
-
         private bool? _chkIsAssignedBot { get; set; } = null;
         private bool? _chkIsAutoTrading { get; set; } = null;
         private string _selectedTimeFrame { get; set; }
@@ -55,8 +49,9 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
         protected override async Task OnInitializedAsync()
         {
-            _currentUser = await _authenticationManager.CurrentUser();
-            _canViewRoles = (await _authorizationService.AuthorizeAsync(_currentUser, Permissions.Roles.View)).Succeeded;
+            var user = _authenticationManager.CurrentUser();
+
+            _canViewRoles = (await _authorizationService.AuthorizeAsync(user, Permissions.Roles.View)).Succeeded;
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -16,6 +16,8 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 {
     public partial class CandleChart : IDisposable
     {
+        [Inject] private IMACDService MACDService { get; set; }
+
         [CascadingParameter(Name = "Candles")]
         private IEnumerable<CandleDto> Candles
         {
@@ -33,15 +35,9 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
         [Parameter] public bool IsReal { get; set; } = true;
 
-        [Inject] private IMACDService MACDService { get; set; }
-
-        private IMapper _mapper;
-
         private bool _loaded;
-
         private IEnumerable<CandleDto> _items { get; set; }
         private IEnumerable<CandleExtensionDto> _candles { get; set; } = new List<CandleExtensionDto>();
-
         private bool _isDivChartRendered { get; set; } = false;
         private string _divChartHeight { get; set; } = "100%";
         private string _candleChartHeight { get; set; } = "85%";

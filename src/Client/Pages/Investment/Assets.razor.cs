@@ -1,6 +1,7 @@
 ﻿using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Infrastructure.Managers;
+using Dreamrosia.Koin.Shared.Constants.Role;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System;
@@ -11,18 +12,14 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
     public partial class Assets
     {
         [Inject] private IInvestmentManager InvestmentManager { get; set; }
-
         [CascadingParameter(Name = "ViewHelp")]
         private bool _viewHelp { get; set; }
-
         [Parameter] public string UserId { get; set; }
 
         private bool _loaded;
         private string _userId { get; set; }
         private DateTime _signUpDate { get; set; }
-
         private AssetReportDto _report { get; set; } = new();
-
         private int _activePanelIndex { get; set; } = 0;
         private static string _hidden => "Visibility:hidden";
         private bool _isProcessing { get; set; } = false;
@@ -32,15 +29,12 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
         {
             if (string.IsNullOrEmpty(UserId))
             {
-                var user = await _authenticationManager.CurrentUser();
-
-                _userId = user.GetUserId();
+                _userId = _authenticationManager.CurrentUser().GetUserId();
             }
             else
             {
-                var isAdmin = _stateProvider.IsAdministrator();
 
-                if (!isAdmin)
+                if (!_stateProvider.IsInRole(RoleConstants.AdministratorRole))
                 {
                     _snackBar.Add(_localizer["You are not Authorized."], Severity.Error);
                     _navigationManager.NavigateTo("/");

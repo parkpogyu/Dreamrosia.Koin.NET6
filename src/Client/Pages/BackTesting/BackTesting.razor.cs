@@ -19,9 +19,7 @@ namespace Dreamrosia.Koin.Client.Pages.BackTesting
         private readonly BackTestingRequestDto _model = new BackTestingRequestDto();
         private BackTestingReportDto _report { get; set; } = new BackTestingReportDto();
         private IEnumerable<SymbolDto> _symbols { get; set; } = new List<SymbolDto>();
-
         private static string _hidden => "Visibility:hidden";
-
         private bool _isProcessing { get; set; } = false;
         private string _progressBarDisplay { get; set; } = _hidden;
 

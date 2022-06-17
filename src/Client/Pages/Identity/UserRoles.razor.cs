@@ -15,19 +15,17 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
     {
         [Parameter] public string Id { get; set; }
 
-        private ClaimsPrincipal _currentUser;
+        private bool _loaded;
+        private ClaimsPrincipal _user { get; set; }
         private bool _canEditUsers;
-
         public List<UserRoleModel> _items { get; set; } = new();
         private UserRoleModel _item = new();
-
-        private bool _loaded;
         private string _searchString = "";
 
         protected override async Task OnInitializedAsync()
         {
-            _currentUser = await _authenticationManager.CurrentUser();
-            _canEditUsers = (await _authorizationService.AuthorizeAsync(_currentUser, Permissions.Users.Edit)).Succeeded;
+            _user = _authenticationManager.CurrentUser();
+            _canEditUsers = (await _authorizationService.AuthorizeAsync(_user, Permissions.Users.Edit)).Succeeded;
 
             var userId = Id;
             var result = await _userManager.GetAsync(userId);

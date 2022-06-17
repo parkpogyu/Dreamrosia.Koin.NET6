@@ -8,6 +8,7 @@ using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Shared.Dialogs;
 using Dreamrosia.Koin.Domain.Enums;
 using Dreamrosia.Koin.Shared.Constants.Application;
+using Dreamrosia.Koin.Shared.Constants.Role;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Threading.Tasks;
@@ -18,18 +19,12 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
     {
         [Parameter] public string UserId { get; set; }
 
-        private bool _loaded;
-
-        private UserDetailDto _user = new();
-        private string _userId { get; set; }
-
-        private MembershipDto _model { get; set; }
-
         private FluentValidationValidator _membershipValidator;
-
-        private IMapper _mapper;
-
         private bool _membershipValidated => _membershipValidator.Validate(options => { options.IncludeAllRuleSets(); });
+        private bool _loaded;
+        private string _userId { get; set; }
+        private UserDetailDto _user = new();
+        private MembershipDto _model { get; set; }
 
         private async Task ToggleUserStatus()
         {
@@ -59,18 +54,13 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
                 c.AddProfile<MembershipProfile>();
             }).CreateMapper();
 
-
             if (string.IsNullOrEmpty(UserId))
             {
-                var user = await _authenticationManager.CurrentUser();
-
-                _userId = user.GetUserId();
+                _userId = _authenticationManager.CurrentUser().GetUserId();
             }
             else
             {
-                var isAdmin = _stateProvider.IsAdministrator();
-
-                if (!isAdmin)
+                if (!_stateProvider.IsInRole(RoleConstants.AdministratorRole))
                 {
                     _snackBar.Add(_localizer["You are not Authorized."], Severity.Error);
                     _navigationManager.NavigateTo("/");

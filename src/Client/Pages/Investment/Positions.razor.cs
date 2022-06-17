@@ -5,6 +5,7 @@ using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Infrastructure.Managers;
 using Dreamrosia.Koin.Shared.Constants.Application;
 using Dreamrosia.Koin.Shared.Constants.Coin;
+using Dreamrosia.Koin.Shared.Constants.Role;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using MudBlazor;
@@ -18,20 +19,15 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
     public partial class Positions : IDisposable
     {
         [Inject] private IInvestmentManager PositionManager { get; set; }
-
         [Parameter] public string UserId { get; set; }
 
-        private IMapper _mapper;
-        private HubConnection SynchronizeHubConnection { get; set; }
-
+        private bool _loaded;
+        private HubConnection _synchronizeHubConnection { get; set; }
         private DateTime _receivedTickerTime { get; set; } = DateTime.Now;
         private bool _isReceiveTicker { get; set; } = false;
-
-        private bool _loaded;
         private string _userId { get; set; }
         private IEnumerable<PaperPositionDto> _items { get; set; }
         private IEnumerable<SymbolDto> _unpositions { get; set; }
-
         private long TotalKRW { get; set; }
         private double TotalAsset { get; set; }
         private double TotalPchsAmt { get; set; }
@@ -47,15 +43,12 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
 
             if (string.IsNullOrEmpty(UserId))
             {
-                var user = await _authenticationManager.CurrentUser();
-
-                _userId = user.GetUserId();
+                _userId = _authenticationManager.CurrentUser().GetUserId();
             }
             else
             {
-                var isAdmin = _stateProvider.IsAdministrator();
 
-                if (!isAdmin)
+                if (!_stateProvider.IsInRole(RoleConstants.AdministratorRole))
                 {
                     _snackBar.Add(_localizer["You are not Authorized."], Severity.Error);
                     _navigationManager.NavigateTo("/");
@@ -69,9 +62,9 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
 
             _loaded = true;
 
-            SynchronizeHubConnection = SynchronizeHubConnection.TryInitializeToSynchronize(_navigationManager, _userId);
+            _synchronizeHubConnection = _synchronizeHubConnection.TryInitializeToSynchronize(_navigationManager, _userId);
 
-            SynchronizeHubConnection.On<TickerDto>(ApplicationConstants.SynchronizeSignalR.ReceiveTicker, (ticker) =>
+            _synchronizeHubConnection.On<TickerDto>(ApplicationConstants.SynchronizeSignalR.ReceiveTicker, (ticker) =>
             {
                 var coin = _items.SingleOrDefault(f => f.market.Equals(ticker.market));
                 var symbol = _unpositions.SingleOrDefault(f => f.market.Equals(ticker.market));
@@ -98,7 +91,7 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
                 _isReceiveTicker = false;
             });
 
-            SynchronizeHubConnection.On<string, PositionsDto>(ApplicationConstants.SynchronizeSignalR.ReceivePositions, (userId, positions) =>
+            _synchronizeHubConnection.On<string, PositionsDto>(ApplicationConstants.SynchronizeSignalR.ReceivePositions, (userId, positions) =>
             {
                 if (userId.Equals(_userId))
                 {
@@ -118,9 +111,9 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
                 }
             });
 
-            if (SynchronizeHubConnection.State == HubConnectionState.Disconnected)
+            if (_synchronizeHubConnection.State == HubConnectionState.Disconnected)
             {
-                await SynchronizeHubConnection.StartAsync();
+                await _synchronizeHubConnection.StartAsync();
             }
         }
 
@@ -170,10 +163,10 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
         {
             Task.Run(async () =>
             {
-                SynchronizeHubConnection.Remove(ApplicationConstants.SynchronizeSignalR.ReceiveTicker);
-                SynchronizeHubConnection.Remove(ApplicationConstants.SynchronizeSignalR.ReceivePositions);
+                _synchronizeHubConnection.Remove(ApplicationConstants.SynchronizeSignalR.ReceiveTicker);
+                _synchronizeHubConnection.Remove(ApplicationConstants.SynchronizeSignalR.ReceivePositions);
 
-                await SynchronizeHubConnection.StopAsync();
+                await _synchronizeHubConnection.StopAsync();
             });
         }
     }

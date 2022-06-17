@@ -60,8 +60,8 @@ namespace Dreamrosia.Koin.Client.Extensions
                 .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
                 .AddScoped<ClientPreferenceManager>()
                 .AddScoped<BlazorHeroStateProvider>()
-                .AddScoped<AuthenticationStateProvider, BlazorHeroStateProvider>()
-                //.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<BlazorHeroStateProvider>())
+                //.AddScoped<AuthenticationStateProvider, BlazorHeroStateProvider>()
+                .AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<BlazorHeroStateProvider>())
                 .AddScoped<IExcelService, ExcelService>()
                 .AddScoped<IMACDService, MACDService>()
                 .AddManagers()
@@ -85,16 +85,15 @@ namespace Dreamrosia.Koin.Client.Extensions
         {
             var managers = typeof(IManager);
 
-            var types = managers
-                .Assembly
-                .GetExportedTypes()
-                .Where(t => t.IsClass && !t.IsAbstract)
-                .Select(t => new
-                {
-                    Service = t.GetInterface($"I{t.Name}"),
-                    Implementation = t
-                })
-                .Where(t => t.Service != null);
+            var types = managers.Assembly
+                                .GetExportedTypes()
+                                .Where(t => t.IsClass && !t.IsAbstract)
+                                .Select(t => new
+                                {
+                                    Service = t.GetInterface($"I{t.Name}"),
+                                    Implementation = t
+                                })
+                                .Where(t => t.Service != null);
 
             foreach (var type in types)
             {
@@ -110,7 +109,10 @@ namespace Dreamrosia.Koin.Client.Extensions
 
         private static void RegisterPermissionClaims(AuthorizationOptions options)
         {
-            foreach (var prop in typeof(Permissions).GetNestedTypes().SelectMany(c => c.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)))
+            foreach (var prop in typeof(Permissions).GetNestedTypes()
+                                                    .SelectMany(c => c.GetFields(BindingFlags.Public |
+                                                                                 BindingFlags.Static |
+                                                                                 BindingFlags.FlattenHierarchy)))
             {
                 var propertyValue = prop.GetValue(null);
                 if (propertyValue is not null)

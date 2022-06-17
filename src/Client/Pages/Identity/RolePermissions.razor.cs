@@ -22,27 +22,27 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
         [Inject] private IRoleManager RoleManager { get; set; }
 
         [CascadingParameter] private HubConnection HubConnection { get; set; }
+
         [Parameter] public string Id { get; set; }
         [Parameter] public string Title { get; set; }
 
+        private bool _loaded;
+        private ClaimsPrincipal _user { get; set; }
         private PermissionResponse _model;
         private Dictionary<string, List<RoleClaimResponse>> GroupedRoleClaims { get; } = new();
-        private IMapper _mapper;
         private RoleClaimResponse _roleClaims = new();
         private RoleClaimResponse _selectedItem = new();
         private string _searchString = "";
         private bool _dense = true;
         private bool _striped = true;
         private bool _bordered = true;
-
-        private ClaimsPrincipal _currentUser;
         private bool _canEditRolePermissions;
-        private bool _loaded;
 
         protected override async Task OnInitializedAsync()
         {
-            _currentUser = await _authenticationManager.CurrentUser();
-            _canEditRolePermissions = (await _authorizationService.AuthorizeAsync(_currentUser, Permissions.RoleClaims.Edit)).Succeeded;
+            _user = _authenticationManager.CurrentUser();
+
+            _canEditRolePermissions = (await _authorizationService.AuthorizeAsync(_user, Permissions.RoleClaims.Edit)).Succeeded;
 
             await GetRolePermissionsAsync();
             _loaded = true;
@@ -96,7 +96,7 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
             {
                 _snackBar.Add(result.Messages[0], Severity.Success);
                 await HubConnection.SendAsync(ApplicationConstants.SignalR.SendRegenerateTokens);
-                await HubConnection.SendAsync(ApplicationConstants.SignalR.OnChangeRolePermissions, _currentUser.GetUserId(), request.RoleId);
+                await HubConnection.SendAsync(ApplicationConstants.SignalR.OnChangeRolePermissions, _user.GetUserId(), request.RoleId);
                 _navigationManager.NavigateTo("/identity/roles");
             }
             else

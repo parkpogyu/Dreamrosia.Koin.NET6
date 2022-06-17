@@ -3,6 +3,7 @@ using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Mappings;
 using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Infrastructure.Managers;
+using Dreamrosia.Koin.Shared.Constants.Role;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Collections.Generic;
@@ -14,14 +15,10 @@ namespace Dreamrosia.Koin.Client.Pages.Trading
     {
         [Inject] private ITradingTermsManager TradingTermsManager { get; set; }
         [Inject] private IMarketManager MarketManager { get; set; }
-
         [Parameter] public string UserId { get; set; }
-
-        private IMapper _mapper;
 
         private bool _loaded;
         private string _userId { get; set; }
-
         private BackTestingRequestDto _model { get; set; }
         private IEnumerable<SymbolDto> _symbols { get; set; } = new List<SymbolDto>();
 
@@ -31,15 +28,11 @@ namespace Dreamrosia.Koin.Client.Pages.Trading
 
             if (string.IsNullOrEmpty(UserId))
             {
-                var user = await _authenticationManager.CurrentUser();
-
-                _userId = user.GetUserId();
+                _userId = _authenticationManager.CurrentUser().GetUserId();
             }
             else
             {
-                var isAdmin = _stateProvider.IsAdministrator();
-
-                if (!isAdmin)
+                if (!_stateProvider.IsInRole(RoleConstants.AdministratorRole))
                 {
                     _snackBar.Add(_localizer["You are not Authorized."], Severity.Error);
                     _navigationManager.NavigateTo("/");

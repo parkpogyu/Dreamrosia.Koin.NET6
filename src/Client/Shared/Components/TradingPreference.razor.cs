@@ -54,26 +54,17 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             }
         }
 
-        private IEnumerable<SymbolDto> _symbols { get; set; }
-
         private bool _loaded;
-
         private FluentValidationValidator _askTermsValidator;
         private bool _askTermsValidated => _askTermsValidator.Validate(options => { options.IncludeAllRuleSets(); });
-
         private FluentValidationValidator _bidTermsValidator;
         private bool _bidTermsValidated => _bidTermsValidator.Validate(options => { options.IncludeAllRuleSets(); });
-
+        private IEnumerable<SymbolDto> _symbols { get; set; }
         private string _userId { get; set; }
-
         private BackTestingRequestDto _model { get; set; }
-
         private HashSet<SymbolDto> _selectedSymbols { get; set; } = new HashSet<SymbolDto>();
-
         private float _autoAmountRate { get; set; }
-
         private string _searchString { get; set; } = string.Empty;
-
         private bool _isDivTableRendered { get; set; } = false;
         private string _divTableHeight { get; set; } = "100%";
         private readonly string _divTableId = Guid.NewGuid().ToString();

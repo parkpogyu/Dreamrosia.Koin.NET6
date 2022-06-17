@@ -12,7 +12,6 @@ namespace Dreamrosia.Koin.Client.Pages.Market
         [Inject] private IMarketManager MarketManager { get; set; }
 
         private bool _loaded;
-
         private IEnumerable<SymbolDto> _items { get; set; } = new List<SymbolDto>();
 
         protected override async Task OnInitializedAsync()

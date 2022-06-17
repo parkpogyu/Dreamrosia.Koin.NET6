@@ -21,7 +21,6 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         [Parameter] public bool IsReal { get; set; } = true;
 
         private IEnumerable<AssetDto> _items { get; set; }
-
         private bool _isDivTableRendered { get; set; } = false;
         private string _divTableHeight { get; set; } = "100%";
         private readonly string _divTableId = Guid.NewGuid().ToString();

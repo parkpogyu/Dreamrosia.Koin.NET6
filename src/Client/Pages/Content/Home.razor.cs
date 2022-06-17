@@ -14,9 +14,7 @@ namespace Dreamrosia.Koin.Client.Pages.Content
         [Inject] private IUPbitKeyManager UPbitKeyManager { get; set; }
 
         private bool _loaded;
-
         private IEnumerable<SymbolDto> _items { get; set; } = new List<SymbolDto>();
-
         private DateTime _expire_at { get; set; }
 
         protected override async Task OnInitializedAsync()

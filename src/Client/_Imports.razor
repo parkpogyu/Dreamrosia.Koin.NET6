@@ -11,6 +11,7 @@
 @using Microsoft.Extensions.Localization
 @using Microsoft.JSInterop
 @using Microsoft.AspNetCore.Identity
+@using AutoMapper;
 @using ApexCharts;
 @using MudBlazor
 @using Blazored.LocalStorage
@@ -59,4 +60,5 @@
 @inject IJSRuntime _jsRuntime
 @inject ResizeListener _resizeListener
 @inject IStringLocalizer<SharedLocalizerResources> _localizer
+@inject IMapper _mapper 
 @inject IExcelService _excelService 

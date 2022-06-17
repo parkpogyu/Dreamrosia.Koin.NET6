@@ -9,13 +9,13 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
 {
     public partial class RecommenderModal
     {
+        [CascadingParameter] private MudDialogInstance MudDialog { get; set; }
+        [Parameter] public string UserId { get; set; }
+        [Parameter] public string UserCode { get; set; }
         private FluentValidationValidator _fluentValidationValidator;
         private bool Validated => _fluentValidationValidator.Validate(options => { options.IncludeAllRuleSets(); });
         private readonly RecommenderDto _model = new();
         private UserResponse _recommender { get; set; } = new UserResponse();
-        [Parameter] public string UserId { get; set; }
-        [Parameter] public string UserCode { get; set; }
-        [CascadingParameter] private MudDialogInstance MudDialog { get; set; }
 
         protected override async Task OnInitializedAsync()
         {

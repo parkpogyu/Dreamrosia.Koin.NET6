@@ -12,11 +12,9 @@ namespace Dreamrosia.Koin.Client.Pages.Market
     {
         [Parameter] public string UserId { get; set; }
 
-        private IEnumerable<UserSummaryDto> _items = new List<UserSummaryDto>();
-
         private bool _loaded;
+        private IEnumerable<UserSummaryDto> _items = new List<UserSummaryDto>();
         private DateRange _dateRange { get; set; } = new DateRange(null, DateTime.Now.Date);
-
         private DateRangePicker.DateRangeTerms _dateRangeTerm { get; set; } = DateRangePicker.DateRangeTerms._All;
 
         protected override async Task OnInitializedAsync()

@@ -17,14 +17,12 @@ namespace Dreamrosia.Koin.Client.Shared
     {
         [Inject] private IRoleManager RoleManager { get; set; }
 
+        private bool _loaded { get; set; }
         private string _userId { get; set; }
-
-        private bool _isLoaded { get; set; }
 
         private async Task LoadDataAsync()
         {
-            var state = await _stateProvider.GetAuthenticationStateAsync();
-            var user = state.User;
+            var user = _authenticationManager.CurrentUser();
 
             if (user.Identity?.IsAuthenticated == true)
             {

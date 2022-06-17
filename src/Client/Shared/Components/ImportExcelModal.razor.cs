@@ -21,6 +21,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private FluentValidationValidator _fluentValidationValidator;
         private bool Validated => _fluentValidationValidator.Validate(options => { options.IncludeAllRuleSets(); });
         private bool _uploading = false;
+
         public void Cancel()
         {
             MudDialog.Cancel();

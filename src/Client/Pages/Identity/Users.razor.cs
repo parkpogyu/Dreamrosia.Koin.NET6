@@ -13,7 +13,6 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
 
         private bool _loaded;
         private DateRange _dateRange { get; set; } = new DateRange(DateTime.Now.AddMonths(-1).AddDays(1).Date, DateTime.Now.Date);
-
         private DateRangePicker.DateRangeTerms _dateRangeTerm { get; set; } = DateRangePicker.DateRangeTerms._1M;
 
         protected override async Task OnInitializedAsync()

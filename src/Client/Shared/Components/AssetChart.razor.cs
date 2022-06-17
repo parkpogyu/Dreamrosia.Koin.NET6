@@ -13,7 +13,6 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 {
     public partial class AssetChart : IDisposable
     {
-
         [CascadingParameter(Name = "Assets")]
         private IEnumerable<AssetDto> Assets
         {
@@ -25,16 +24,12 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         }
 
         [Parameter] public bool IsReal { get; set; } = true;
-
         [Parameter] public DateTime? SignUpDate { get; set; }
 
         private IEnumerable<AssetDto> _assets { get; set; }
         private IEnumerable<AssetDto> _items { get; set; } = new List<AssetDto>();
-
         private TimeFrames _selectedTimeFrame { get; set; } = TimeFrames.Week;
-
         private readonly string _divChartId = Guid.NewGuid().ToString();
-
         private bool _isDivChartRendered { get; set; } = false;
         private string _divChartHeight { get; set; } = "100%";
         private string _assetChartHeight { get; set; } = "85%";
@@ -42,7 +37,6 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private ApexChart<AssetDto> _refRangeChart { get; set; }
         private ApexChartOptions<AssetDto> _assetOptions;
         private ApexChartOptions<AssetDto> _rangeOptions;
-
         private string _selectedSeries { get; set; }
         private List<string> _selectedSerieses { get; set; }
 

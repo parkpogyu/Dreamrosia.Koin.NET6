@@ -16,14 +16,11 @@ namespace Dreamrosia.Koin.Client.Pages.Test
         [CascadingParameter] private HubConnection HubConnection { get; set; }
 
         private bool _loaded;
-
         private string _userId;
 
         protected override async Task OnInitializedAsync()
         {
-            var user = await _authenticationManager.CurrentUser();
-
-            _userId = user.GetUserId();
+            _userId = _authenticationManager.CurrentUser().GetUserId();
 
             _loaded = true;
 
