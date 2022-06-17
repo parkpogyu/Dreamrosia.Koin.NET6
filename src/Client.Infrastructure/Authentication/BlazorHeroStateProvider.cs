@@ -72,9 +72,14 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Authentication
             return new AuthenticationState(AuthenticationStateUser);
         }
 
-        public bool IsAdministrator()
+        public bool IsInRole(string role)
         {
-            return AuthenticationStateUser.IsInRole(RoleConstants.AdministratorRole);
+            return AuthenticationStateUser.IsInRole(role);
+        }
+
+        public bool IsHasClaim(string type, string value)
+        {
+            return AuthenticationStateUser.HasClaim(type, value);
         }
 
         private IEnumerable<Claim> GetClaimsFromJwt(string jwt)

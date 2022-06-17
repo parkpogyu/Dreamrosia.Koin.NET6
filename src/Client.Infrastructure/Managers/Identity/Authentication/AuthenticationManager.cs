@@ -37,11 +37,9 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers.Identity.Authentication
             _localizer = localizer;
         }
 
-        public async Task<ClaimsPrincipal> CurrentUser()
+        public ClaimsPrincipal CurrentUser()
         {
-            var state = await _authenticationStateProvider.GetAuthenticationStateAsync();
-
-            return state.User;
+            return ((BlazorHeroStateProvider)_authenticationStateProvider).GetAuthenticationStateUser();
         }
 
         public async Task<IResult> Login(TokenRequest model)
@@ -53,8 +51,6 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers.Identity.Authentication
             if (result.Succeeded)
             {
                 await TokenToStorage(result.Data);
-
-                await _authenticationStateProvider.GetAuthenticationStateAsync();
 
                 return await Result.SuccessAsync();
             }
@@ -87,7 +83,7 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers.Identity.Authentication
             await _localStorage.SetItemAsync(StorageConstants.Local.Token, response.Token);
             await _localStorage.SetItemAsync(StorageConstants.Local.RefreshToken, response.RefreshToken);
 
-            ((BlazorHeroStateProvider)this._authenticationStateProvider).MarkUserAsAuthenticated(response.Email);
+            ((BlazorHeroStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated();
         }
 
         public async Task<IResult> Logout()

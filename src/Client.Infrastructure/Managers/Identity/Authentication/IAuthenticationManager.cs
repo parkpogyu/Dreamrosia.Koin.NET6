@@ -19,6 +19,7 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers.Identity.Authentication
 
         Task<string> TryForceRefreshToken();
 
-        Task<ClaimsPrincipal> CurrentUser();
+        //Task<ClaimsPrincipal> CurrentUser();
+        ClaimsPrincipal CurrentUser();
     }
 }
