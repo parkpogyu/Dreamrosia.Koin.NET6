@@ -26,39 +26,33 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Authentication
             _localStorage = localStorage;
         }
 
-        public void MarkUserAsAuthenticated(string email)
+        public void MarkUserAsAuthenticated()
         {
-            var authenticatedUser = new ClaimsPrincipal(
-                new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Email, email)
-                }, "apiauth"));
+            //var authenticatedUser = new ClaimsPrincipal(
+            //    new ClaimsIdentity(new[]
+            //    {
+            //        new Claim(ClaimTypes.Email, email)
+            //    }, "apiauth"));
 
-            var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
+            //var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
 
-            NotifyAuthenticationStateChanged(authState);
+            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
 
         public void MarkUserAsLoggedOut()
         {
             var anonymousUser = new ClaimsPrincipal(new ClaimsIdentity());
+
             var authState = Task.FromResult(new AuthenticationState(anonymousUser));
+
+            AuthenticationStateUser = anonymousUser;
 
             NotifyAuthenticationStateChanged(authState);
         }
 
-        public async Task<ClaimsPrincipal> GetAuthenticationStateProviderUserAsync()
-        {
-            var state = await this.GetAuthenticationStateAsync();
+        public ClaimsPrincipal GetAuthenticationStateUser() => AuthenticationStateUser ?? new ClaimsPrincipal(new ClaimsIdentity());
 
-            var authenticationStateProviderUser = state.User;
-
-            return authenticationStateProviderUser;
-        }
-
-        public ClaimsPrincipal GetAuthenticationStateProviderUser() => AuthenticationStateUser;
-
-        public ClaimsPrincipal AuthenticationStateUser { get; set; }
+        private ClaimsPrincipal AuthenticationStateUser { get; set; }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
@@ -73,18 +67,14 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Authentication
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var state = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt")));
+            AuthenticationStateUser = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt"));
 
-            AuthenticationStateUser = state.User;
-
-            return state;
+            return new AuthenticationState(AuthenticationStateUser);
         }
 
         public bool IsAdministrator()
         {
-            var value = AuthenticationStateUser.FindFirstValue(ClaimTypes.Role);
-
-            return value.Equals(RoleConstants.AdministratorRole);
+            return AuthenticationStateUser.IsInRole(RoleConstants.AdministratorRole);
         }
 
         private IEnumerable<Claim> GetClaimsFromJwt(string jwt)
