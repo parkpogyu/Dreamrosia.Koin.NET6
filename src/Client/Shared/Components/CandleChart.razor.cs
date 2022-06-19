@@ -47,8 +47,12 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private ApexChartOptions<CandleExtensionDto> _candleOptions;
         private ApexChartOptions<CandleExtensionDto> _rangeOptions;
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
+            await _jsRuntime.InvokeVoidAsync("loadScript", "_content/Blazor-ApexCharts/js/apex-charts.min.js");
+            await _jsRuntime.InvokeVoidAsync("loadScript", "_content/Blazor-ApexCharts/js/blazor-apex-charts.js");
+            await _jsRuntime.InvokeVoidAsync("loadScript", "js/chart/chart-label.js");
+
             _mapper = new MapperConfiguration(c => { c.AddProfile<CandleProfile>(); }).CreateMapper();
 
             SetChartOptions();

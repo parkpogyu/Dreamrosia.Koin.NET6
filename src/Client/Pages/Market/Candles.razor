@@ -22,7 +22,8 @@ else
         <FullSpacer/>
         <MudAutocomplete T="SymbolDto"
                          Label="@($"{_localizer["Symbol.korean_name"]}, {_localizer["Symbol.code"]}")"
-                         @bind-Value="_symbol"
+                         Value="_symbol"
+                         ValueChanged="MarketValueChanged"
                          SearchFunc="@AutoCompleteSearch"
                          ToStringFunc="@(e=> e is null ? null : $"{e.korean_name}")"
                          Margin="Margin.Dense"
@@ -57,8 +58,9 @@ else
             <MudSelectItem T="TimeFrames" Value="TimeFrames.Month">@TimeFrames.Month.ToDescriptionString()</MudSelectItem>
         </MudSelect>
 
-        <DateRangePicker DateRange="@_dateRange"
-                         @bind-SelectedTerm="@_dateRangeTerm" />
+        <DateRangePicker DateRange="_dateRange"
+                     SelectedTerm="_dateRangeTerm"
+                     SelectedTermChanged="SelectedTermChanged"/>
 
         <MudButton DisableElevation
                    OnClick="GetCandlesAsync"

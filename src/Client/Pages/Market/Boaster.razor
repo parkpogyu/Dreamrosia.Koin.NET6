@@ -15,8 +15,9 @@ else
 {
 <MudPaper Elevation="25" Class="flex-x-scroll-container pa-2 mb-1 ">
     <FullSpacer/>
-        <DateRangePicker DateRange="@_dateRange"
-                         @bind-SelectedTerm="@_dateRangeTerm" />
+        <DateRangePicker DateRange="_dateRange"
+                     SelectedTerm="_dateRangeTerm"
+                     SelectedTermChanged="SelectedTermChanged"/>
 
         <MudButton DisableElevation
                    OnClick="GetBoastersAsync"

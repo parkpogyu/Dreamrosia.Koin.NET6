@@ -1,6 +1,7 @@
 ﻿using Dreamrosia.Koin.Application.DTO;
+using Dreamrosia.Koin.Application.Extensions;
 using Dreamrosia.Koin.Client.Extensions;
-using Dreamrosia.Koin.Client.Shared.Components;
+using Dreamrosia.Koin.Domain.Enums;
 using Dreamrosia.Koin.Shared.Constants.Role;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -17,11 +18,17 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
         private bool _loaded;
         private string _userId { get; set; }
         private IEnumerable<UserSummaryDto> _items = new List<UserSummaryDto>();
-        private DateRange _dateRange { get; set; } = new DateRange(DateTime.Now.AddMonths(-6).AddDays(1).Date, DateTime.Now.Date);
-        private DateRangePicker.DateRangeTerms _dateRangeTerm { get; set; } = DateRangePicker.DateRangeTerms._6M;
+        private DateRange _dateRange { get; set; } = new DateRange();
+        private DateRangeTerms _dateRangeTerm { get; set; } = DateRangeTerms._1W;
+        private readonly OrdersRequestDto _model = new OrdersRequestDto();
 
         protected override async Task OnInitializedAsync()
         {
+            var now = DateTime.Now.Date;
+
+            _dateRange.Start = now.GetBefore(_dateRangeTerm);
+            _dateRange.End = now;
+
             if (string.IsNullOrEmpty(UserId))
             {
                 _userId = _authenticationManager.CurrentUser().GetUserId();
@@ -55,6 +62,13 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
             {
                 _snackBar.Add(message, Severity.Error);
             }
+        }
+
+        private async Task SelectedTermChanged(DateRangeTerms value)
+        {
+            _dateRangeTerm = value;
+
+            await GetFollowersAsync();
         }
     }
 }

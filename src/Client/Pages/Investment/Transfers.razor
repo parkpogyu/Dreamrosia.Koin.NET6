@@ -26,130 +26,131 @@ else
 {
     <MudPaper Elevation="25" Class="flex-x-scroll-container pa-2 mb-1 ">
         <FullSpacer />
-        <DateRangePicker DateRange="@_dateRange"
-                         @bind-SelectedTerm="@_dateRangeTerm" />
+        <DateRangePicker DateRange="_dateRange"
+                     SelectedTerm="_dateRangeTerm"
+                     SelectedTermChanged="SelectedTermChanged" />
 
         <MudButton DisableElevation
-                   OnClick="GetTransfersAsync"
-                   Variant="Variant.Filled"
-                   StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface"
-                   Color="MudBlazor.Color.Primary"
-                   Size="Size.Small"
-                   Class="align-self-end-button ml-4">
+               OnClick="GetTransfersAsync"
+               Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface"
+               Color="MudBlazor.Color.Primary"
+               Size="Size.Small"
+               Class="align-self-end-button ml-4">
             @_localizer["Reload"]
         </MudButton>
     </MudPaper>
 
     <div id="@_divTableId">
         <MudTable Items="@_items"
-                  Elevation="25"
-                  Hover="true" Dense="true" Bordered="true" Striped="true"
-                  FixedHeader="true" FixedFooter="true"
-                  RowsPerPage="@TablePager.DefaultPageSize"
-                  Filter="new Func<TransferDto, bool>(Search)"
-                  Height="@_divTableHeight">
+              Elevation="25"
+              Hover="true" Dense="true" Bordered="true" Striped="true"
+              FixedHeader="true" FixedFooter="true"
+              RowsPerPage="@TablePager.DefaultPageSize"
+              Filter="new Func<TransferDto, bool>(Search)"
+              Height="@_divTableHeight">
             <ToolBarContent>
                 <div class="flex-x-scroll-container pa-2" style="width:100%">
                     <FullSpacer />
                     <MudSelect T="string"
-                               Label="@_localizer["Transfer.type"]"
-                               MultiSelection="true" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetTransferTypeSelectionText))"
-                               Dense="true"
-                               SelectAll="true" SelectAllText="@_localizer["All"]"
-                               @bind-Value="@_selectedTransferType"
-                               SelectedValues="@_selectedTransferTypes"
-                               SelectedValuesChanged="@((values)=> TransferTypeSelectionChanged(values))"
-                               Class="mud-multi-select-1">
+                           Label="@_localizer["Transfer.type"]"
+                           MultiSelection="true" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetTransferTypeSelectionText))"
+                           Dense="true"
+                           SelectAll="true" SelectAllText="@_localizer["All"]"
+                           @bind-Value="@_selectedTransferType"
+                           SelectedValues="@_selectedTransferTypes"
+                           SelectedValuesChanged="@((values)=> TransferTypeSelectionChanged(values))"
+                           Class="mud-multi-select-1">
 
                         @foreach (var transfer in (TransferType[])Enum.GetValues(typeof(TransferType)))
-                        {
-                            <MudSelectItem T="string" Value="@(transfer.ToDescriptionString())">@(transfer.ToDescriptionString())</MudSelectItem>
-                        }
-                    </MudSelect>
+                    {
+                        <MudSelectItem T="string" Value="@(transfer.ToDescriptionString())">@(transfer.ToDescriptionString())</MudSelectItem>
+                    }
+                </MudSelect>
 
-                    <MudTextField @bind-Value="@_searchString"
-                                  Immediate="false"
-                                  FullWidth="false"
-                                  Placeholder="@_localizer["Search"]"
-                                  Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small"
-                                  Class="ml-4 search-box" />
-                </div>
-            </ToolBarContent>
-            <HeaderContent>
-                <MudTh> @_localizer["Transfer.created_at"] </MudTh>
-                <MudTh> @_localizer["Transfer.done_at"] </MudTh>
-                <MudTh> @_localizer["Symbol.code"] </MudTh>
-                <MudTh> @_localizer["Transfer.type"] </MudTh>
-                <MudTh> @_localizer["Transfer.Cash"] </MudTh>
-                <MudTh> @_localizer["Transfer.Volume"] </MudTh>
-                <MudTh> @_localizer["Transfer.fee"] </MudTh>
-                <MudTh> @_localizer["Transfer.transaction_type"] </MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel=@_localizer["Transfer.created_at"] Style="text-align:center">
-                    @($"{context.created_at:g}")
-                </MudTd>
-                <MudTd DataLabel=@_localizer["Transfer.done_at"] Style="text-align:center">
-                    @($"{context.done_at:t}")
-                </MudTd>
-                <MudTd DataLabel=@_localizer["Symbol.code"]>
-                    <CoinIcon Code="@context.code" Link="true" />
-                </MudTd>
-                @{
-                        if (context.type == TransferType.deposit)
-                        {
-                        <MudTd DataLabel=@_localizer["Transfer.type"] Style="text-align:center;color:orangered">
-                            @($"{context.type.ToDescriptionString()}")
-                        </MudTd>
-                        }
-                        else
-                        {
-                        <MudTd DataLabel=@_localizer["Transfer.type"] Style="text-align:center;color:dodgerblue">
-                            @($"{context.type.ToDescriptionString()}")
-                        </MudTd>
-                        }
-
-                        if (context.Cash > 0)
-                        {
-                        <MudTd DataLabel=@_localizer["Transfer.Cash"] Style="text-align:right">
-                            @($"{context.Cash:N0}")
-                        </MudTd>
-                        }
-                        else
-                        {
-                        <MudTd DataLabel=@_localizer["Transfer.Cash"] />
-                        }
-
-                        if (context.Volume > 0)
-                        {
-                        <MudTd DataLabel=@_localizer["Transfer.Volume"] Style="text-align:right">
-                            @($"{context.Volume:N8}")
-                        </MudTd>
-                        }
-                        else
-                        {
-                        <MudTd DataLabel=@_localizer["Transfer.Volume"] />
-                        }
-
-                        if (context.fee > 0)
-                        {
-                        <MudTd DataLabel=@_localizer["Transfer.fee"] Style="text-align:right">
-                            @($"{context.fee:N2}")
-                        </MudTd>
-                        }
-                        else
-                        {
-                        <MudTd DataLabel=@_localizer["Transfer.fee"] />
-                        }
-
-                    <MudTd DataLabel=@_localizer["Transfer.transaction_type"] Style="text-align:center">
-                        @($"{context.transaction_type.ToDescriptionString()}")
+                <MudTextField @bind-Value="@_searchString"
+                              Immediate="false"
+                              FullWidth="false"
+                              Placeholder="@_localizer["Search"]"
+                              Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small"
+                              Class="ml-4 search-box" />
+            </div>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh> @_localizer["Transfer.created_at"] </MudTh>
+            <MudTh> @_localizer["Transfer.done_at"] </MudTh>
+            <MudTh> @_localizer["Symbol.code"] </MudTh>
+            <MudTh> @_localizer["Transfer.type"] </MudTh>
+            <MudTh> @_localizer["Transfer.Cash"] </MudTh>
+            <MudTh> @_localizer["Transfer.Volume"] </MudTh>
+            <MudTh> @_localizer["Transfer.fee"] </MudTh>
+            <MudTh> @_localizer["Transfer.transaction_type"] </MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel=@_localizer["Transfer.created_at"] Style="text-align:center">
+                @($"{context.created_at:g}")
+            </MudTd>
+            <MudTd DataLabel=@_localizer["Transfer.done_at"] Style="text-align:center">
+                @($"{context.done_at:t}")
+            </MudTd>
+            <MudTd DataLabel=@_localizer["Symbol.code"]>
+                <CoinIcon Code="@context.code" Link="true" />
+            </MudTd>
+            @{
+                    if (context.type == TransferType.deposit)
+                    {
+                    <MudTd DataLabel=@_localizer["Transfer.type"] Style="text-align:center;color:orangered">
+                        @($"{context.type.ToDescriptionString()}")
                     </MudTd>
-                }
-            </RowTemplate>
-            <PagerContent>
-                <TablePager />
-            </PagerContent>
-        </MudTable>
-    </div>
+                    }
+                    else
+                    {
+                    <MudTd DataLabel=@_localizer["Transfer.type"] Style="text-align:center;color:dodgerblue">
+                        @($"{context.type.ToDescriptionString()}")
+                    </MudTd>
+                    }
+
+                    if (context.Cash > 0)
+                    {
+                    <MudTd DataLabel=@_localizer["Transfer.Cash"] Style="text-align:right">
+                        @($"{context.Cash:N0}")
+                    </MudTd>
+                    }
+                    else
+                    {
+                    <MudTd DataLabel=@_localizer["Transfer.Cash"] />
+                    }
+
+                    if (context.Volume > 0)
+                    {
+                    <MudTd DataLabel=@_localizer["Transfer.Volume"] Style="text-align:right">
+                        @($"{context.Volume:N8}")
+                    </MudTd>
+                    }
+                    else
+                    {
+                    <MudTd DataLabel=@_localizer["Transfer.Volume"] />
+                    }
+
+                    if (context.fee > 0)
+                    {
+                    <MudTd DataLabel=@_localizer["Transfer.fee"] Style="text-align:right">
+                        @($"{context.fee:N2}")
+                    </MudTd>
+                    }
+                    else
+                    {
+                    <MudTd DataLabel=@_localizer["Transfer.fee"] />
+                    }
+
+                <MudTd DataLabel=@_localizer["Transfer.transaction_type"] Style="text-align:center">
+                    @($"{context.transaction_type.ToDescriptionString()}")
+                </MudTd>
+            }
+        </RowTemplate>
+        <PagerContent>
+            <TablePager />
+        </PagerContent>
+    </MudTable>
+</div>
 }

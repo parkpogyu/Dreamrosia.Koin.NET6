@@ -46,7 +46,7 @@ else
 
                     <ApexPointSeries TItem="CandleExtensionDto"
                                      Items="_candles"
-                                     Name="@_localizer[" Symbol.Signal"]"
+                                     Name="@_localizer["Trading.Signal"]"
                                      SeriesType="@SeriesType.Area"
                                      XValue="@(e => e.candle_date_time_utc.Date)"
                                      YAggregate="@(e => Convert.ToDecimal( e.Sum(e => e.signal)))"

@@ -113,7 +113,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                     if (string.IsNullOrEmpty(bot.MiningBotTicket?.UserId))
                     {
                         item = new TradingTermsExtensionDto()
-                        { 
+                        {
                             Ticket = bot.Ticket,
                         };
                     }

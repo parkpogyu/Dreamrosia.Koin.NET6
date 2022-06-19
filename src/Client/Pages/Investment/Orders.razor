@@ -17,16 +17,17 @@ else
 {
     <MudPaper Elevation="25" Class="flex-x-scroll-container pa-2 mb-1 ">
         <FullSpacer />
-        <DateRangePicker DateRange="@_dateRange"
-                         @bind-SelectedTerm="@_dateRangeTerm" />
+        <DateRangePicker DateRange="_dateRange"
+                     SelectedTerm="_dateRangeTerm"
+                     SelectedTermChanged="SelectedTermChanged"/>
 
         <MudButton DisableElevation
-                   OnClick="GetOrdersAsync"
-                   Variant="Variant.Filled"
-                   StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface"
-                   Color="MudBlazor.Color.Primary"
-                   Size="Size.Small"
-                   Class="align-self-end-button ml-4">
+               OnClick="GetOrdersAsync"
+               Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface"
+               Color="MudBlazor.Color.Primary"
+               Size="Size.Small"
+               Class="align-self-end-button ml-4">
             @_localizer["Reload"]
         </MudButton>
     </MudPaper>

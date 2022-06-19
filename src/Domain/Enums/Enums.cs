@@ -43,4 +43,28 @@ namespace Dreamrosia.Koin.Domain.Enums
         [Description("쿠폰")]
         Coupon,
     }
+
+    public enum DateRangeTerms
+    {
+        [Description("일주")]
+        _1W,
+
+        [Description("한달")]
+        _1M,
+
+        [Description("세달")]
+        _3M,
+
+        [Description("여섯달")]
+        _6M,
+
+        [Description("일년")]
+        _1Y,
+
+        [Description("올해")]
+        _YTD,
+
+        [Description("모두")]
+        _All
+    }
 }

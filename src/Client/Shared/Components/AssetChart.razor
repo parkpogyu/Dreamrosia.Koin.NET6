@@ -9,15 +9,21 @@
     }
 </style>
 
-<MudPaper Elevation="25" Class="mb-2">
-    <div class="d-flex justify-end">
-        <MudSpacer />
-        <div class="d-flex">
-            @*<MudCheckBox T="bool" Label="@_localizer["Logarithmic"]"
-                Checked="@_logarithmic"
-                CheckedChanged="@((value)=>LogarithmicChanged(value))"
-                Color="MudBlazor.Color.Primary" Dense="true" />*@
-            <MudSelect T="TimeFrames"
+@if (!_loaded)
+{
+    <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudPaper Elevation="25" Class="mb-2">
+        <div class="d-flex justify-end">
+            <MudSpacer />
+            <div class="d-flex">
+                @*<MudCheckBox T="bool" Label="@_localizer["Logarithmic"]"
+                    Checked="@_logarithmic"
+                    CheckedChanged="@((value)=>LogarithmicChanged(value))"
+                    Color="MudBlazor.Color.Primary" Dense="true" />*@
+                <MudSelect T="TimeFrames"
                        Label="@_localizer["TimeFrames"]"
                        Dense="true"
                        Margin="Margin.None"
@@ -28,12 +34,12 @@
                        @bind-Value="@_selectedTimeFrame"
                        SelectedValuesChanged="@((value)=> TimeFrameSelectionChanged(value))">
 
-                <MudSelectItem T="TimeFrames" Value="TimeFrames.Week">@TimeFrames.Week.ToDescriptionString()</MudSelectItem>
-                <MudSelectItem T="TimeFrames" Value="TimeFrames.Month">@TimeFrames.Month.ToDescriptionString()</MudSelectItem>
-            </MudSelect>
-        </div>
-        <div>
-            <MudSelect T="string"
+                    <MudSelectItem T="TimeFrames" Value="TimeFrames.Week">@TimeFrames.Week.ToDescriptionString()</MudSelectItem>
+                    <MudSelectItem T="TimeFrames" Value="TimeFrames.Month">@TimeFrames.Month.ToDescriptionString()</MudSelectItem>
+                </MudSelect>
+            </div>
+            <div>
+                <MudSelect T="string"
                        Label="@_localizer["Chart"]"
                        Dense="true"
                        Margin="Margin.None"
@@ -45,210 +51,211 @@
                        SelectedValues="@_selectedSerieses"
                        SelectedValuesChanged="@((values)=> SeriesSelectionChanged(values))">
 
-                @{
-                    <MudSelectItem T="string" Value="@_localizer["Asset.DssAmt"]">@_localizer["Asset.DssAmt"]</MudSelectItem>
-                    <MudSelectItem T="string" Value="@_localizer["Asset.BalEvalAmt"]">@_localizer["Asset.BalEvalAmt"]</MudSelectItem>
-                    <MudSelectItem T="string" Value="@_localizer["Asset.Deposit"]">@_localizer["Asset.Deposit"]</MudSelectItem>
-                    <MudSelectItem T="string" Value="@_localizer["Asset.InvsAmt"]">@_localizer["Asset.InvsAmt"]</MudSelectItem>
-                    <MudSelectItem T="string" Value="@_localizer["Asset.InvsPnL"]">@_localizer["Asset.InvsPnL"]</MudSelectItem>
-                    <MudSelectItem T="string" Value="@_localizer["Asset.InvsPnLRat"]">@_localizer["Asset.InvsPnLRat"]</MudSelectItem>
-                    <MudSelectItem T="string" Value="@_localizer["Asset.MDDInvsPnL"]">@_localizer["Asset.MDDInvsPnL"]</MudSelectItem>
-                    <MudSelectItem T="string" Value="@_localizer["Asset.MDDInvsPnLRat"]">@_localizer["Asset.MDDInvsPnLRat"]</MudSelectItem>
-                    if (IsReal)
-                    {
-                        <MudSelectItem T="string" Value="@_localizer["Asset.InAmt"]">@_localizer["Asset.InAmt"]</MudSelectItem>
-                        <MudSelectItem T="string" Value="@_localizer["Asset.OutAmt"]">@_localizer["Asset.OutAmt"]</MudSelectItem>
+                    @{
+                        <MudSelectItem T="string" Value="@_localizer["Asset.DssAmt"]">@_localizer["Asset.DssAmt"]</MudSelectItem>
+                        <MudSelectItem T="string" Value="@_localizer["Asset.BalEvalAmt"]">@_localizer["Asset.BalEvalAmt"]</MudSelectItem>
+                        <MudSelectItem T="string" Value="@_localizer["Asset.Deposit"]">@_localizer["Asset.Deposit"]</MudSelectItem>
+                        <MudSelectItem T="string" Value="@_localizer["Asset.InvsAmt"]">@_localizer["Asset.InvsAmt"]</MudSelectItem>
+                        <MudSelectItem T="string" Value="@_localizer["Asset.InvsPnL"]">@_localizer["Asset.InvsPnL"]</MudSelectItem>
+                        <MudSelectItem T="string" Value="@_localizer["Asset.InvsPnLRat"]">@_localizer["Asset.InvsPnLRat"]</MudSelectItem>
+                        <MudSelectItem T="string" Value="@_localizer["Asset.MDDInvsPnL"]">@_localizer["Asset.MDDInvsPnL"]</MudSelectItem>
+                        <MudSelectItem T="string" Value="@_localizer["Asset.MDDInvsPnLRat"]">@_localizer["Asset.MDDInvsPnLRat"]</MudSelectItem>
+                        if (IsReal)
+                        {
+                            <MudSelectItem T="string" Value="@_localizer["Asset.InAmt"]">@_localizer["Asset.InAmt"]</MudSelectItem>
+                            <MudSelectItem T="string" Value="@_localizer["Asset.OutAmt"]">@_localizer["Asset.OutAmt"]</MudSelectItem>
+                        }
+                        else
+                        {
+                            <MudSelectItem T="string" Value="@_localizer["Asset.BorrowedAmt"]">@_localizer["Asset.BorrowedAmt"]</MudSelectItem>
+                        }
+                        <MudSelectItem T="string" Value="@_localizer["Asset.BidAmt"]">@_localizer["Asset.BidAmt"]</MudSelectItem>
+                        <MudSelectItem T="string" Value="@_localizer["Asset.AskAmt"]">@_localizer["Asset.AskAmt"]</MudSelectItem>
+                        <MudSelectItem T="string" Value="@_localizer["Asset.PnL"]">@_localizer["Asset.PnL"]</MudSelectItem>
                     }
-                    else
-                    {
-                        <MudSelectItem T="string" Value="@_localizer["Asset.BorrowedAmt"]">@_localizer["Asset.BorrowedAmt"]</MudSelectItem>
-                    }
-                    <MudSelectItem T="string" Value="@_localizer["Asset.BidAmt"]">@_localizer["Asset.BidAmt"]</MudSelectItem>
-                    <MudSelectItem T="string" Value="@_localizer["Asset.AskAmt"]">@_localizer["Asset.AskAmt"]</MudSelectItem>
-                    <MudSelectItem T="string" Value="@_localizer["Asset.PnL"]">@_localizer["Asset.PnL"]</MudSelectItem>
-                }
-            </MudSelect>
+                </MudSelect>
+            </div>
         </div>
-    </div>
-    <div id="@_divChartId" style="height:@_divChartHeight">
-        <div style="height:@_assetChartHeight">
-            <ApexChart TItem="AssetDto"
+        <div id="@_divChartId" style="height:@_divChartHeight">
+            <div style="height:@_assetChartHeight">
+                <ApexChart TItem="AssetDto"
                        XAxisType="XAxisType.Category"
                        @ref="@_refAssetChart"
                        Options="@_assetOptions"
                        Height="@(" 100%")">
-                @{
-                    if (_selectedSerieses.Contains(_localizer["Asset.DssAmt"]))
-                    {
-                        <ApexPointSeries TItem="AssetDto"
-                                         Items="@_items"
-                                         Name="@_localizer["Asset.DssAmt"]"
-                                         SeriesType="@SeriesType.Line"
-                                         XValue="@(e => e.created_at.Date)"
-                                         YValue="@(e=> Convert.ToDecimal(e.DssAmt))"
-                                         OrderBy="@(e=> e.X)" />
-                    }
-
-                    if (_selectedSerieses.Contains(_localizer["Asset.BalEvalAmt"]))
-                    {
-                        <ApexPointSeries TItem="AssetDto"
-                                         Items="@_items"
-                                         Name="@_localizer["Asset.BalEvalAmt"]"
-                                         SeriesType="@SeriesType.Line"
-                                         XValue="@(e => e.created_at.Date)"
-                                         YValue="@(e=> Convert.ToDecimal(e.BalEvalAmt))"
-                                         OrderBy="@(e=> e.X)" />
-                    }
-
-                    if (_selectedSerieses.Contains(_localizer["Asset.Deposit"]))
-                    {
-                        <ApexPointSeries TItem="AssetDto"
-                                         Items="@_items"
-                                         Name="@_localizer["Asset.Deposit"]"
-                                         SeriesType="@SeriesType.Line"
-                                         XValue="@(e => e.created_at.Date)"
-                                         YValue="@(e=> Convert.ToDecimal(e.Deposit))"
-                                         OrderBy="@(e=> e.X)" />
-                    }
-
-                    if (_selectedSerieses.Contains(_localizer["Asset.InvsAmt"]))
-                    {
-                        <ApexPointSeries TItem="AssetDto"
-                                         Items="@_items"
-                                         Name="@_localizer["Asset.InvsAmt"]"
-                                         SeriesType="@SeriesType.Line"
-                                         XValue="@(e => e.created_at.Date)"
-                                         YValue="@(e=> Convert.ToDecimal(e.InvsAmt))"
-                                         OrderBy="@(e=> e.X)" />
-                    }
-
-                    if (_selectedSerieses.Contains(_localizer["Asset.InvsPnL"]))
-                    {
-                        <ApexPointSeries TItem="AssetDto"
-                                         Items="@_items"
-                                         Name="@_localizer["Asset.InvsPnL"]"
-                                         SeriesType="@SeriesType.Line"
-                                         XValue="@(e => e.created_at.Date)"
-                                         YValue="@(e=> Convert.ToDecimal(e.InvsPnL))"
-                                         OrderBy="@(e=> e.X)" />
-                    }
-
-                    if (_selectedSerieses.Contains(_localizer["Asset.InvsPnLRat"]))
-                    {
-                        <ApexPointSeries TItem="AssetDto"
-                                         Items="@_items"
-                                         Name="@_localizer["Asset.InvsPnLRat"]"
-                                         SeriesType="@SeriesType.Line"
-                                         XValue="@(e => e.created_at.Date)"
-                                         YValue="@(e=> Convert.ToDecimal(e.InvsPnLRat))"
-                                         OrderBy="@(e=> e.X)" />
-                    }
-
-                    if (_selectedSerieses.Contains(_localizer["Asset.MDDInvsPnL"]))
-                    {
-                        <ApexPointSeries TItem="AssetDto"
-                                         Items="@_items"
-                                         Name="@_localizer["Asset.MDDInvsPnL"]"
-                                         SeriesType="@SeriesType.Line"
-                                         XValue="@(e => e.created_at.Date)"
-                                         YValue="@(e=> Convert.ToDecimal(e.MDDInvsPnL))"
-                                         OrderBy="@(e=> e.X)" />
-                    }
-
-                    if (_selectedSerieses.Contains(_localizer["Asset.MDDInvsPnLRat"]))
-                    {
-                        <ApexPointSeries TItem="AssetDto"
-                                         Items="@_items"
-                                         Name="@_localizer["Asset.MDDInvsPnLRat"]"
-                                         SeriesType="@SeriesType.Line"
-                                         XValue="@(e => e.created_at.Date)"
-                                         YValue="@(e=> Convert.ToDecimal(e.MDDInvsPnLRat))"
-                                         OrderBy="@(e=> e.X)" />
-                    }
-
-                    if (_selectedSerieses.Contains(_localizer["Asset.InAmt"]))
-                    {
-                        <ApexPointSeries TItem="AssetDto"
-                                         Items="@_items"
-                                         Name="@_localizer["Asset.InAmt"]"
-                                         SeriesType="@SeriesType.Bar"
-                                         XValue="@(e => e.created_at.Date)"
-                                         YValue="@(e=> Convert.ToDecimal(e.InAmt))"
-                                         OrderBy="@(e=> e.X)" />
-                    }
-
-                    if (_selectedSerieses.Contains(_localizer["Asset.OutAmt"]))
-                    {
-                        <ApexPointSeries TItem="AssetDto"
-                                         Items="@_items"
-                                         Name="@_localizer["Asset.OutAmt"]"
-                                         SeriesType="@SeriesType.Bar"
-                                         XValue="@(e => e.created_at.Date)"
-                                         YValue="@(e=> Convert.ToDecimal(e.OutAmt))"
-                                         OrderBy="@(e=> e.X)" />
-                    }
-
-                    if (_selectedSerieses.Contains(_localizer["Asset.BorrowedAmt"]))
-                    {
-                        <ApexPointSeries TItem="AssetDto"
-                                         Items="@_items"
-                                         Name="@_localizer["Asset.BorrowedAmt"]"
-                                         SeriesType="@SeriesType.Bar"
-                                         XValue="@(e => e.created_at.Date)"
-                                         YValue="@(e=> Convert.ToDecimal(e.BorrowedAmt))"
-                                         OrderBy="@(e=> e.X)" />
-                    }
-
-                    if (_selectedSerieses.Contains(_localizer["Asset.BidAmt"]))
-                    {
-                        <ApexPointSeries TItem="AssetDto"
-                                         Items="@_items"
-                                         Name="@_localizer["Asset.BidAmt"]"
-                                         SeriesType="@SeriesType.Bar"
-                                         XValue="@(e => e.created_at.Date)"
-                                         YValue="@(e=> Convert.ToDecimal(e.BidAmt))"
-                                         OrderBy="@(e=> e.X)" />
-                    }
-
-                    if (_selectedSerieses.Contains(_localizer["Asset.AskAmt"]))
-                    {
-                        <ApexPointSeries TItem="AssetDto"
-                                         Items="@_items"
-                                         Name="@_localizer["Asset.AskAmt"]"
-                                         SeriesType="@SeriesType.Bar"
-                                         XValue="@(e => e.created_at.Date)"
-                                         YValue="@(e=> Convert.ToDecimal(e.AskAmt))"
-                                         OrderBy="@(e=> e.X)" />
-                    }
-
-                    if (_selectedSerieses.Contains(_localizer["Asset.PnL"]))
-                    {
-                        <ApexPointSeries TItem="AssetDto"
-                                         Items="@_items"
-                                         Name="@_localizer["Asset.PnL"]"
-                                         SeriesType="@SeriesType.Bar"
-                                         XValue="@(e => e.created_at.Date)"
-                                         YValue="@(e=> Convert.ToDecimal(e.PnL))"
-                                         OrderBy="@(e=> e.X)" />
-                    }
-                }
-            </ApexChart>
-        </div>
-        <div style="height:150px;" class="brush-chart">
-            <ApexChart TItem="AssetDto"
-                       XAxisType="XAxisType.Category"
-                       @ref="@_refRangeChart"
-                       Options="@_rangeOptions"
-                       Height="@(" 100%")">
-
-                <ApexPointSeries TItem="AssetDto"
+                    @{
+                        if (_selectedSerieses.Contains(_localizer["Asset.DssAmt"]))
+                        {
+                            <ApexPointSeries TItem="AssetDto"
                                  Items="@_items"
                                  Name="@_localizer["Asset.DssAmt"]"
                                  SeriesType="@SeriesType.Line"
                                  XValue="@(e => e.created_at.Date)"
                                  YValue="@(e=> Convert.ToDecimal(e.DssAmt))"
                                  OrderBy="@(e=> e.X)" />
-            </ApexChart>
+                        }
+
+                        if (_selectedSerieses.Contains(_localizer["Asset.BalEvalAmt"]))
+                        {
+                            <ApexPointSeries TItem="AssetDto"
+                                 Items="@_items"
+                                 Name="@_localizer["Asset.BalEvalAmt"]"
+                                 SeriesType="@SeriesType.Line"
+                                 XValue="@(e => e.created_at.Date)"
+                                 YValue="@(e=> Convert.ToDecimal(e.BalEvalAmt))"
+                                 OrderBy="@(e=> e.X)" />
+                        }
+
+                        if (_selectedSerieses.Contains(_localizer["Asset.Deposit"]))
+                        {
+                            <ApexPointSeries TItem="AssetDto"
+                                 Items="@_items"
+                                 Name="@_localizer["Asset.Deposit"]"
+                                 SeriesType="@SeriesType.Line"
+                                 XValue="@(e => e.created_at.Date)"
+                                 YValue="@(e=> Convert.ToDecimal(e.Deposit))"
+                                 OrderBy="@(e=> e.X)" />
+                        }
+
+                        if (_selectedSerieses.Contains(_localizer["Asset.InvsAmt"]))
+                        {
+                            <ApexPointSeries TItem="AssetDto"
+                                 Items="@_items"
+                                 Name="@_localizer["Asset.InvsAmt"]"
+                                 SeriesType="@SeriesType.Line"
+                                 XValue="@(e => e.created_at.Date)"
+                                 YValue="@(e=> Convert.ToDecimal(e.InvsAmt))"
+                                 OrderBy="@(e=> e.X)" />
+                        }
+
+                        if (_selectedSerieses.Contains(_localizer["Asset.InvsPnL"]))
+                        {
+                            <ApexPointSeries TItem="AssetDto"
+                                 Items="@_items"
+                                 Name="@_localizer["Asset.InvsPnL"]"
+                                 SeriesType="@SeriesType.Line"
+                                 XValue="@(e => e.created_at.Date)"
+                                 YValue="@(e=> Convert.ToDecimal(e.InvsPnL))"
+                                 OrderBy="@(e=> e.X)" />
+                        }
+
+                        if (_selectedSerieses.Contains(_localizer["Asset.InvsPnLRat"]))
+                        {
+                            <ApexPointSeries TItem="AssetDto"
+                                 Items="@_items"
+                                 Name="@_localizer["Asset.InvsPnLRat"]"
+                                 SeriesType="@SeriesType.Line"
+                                 XValue="@(e => e.created_at.Date)"
+                                 YValue="@(e=> Convert.ToDecimal(e.InvsPnLRat))"
+                                 OrderBy="@(e=> e.X)" />
+                        }
+
+                        if (_selectedSerieses.Contains(_localizer["Asset.MDDInvsPnL"]))
+                        {
+                            <ApexPointSeries TItem="AssetDto"
+                                 Items="@_items"
+                                 Name="@_localizer["Asset.MDDInvsPnL"]"
+                                 SeriesType="@SeriesType.Line"
+                                 XValue="@(e => e.created_at.Date)"
+                                 YValue="@(e=> Convert.ToDecimal(e.MDDInvsPnL))"
+                                 OrderBy="@(e=> e.X)" />
+                        }
+
+                        if (_selectedSerieses.Contains(_localizer["Asset.MDDInvsPnLRat"]))
+                        {
+                            <ApexPointSeries TItem="AssetDto"
+                                 Items="@_items"
+                                 Name="@_localizer["Asset.MDDInvsPnLRat"]"
+                                 SeriesType="@SeriesType.Line"
+                                 XValue="@(e => e.created_at.Date)"
+                                 YValue="@(e=> Convert.ToDecimal(e.MDDInvsPnLRat))"
+                                 OrderBy="@(e=> e.X)" />
+                        }
+
+                        if (_selectedSerieses.Contains(_localizer["Asset.InAmt"]))
+                        {
+                            <ApexPointSeries TItem="AssetDto"
+                                 Items="@_items"
+                                 Name="@_localizer["Asset.InAmt"]"
+                                 SeriesType="@SeriesType.Bar"
+                                 XValue="@(e => e.created_at.Date)"
+                                 YValue="@(e=> Convert.ToDecimal(e.InAmt))"
+                                 OrderBy="@(e=> e.X)" />
+                        }
+
+                        if (_selectedSerieses.Contains(_localizer["Asset.OutAmt"]))
+                        {
+                            <ApexPointSeries TItem="AssetDto"
+                                 Items="@_items"
+                                 Name="@_localizer["Asset.OutAmt"]"
+                                 SeriesType="@SeriesType.Bar"
+                                 XValue="@(e => e.created_at.Date)"
+                                 YValue="@(e=> Convert.ToDecimal(e.OutAmt))"
+                                 OrderBy="@(e=> e.X)" />
+                        }
+
+                        if (_selectedSerieses.Contains(_localizer["Asset.BorrowedAmt"]))
+                        {
+                            <ApexPointSeries TItem="AssetDto"
+                                 Items="@_items"
+                                 Name="@_localizer["Asset.BorrowedAmt"]"
+                                 SeriesType="@SeriesType.Bar"
+                                 XValue="@(e => e.created_at.Date)"
+                                 YValue="@(e=> Convert.ToDecimal(e.BorrowedAmt))"
+                                 OrderBy="@(e=> e.X)" />
+                        }
+
+                        if (_selectedSerieses.Contains(_localizer["Asset.BidAmt"]))
+                        {
+                            <ApexPointSeries TItem="AssetDto"
+                                 Items="@_items"
+                                 Name="@_localizer["Asset.BidAmt"]"
+                                 SeriesType="@SeriesType.Bar"
+                                 XValue="@(e => e.created_at.Date)"
+                                 YValue="@(e=> Convert.ToDecimal(e.BidAmt))"
+                                 OrderBy="@(e=> e.X)" />
+                        }
+
+                        if (_selectedSerieses.Contains(_localizer["Asset.AskAmt"]))
+                        {
+                            <ApexPointSeries TItem="AssetDto"
+                                 Items="@_items"
+                                 Name="@_localizer["Asset.AskAmt"]"
+                                 SeriesType="@SeriesType.Bar"
+                                 XValue="@(e => e.created_at.Date)"
+                                 YValue="@(e=> Convert.ToDecimal(e.AskAmt))"
+                                 OrderBy="@(e=> e.X)" />
+                        }
+
+                        if (_selectedSerieses.Contains(_localizer["Asset.PnL"]))
+                        {
+                            <ApexPointSeries TItem="AssetDto"
+                                 Items="@_items"
+                                 Name="@_localizer["Asset.PnL"]"
+                                 SeriesType="@SeriesType.Bar"
+                                 XValue="@(e => e.created_at.Date)"
+                                 YValue="@(e=> Convert.ToDecimal(e.PnL))"
+                                 OrderBy="@(e=> e.X)" />
+                        }
+                    }
+                </ApexChart>
+            </div>
+            <div style="height:150px;" class="brush-chart">
+                <ApexChart TItem="AssetDto"
+                       XAxisType="XAxisType.Category"
+                       @ref="@_refRangeChart"
+                       Options="@_rangeOptions"
+                       Height="@(" 100%")">
+
+                    <ApexPointSeries TItem="AssetDto"
+                                 Items="@_items"
+                                 Name="@_localizer["Asset.DssAmt"]"
+                                 SeriesType="@SeriesType.Line"
+                                 XValue="@(e => e.created_at.Date)"
+                                 YValue="@(e=> Convert.ToDecimal(e.DssAmt))"
+                                 OrderBy="@(e=> e.X)" />
+                </ApexChart>
+            </div>
         </div>
-    </div>
-</MudPaper>
+    </MudPaper>
+}

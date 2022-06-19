@@ -4,7 +4,6 @@ using Dreamrosia.Koin.Shared.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using System;
 using System.Text;
 using System.Threading.Tasks;
 

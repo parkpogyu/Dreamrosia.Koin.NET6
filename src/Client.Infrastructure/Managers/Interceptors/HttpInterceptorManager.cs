@@ -18,7 +18,7 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers.Interceptors
         private readonly ISnackbar _snackBar;
         private readonly IStringLocalizer<SharedLocalizerResources> _localizer;
 
-        public HttpInterceptorManager(HttpClientInterceptor interceptor, 
+        public HttpInterceptorManager(HttpClientInterceptor interceptor,
                                       IAuthenticationManager authenticationManager,
                                       NavigationManager navigationManager,
                                       ISnackbar snackBar,

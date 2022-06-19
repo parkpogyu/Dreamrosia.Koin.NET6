@@ -3,6 +3,7 @@ using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Infrastructure.Managers;
 using Dreamrosia.Koin.Shared.Constants.Role;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor;
 using System;
 using System.Threading.Tasks;
@@ -27,6 +28,9 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
 
         protected override async Task OnInitializedAsync()
         {
+            await _jsRuntime.InvokeVoidAsync("loadScript", "https://html2canvas.hertzen.com/dist/html2canvas.min.js");
+            await _jsRuntime.InvokeVoidAsync("loadScript", "js/screenshot.js");
+
             if (string.IsNullOrEmpty(UserId))
             {
                 _userId = _authenticationManager.CurrentUser().GetUserId();

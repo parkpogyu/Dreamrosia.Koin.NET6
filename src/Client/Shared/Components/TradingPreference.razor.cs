@@ -69,8 +69,11 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private string _divTableHeight { get; set; } = "100%";
         private readonly string _divTableId = Guid.NewGuid().ToString();
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
+            await _jsRuntime.InvokeVoidAsync("loadScript", "https://html2canvas.hertzen.com/dist/html2canvas.min.js");
+            await _jsRuntime.InvokeVoidAsync("loadScript", "js/screenshot.js");
+
             SetSelectedSymbols();
             SetAutoAmountRate();
 

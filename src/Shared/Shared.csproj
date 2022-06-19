@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Remove="Resources\Localization\SharedLocalizerResources.en.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="EPPlus" Version="6.0.5" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.5" />
   </ItemGroup>

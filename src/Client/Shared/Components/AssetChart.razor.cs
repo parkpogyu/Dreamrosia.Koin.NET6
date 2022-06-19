@@ -26,6 +26,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         [Parameter] public bool IsReal { get; set; } = true;
         [Parameter] public DateTime? SignUpDate { get; set; }
 
+        private bool _loaded { get; set; }
         private IEnumerable<AssetDto> _assets { get; set; }
         private IEnumerable<AssetDto> _items { get; set; } = new List<AssetDto>();
         private TimeFrames _selectedTimeFrame { get; set; } = TimeFrames.Week;
@@ -40,8 +41,12 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private string _selectedSeries { get; set; }
         private List<string> _selectedSerieses { get; set; }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
+            await _jsRuntime.InvokeVoidAsync("loadScript", "_content/Blazor-ApexCharts/js/apex-charts.min.js");
+            await _jsRuntime.InvokeVoidAsync("loadScript", "_content/Blazor-ApexCharts/js/blazor-apex-charts.js");
+            await _jsRuntime.InvokeVoidAsync("loadScript", "js/chart/chart-label.js");
+
             _selectedSerieses = new List<string>()
             {
                 _localizer["Asset.DssAmt"],
@@ -50,6 +55,8 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             };
 
             SetChartOptions();
+
+            _loaded = true;
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

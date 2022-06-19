@@ -1,5 +1,6 @@
 ﻿using Dreamrosia.Koin.Application.DTO;
-using Dreamrosia.Koin.Client.Shared.Components;
+using Dreamrosia.Koin.Application.Extensions;
+using Dreamrosia.Koin.Domain.Enums;
 using MudBlazor;
 using System;
 using System.Collections.Generic;
@@ -9,11 +10,10 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
 {
     public partial class Users
     {
-        private IEnumerable<UserSummaryDto> _items = new List<UserSummaryDto>();
-
         private bool _loaded;
-        private DateRange _dateRange { get; set; } = new DateRange(DateTime.Now.AddMonths(-1).AddDays(1).Date, DateTime.Now.Date);
-        private DateRangePicker.DateRangeTerms _dateRangeTerm { get; set; } = DateRangePicker.DateRangeTerms._1M;
+        private IEnumerable<UserSummaryDto> _items = new List<UserSummaryDto>();
+        private DateRange _dateRange { get; set; } = new DateRange();
+        private DateRangeTerms _dateRangeTerm { get; set; } = DateRangeTerms._1W;
 
         protected override async Task OnInitializedAsync()
         {
@@ -24,6 +24,11 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
 
         private async Task GetUsersAsync()
         {
+            var now = DateTime.Now.Date;
+
+            _dateRange.Start = now.GetBefore(_dateRangeTerm);
+            _dateRange.End = now;
+
             var response = await _userManager.GetSummariseAsync(_dateRange.Start, _dateRange.End);
 
             _items = response.Data ?? new List<UserSummaryDto>();
@@ -34,6 +39,13 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
             {
                 _snackBar.Add(message, Severity.Error);
             }
+        }
+
+        private async Task SelectedTermChanged(DateRangeTerms value)
+        {
+            _dateRangeTerm = value;
+
+            await GetUsersAsync();
         }
     }
 }

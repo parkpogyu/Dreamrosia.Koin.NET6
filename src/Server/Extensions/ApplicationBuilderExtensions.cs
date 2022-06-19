@@ -25,6 +25,7 @@ namespace Dreamrosia.Koin.Server.Extensions
             {
                 app.UseDeveloperExceptionPage();
                 app.UseWebAssemblyDebugging();
+                app.UseBrowserLink();
             }
 
             return app;

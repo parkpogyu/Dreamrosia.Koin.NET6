@@ -138,15 +138,6 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
             if (last.candle_date_time_utc != today) { return; }
 
-            _macdService.Short = 2;
-            _macdService.Long = 2;
-
-            //MACDService _macdService = new MACDService()
-            //{
-            //    Short = 2,
-            //    Long = 10,
-            //};
-
             if (DateTime.Today.DayOfWeek == DayOfWeek.Monday)
             {
                 _macdService.Generate(candles.GetTimeFrameCandles(TimeFrames.Week));

@@ -4,6 +4,7 @@ using Dreamrosia.Koin.Application.Extensions;
 using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Infrastructure.Managers;
 using Dreamrosia.Koin.Client.Shared.Components;
+using Dreamrosia.Koin.Domain.Enums;
 using Dreamrosia.Koin.Shared.Constants.Role;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -25,8 +26,8 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
         private string _userId { get; set; } = string.Empty;
         private IEnumerable<TransferDto> _items { get; set; }
         private IEnumerable<TransferDto> _sources { get; set; }
-        private DateRange _dateRange { get; set; } = new DateRange(DateTime.Now.AddMonths(-1).AddDays(1).Date, DateTime.Now.Date);
-        private DateRangePicker.DateRangeTerms _dateRangeTerm { get; set; } = DateRangePicker.DateRangeTerms._1W;
+        private DateRange _dateRange { get; set; } = new DateRange();
+        private DateRangeTerms _dateRangeTerm { get; set; } = DateRangeTerms._1W;
         private bool _isDivTableRendered { get; set; } = false;
         private string _divTableHeight { get; set; } = "100%";
         private readonly string _divTableId = Guid.NewGuid().ToString();
@@ -38,6 +39,11 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
 
         protected override async Task OnInitializedAsync()
         {
+            var now = DateTime.Now.Date;
+
+            _dateRange.Start = now.GetBefore(_dateRangeTerm);
+            _dateRange.End = now;
+
             if (string.IsNullOrEmpty(UserId))
             {
                 _userId = _authenticationManager.CurrentUser().GetUserId();
@@ -119,6 +125,14 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
             {
                 _snackBar.Add(message, Severity.Error);
             }
+        }
+
+
+        private async Task SelectedTermChanged(DateRangeTerms value)
+        {
+            _dateRangeTerm = value;
+
+            await GetTransfersAsync();
         }
 
         private void SetItems()

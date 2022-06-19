@@ -29,7 +29,11 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
         private async Task SaveAsync()
         {
-            if (OnSaved != null)
+            if (OnSaved == null)
+            {
+                MudDialog.Close();
+            }
+            else
             {
                 _uploading = true;
                 var result = await OnSaved.Invoke(UploadRequest);
@@ -47,12 +51,6 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                 }
                 _uploading = false;
             }
-            else
-            {
-                MudDialog.Close();
-            }
-
-            await Task.CompletedTask;
         }
 
         private async Task UploadFiles(InputFileChangeEventArgs e)
