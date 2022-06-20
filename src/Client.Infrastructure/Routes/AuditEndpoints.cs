@@ -1,4 +1,6 @@
-﻿namespace Dreamrosia.Koin.Client.Infrastructure.Routes
+﻿using System;
+
+namespace Dreamrosia.Koin.Client.Infrastructure.Routes
 {
     public static class AuditEndpoints
     {
@@ -7,7 +9,10 @@
             return $"{DownloadFile}?searchString={searchString}&searchInOldValues={searchInOldValues}&searchInNewValues={searchInNewValues}";
         }
 
-        public static string GetCurrentUserTrails = "api/audits";
+        public static string GetUserAuditTrails(string userId, DateTime head, DateTime rear)
+        {
+            return $"api/audits?userId={userId}&head={head:d}&rear={rear:d}";
+        }
         public static string DownloadFile = "api/audits/export";
     }
 }

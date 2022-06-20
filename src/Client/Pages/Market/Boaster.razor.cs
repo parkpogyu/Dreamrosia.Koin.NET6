@@ -46,6 +46,8 @@ namespace Dreamrosia.Koin.Client.Pages.Market
 
         private async Task SelectedTermChanged(DateRangeTerms value)
         {
+            if (_dateRangeTerm == value) { return; }
+
             _dateRangeTerm = value;
 
             await GetBoastersAsync();

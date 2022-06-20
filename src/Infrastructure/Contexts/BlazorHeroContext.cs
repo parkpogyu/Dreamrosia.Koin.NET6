@@ -2,6 +2,7 @@
 using Dreamrosia.Koin.Domain.Contracts;
 using Dreamrosia.Koin.Domain.Entities;
 using Dreamrosia.Koin.Domain.Enums;
+using Dreamrosia.Koin.Infrastructure.Models.Audit;
 using Dreamrosia.Koin.Infrastructure.Models.Identity;
 using Dreamrosia.Koin.Shared.Constants.Application;
 using Dreamrosia.Koin.Shared.Enums;
@@ -106,6 +107,17 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
             }
 
             base.OnModelCreating(builder);
+
+            builder.Entity<Audit>(entity =>
+            {
+                entity.Property<string>("UserId")
+                      .HasColumnType("varchar(36)");
+
+                entity.HasOne(p => p.User as BlazorHeroUser)
+                      .WithMany(p => p.Audits)
+                      .HasForeignKey(p => p.UserId)
+                      .OnDelete(DeleteBehavior.NoAction);
+            });
 
             builder.Entity<BlazorHeroUser>(entity =>
             {
@@ -243,7 +255,6 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .WithMany(p => p.Memberships)
                       .HasForeignKey(p => p.UserId)
                       .OnDelete(DeleteBehavior.Cascade);
-
             });
 
             builder.Entity<Subscription>(entity =>

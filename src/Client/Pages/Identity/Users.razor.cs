@@ -43,6 +43,8 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
 
         private async Task SelectedTermChanged(DateRangeTerms value)
         {
+            if (_dateRangeTerm == value) { return; }
+
             _dateRangeTerm = value;
 
             await GetUsersAsync();

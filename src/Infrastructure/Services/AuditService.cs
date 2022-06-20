@@ -25,11 +25,10 @@ namespace Dreamrosia.Koin.Infrastructure.Services
         private readonly IExcelService _excelService;
         private readonly IStringLocalizer<SharedLocalizerResources> _localizer;
 
-        public AuditService(
-            IMapper mapper,
-            BlazorHeroContext context,
-            IExcelService excelService,
-            IStringLocalizer<SharedLocalizerResources> localizer)
+        public AuditService(IMapper mapper,
+                            BlazorHeroContext context,
+                            IExcelService excelService,
+                            IStringLocalizer<SharedLocalizerResources> localizer)
         {
             _mapper = mapper;
             _context = context;
@@ -37,11 +36,17 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             _localizer = localizer;
         }
 
-        public async Task<IResult<IEnumerable<AuditResponse>>> GetCurrentUserTrailsAsync(string userId)
+        public async Task<IResult<IEnumerable<AuditResponse>>> GetUserAuditTrailsAsync(string userId, DateTime rear, DateTime head)
         {
-            var trails = await _context.AuditTrails.Where(a => a.UserId == userId).OrderByDescending(a => a.Id).Take(250).ToListAsync();
-            var mappedLogs = _mapper.Map<List<AuditResponse>>(trails);
-            return await Result<IEnumerable<AuditResponse>>.SuccessAsync(mappedLogs);
+            var trails = await _context.AuditTrails
+                                       .AsNoTracking()
+                                       .Where(f => (string.IsNullOrEmpty(userId) ? true : f.UserId == userId) &&
+                                                   rear.Date <= f.DateTime && f.DateTime <= head.Date.AddDays(1).AddSeconds(-1))
+                                       .Include(i => i.User)
+                                       .OrderByDescending(o => o.DateTime)
+                                       .ToArrayAsync();
+
+            return await Result<IEnumerable<AuditResponse>>.SuccessAsync(_mapper.Map<IEnumerable<AuditResponse>>(trails));
         }
 
         public async Task<IResult<string>> ExportToExcelAsync(string userId, string searchString = "", bool searchInOldValues = false, bool searchInNewValues = false)
@@ -57,7 +62,6 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                     { _localizer["Table Name"], item => item.TableName },
                     { _localizer["Type"], item => item.Type },
                     { _localizer["Date Time (Local)"], item => DateTime.SpecifyKind(item.DateTime, DateTimeKind.Utc).ToLocalTime().ToString("G", CultureInfo.CurrentCulture) },
-                    { _localizer["Date Time (UTC)"], item => item.DateTime.ToString("G", CultureInfo.CurrentCulture) },
                     { _localizer["Primary Key"], item => item.PrimaryKey },
                     { _localizer["Old Values"], item => item.OldValues },
                     { _localizer["New Values"], item => item.NewValues },

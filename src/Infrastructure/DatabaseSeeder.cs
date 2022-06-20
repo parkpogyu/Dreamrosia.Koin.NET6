@@ -165,26 +165,26 @@ namespace Dreamrosia.Koin.Infrastructure
                 }
                 #endregion
 
-                //#region Partner
-                //var partnerRoleInDb = await _roleManager.FindByNameAsync(RoleConstants.PartnerRole);
+                #region Partner
+                var partnerRoleInDb = await _roleManager.FindByNameAsync(RoleConstants.PartnerRole);
 
-                //if (partnerRoleInDb == null)
-                //{
-                //    var partnerRole = new BlazorHeroRole(RoleConstants.PartnerRole, _localizer["Partner role with default permissions"]);
+                if (partnerRoleInDb == null)
+                {
+                    var partnerRole = new BlazorHeroRole(RoleConstants.PartnerRole, _localizer["Partner role with default permissions"]);
 
-                //    await _roleManager.CreateAsync(partnerRole);
+                    await _roleManager.CreateAsync(partnerRole);
 
-                //    partnerRoleInDb = await _roleManager.FindByNameAsync(RoleConstants.PartnerRole);
+                    partnerRoleInDb = await _roleManager.FindByNameAsync(RoleConstants.PartnerRole);
 
-                //    _logger.LogInformation(_localizer["Seeded Partner Role."]);
-                //}
+                    _logger.LogInformation(_localizer["Seeded Partner Role."]);
+                }
 
-                //foreach (var permission in Permissions.GetRegisteredPermissions()
-                //                                      .Where(f => roles.Contains(f)))
-                //{
-                //    await _roleManager.AddPermissionClaim(partnerRoleInDb, permission);
-                //}
-                //#endregion
+                foreach (var permission in Permissions.GetRegisteredPermissions()
+                                                      .Where(f => roles.Contains(f)))
+                {
+                    await _roleManager.AddPermissionClaim(partnerRoleInDb, permission);
+                }
+                #endregion
 
             }).GetAwaiter().GetResult();
         }

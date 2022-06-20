@@ -2,6 +2,7 @@
 using Dreamrosia.Koin.Shared.Constants.Permission;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Server.Controllers.Utilities
@@ -26,9 +27,9 @@ namespace Dreamrosia.Koin.Server.Controllers.Utilities
         /// <returns>Status 200 OK</returns>
         [Authorize(Policy = Permissions.AuditTrails.View)]
         [HttpGet]
-        public async Task<IActionResult> GetUserTrailsAsync()
+        public async Task<IActionResult> GetUserTrailsAsync(string userId, DateTime head, DateTime rear)
         {
-            return Ok(await _auditService.GetCurrentUserTrailsAsync(_currentUserService.UserId));
+            return Ok(await _auditService.GetUserAuditTrailsAsync(userId, head, rear));
         }
 
         /// <summary>

@@ -34,10 +34,11 @@ namespace Dreamrosia.Koin.Infrastructure.Models.Identity
 
         public DateTime RefreshTokenExpiryTime { get; set; }
 
-        public ICollection<Membership> Memberships { get; set; }
-
+        public ICollection<Audit.Audit> Audits { get; set; }
         public Subscription Subscription { get; set; }
         public ICollection<Subscription> Followers { get; set; }
+
+        public ICollection<Membership> Memberships { get; set; }
 
         public MiningBotTicket MiningBotTicket { get; set; }
 

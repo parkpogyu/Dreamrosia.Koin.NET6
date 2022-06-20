@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dreamrosia.Koin.Application.Responses.Identity;
+using System;
 
 namespace Dreamrosia.Koin.Application.Responses.Audit
 {
@@ -13,5 +14,7 @@ namespace Dreamrosia.Koin.Application.Responses.Audit
         public string NewValues { get; set; }
         public string AffectedColumns { get; set; }
         public string PrimaryKey { get; set; }
+
+        public UserResponse User { get; set; }
     }
 }

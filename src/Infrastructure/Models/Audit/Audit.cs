@@ -1,4 +1,5 @@
 ﻿using Dreamrosia.Koin.Domain.Contracts;
+using Dreamrosia.Koin.Domain.Entities;
 using System;
 
 namespace Dreamrosia.Koin.Infrastructure.Models.Audit
@@ -14,5 +15,6 @@ namespace Dreamrosia.Koin.Infrastructure.Models.Audit
         public string NewValues { get; set; }
         public string AffectedColumns { get; set; }
         public string PrimaryKey { get; set; }
+        public IDomainUser User { get; set; }
     }
 }

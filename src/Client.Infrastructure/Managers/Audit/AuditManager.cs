@@ -1,6 +1,7 @@
 ﻿using Dreamrosia.Koin.Application.Responses.Audit;
 using Dreamrosia.Koin.Client.Infrastructure.Extensions;
 using Dreamrosia.Koin.Shared.Wrapper;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -16,10 +17,12 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers.Audit
             _httpClient = httpClient;
         }
 
-        public async Task<IResult<IEnumerable<AuditResponse>>> GetCurrentUserTrailsAsync()
+        public async Task<IResult<IEnumerable<AuditResponse>>> GetUserAuditTrailsAsync(string userId, DateTime head, DateTime rear)
         {
-            var response = await _httpClient.GetAsync(Routes.AuditEndpoints.GetCurrentUserTrails);
+            var response = await _httpClient.GetAsync(Routes.AuditEndpoints.GetUserAuditTrails(userId, head, rear));
+
             var data = await response.ToResult<IEnumerable<AuditResponse>>();
+
             return data;
         }
 

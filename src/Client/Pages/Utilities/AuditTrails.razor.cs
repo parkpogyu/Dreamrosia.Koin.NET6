@@ -1,7 +1,13 @@
-﻿using Dreamrosia.Koin.Application.Responses.Audit;
+﻿using BlazorPro.BlazorSize;
+using Dreamrosia.Koin.Application.Extensions;
+using Dreamrosia.Koin.Application.Responses.Audit;
+using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Infrastructure.Managers.Audit;
+using Dreamrosia.Koin.Client.Shared.Components;
+using Dreamrosia.Koin.Domain.Enums;
 using Dreamrosia.Koin.Shared.Constants.Application;
 using Dreamrosia.Koin.Shared.Constants.Permission;
+using Dreamrosia.Koin.Shared.Constants.Role;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -13,23 +19,165 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Pages.Utilities
 {
-    public partial class AuditTrails
+    public partial class AuditTrails : IDisposable
     {
         [Inject] private IAuditManager AuditManager { get; set; }
+        [Parameter] public string UserId { get; set; }
 
         private bool _loaded;
-        public List<RelatedAuditTrail> Trails = new();
-        private RelatedAuditTrail _trail = new();
+        private MudTable<RelatedAuditTrail> _table;
+        private string _userId { get; set; }
+        public IEnumerable<RelatedAuditTrail> _items = new List<RelatedAuditTrail>();
+        private bool _isDivTableRendered { get; set; } = false;
+        private string _divTableHeight { get; set; } = "100%";
+        private readonly string _divTableId = Guid.NewGuid().ToString();
         private string _searchString = "";
-        private bool _dense = true;
-        private bool _striped = true;
-        private bool _bordered = false;
+        private bool _chkIsAllUser = true;
         private bool _searchInOldValues = false;
         private bool _searchInNewValues = false;
-        private MudDateRangePicker _dateRangePicker;
-        private DateRange _dateRange;
+        private DateRange _dateRange { get; set; } = new DateRange();
+        private DateRangeTerms _dateRangeTerm { get; set; } = DateRangeTerms._1W;
 
         private bool _canExportAuditTrails;
+
+        protected override async Task OnInitializedAsync()
+        {
+            var now = DateTime.Now.Date;
+
+            _dateRange.Start = now.GetBefore(_dateRangeTerm);
+            _dateRange.End = now;
+
+            var user = _authenticationManager.CurrentUser();
+
+            _canExportAuditTrails = (await _authorizationService.AuthorizeAsync(user, Permissions.AuditTrails.Export)).Succeeded;
+
+            if (string.IsNullOrEmpty(UserId))
+            {
+                _userId = user.GetUserId();
+            }
+            else
+            {
+                if (!_stateProvider.IsInRole(RoleConstants.AdministratorRole))
+                {
+                    _snackBar.Add(_localizer["You are not Authorized."], Severity.Error);
+                    _navigationManager.NavigateTo("/");
+                    return;
+                }
+
+                _userId = UserId;
+            }
+
+            await GetAuditTrailsAsync();
+
+            _loaded = true;
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            try
+            {
+                if (firstRender)
+                {
+                    _resizeListener.OnResized += OnWindowResized;
+                }
+
+                if (_isDivTableRendered) { return; }
+
+                var isRendered = await _jsRuntime.InvokeAsync<bool>("func_isRendered", _divTableId);
+
+                if (!isRendered) { return; }
+
+                _isDivTableRendered = isRendered;
+
+                await SetDivHeightAsync();
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private async Task SetDivHeightAsync()
+        {
+            var window = await _jsRuntime.InvokeAsync<BoundingClientRect>("func_getWindowSize");
+            var rect = await _jsRuntime.InvokeAsync<BoundingClientRect>("func_BoundingClientRect.get", _divTableId);
+
+            if (rect is null) { return; }
+
+            if (BoundingClientRect.IsMatchMimimumHeight(window.Height))
+            {
+                var divHeight = (window.Height - rect.Top - 62 - 52 - 8);
+
+                _divTableHeight = $"{divHeight}px";
+            }
+            else
+            {
+                _divTableHeight = "auto";
+            }
+
+            StateHasChanged();
+        }
+
+        private async Task GetAuditTrailsAsync()
+        {
+            var response = await AuditManager.GetUserAuditTrailsAsync(_chkIsAllUser ? null : _userId, 
+                                                                      Convert.ToDateTime(_dateRange.Start), 
+                                                                      Convert.ToDateTime(_dateRange.End));
+
+            if (response.Succeeded)
+            {
+                _items = response.Data.Select(x => new RelatedAuditTrail
+                {
+                    AffectedColumns = x.AffectedColumns,
+                    DateTime = x.DateTime,
+                    Id = x.Id,
+                    NewValues = x.NewValues,
+                    OldValues = x.OldValues,
+                    PrimaryKey = x.PrimaryKey,
+                    TableName = x.TableName,
+                    Type = x.Type,
+                    UserId = x.UserId,
+                    User = x.User,
+                    LocalTime = DateTime.SpecifyKind(x.DateTime, DateTimeKind.Utc).ToLocalTime()
+                }).ToList();
+            }
+            else
+            {
+                foreach (var message in response.Messages)
+                {
+                    _snackBar.Add(message, Severity.Error);
+                }
+            }
+        }
+
+        private async Task CheckAllUserChanged(bool value)
+        {
+            _chkIsAllUser = value;
+
+            await GetAuditTrailsAsync();
+        }
+
+        private async Task SelectedTermChanged(DateRangeTerms value)
+        {
+            if (_dateRangeTerm == value) { return; }
+
+            _dateRangeTerm = value;
+
+            await GetAuditTrailsAsync();
+        }
+
+        private void RowClickEvent(TableRowClickEventArgs<RelatedAuditTrail> args)
+        {
+            if (args.Item is null) { return; }
+
+            var audit = _items.Single(f => f.Id.Equals(args.Item.Id));
+
+            foreach (var item in _items.Where(f => !f.Id.Equals(audit.Id)))
+            {
+                item.ShowDetails = false;
+            }
+
+            audit.ShowDetails = !audit.ShowDetails;
+        }
 
         private bool Search(AuditResponse response)
         {
@@ -37,6 +185,7 @@ namespace Dreamrosia.Koin.Client.Pages.Utilities
 
             // check Search String
             if (string.IsNullOrWhiteSpace(_searchString)) result = true;
+
             if (!result)
             {
                 if (response.TableName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
@@ -55,67 +204,7 @@ namespace Dreamrosia.Koin.Client.Pages.Utilities
                 }
             }
 
-            // check Date Range
-            if (_dateRange?.Start == null && _dateRange?.End == null) return result;
-            if (_dateRange?.Start != null && response.DateTime < _dateRange.Start)
-            {
-                result = false;
-            }
-            if (_dateRange?.End != null && response.DateTime > _dateRange.End + new TimeSpan(0, 11, 59, 59, 999))
-            {
-                result = false;
-            }
-
-            return result;
-        }
-
-        protected override async Task OnInitializedAsync()
-        {
-            var user = _authenticationManager.CurrentUser();
-
-            _canExportAuditTrails = (await _authorizationService.AuthorizeAsync(user, Permissions.AuditTrails.Export)).Succeeded;
-
-            await GetDataAsync();
-            _loaded = true;
-        }
-
-        private async Task GetDataAsync()
-        {
-            var response = await AuditManager.GetCurrentUserTrailsAsync();
-            if (response.Succeeded)
-            {
-                Trails = response.Data
-                    .Select(x => new RelatedAuditTrail
-                    {
-                        AffectedColumns = x.AffectedColumns,
-                        DateTime = x.DateTime,
-                        Id = x.Id,
-                        NewValues = x.NewValues,
-                        OldValues = x.OldValues,
-                        PrimaryKey = x.PrimaryKey,
-                        TableName = x.TableName,
-                        Type = x.Type,
-                        UserId = x.UserId,
-                        LocalTime = DateTime.SpecifyKind(x.DateTime, DateTimeKind.Utc).ToLocalTime()
-                    }).ToList();
-            }
-            else
-            {
-                foreach (var message in response.Messages)
-                {
-                    _snackBar.Add(message, Severity.Error);
-                }
-            }
-        }
-
-        private void ShowBtnPress(int id)
-        {
-            _trail = Trails.First(f => f.Id == id);
-            foreach (var trial in Trails.Where(a => a.Id != id))
-            {
-                trial.ShowDetails = false;
-            }
-            _trail.ShowDetails = !_trail.ShowDetails;
+            return result || response.User.NickName.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true;
         }
 
         private async Task ExportToExcelAsync()
@@ -140,6 +229,21 @@ namespace Dreamrosia.Koin.Client.Pages.Utilities
                     _snackBar.Add(message, Severity.Error);
                 }
             }
+        }
+
+        private void OnWindowResized(object sender, BrowserWindowSize e)
+        {
+            Task.Run(async () =>
+            {
+                if (!_isDivTableRendered) { return; }
+
+                await SetDivHeightAsync();
+            });
+        }
+
+        public void Dispose()
+        {
+            _resizeListener.OnResized -= OnWindowResized;
         }
 
         public class RelatedAuditTrail : AuditResponse

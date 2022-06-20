@@ -355,7 +355,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                 await _unitOfWork.Commit(new CancellationToken());
             }
 
-            // UPbit 중대오류 발생자 Ticket 삭제
+            // UPbit 중대오류 발생자 Ticket 회수
             var keys = await _context.Users
                                      .Include(i => i.UPbitKey)
                                      .Include(i => i.MiningBotTicket)

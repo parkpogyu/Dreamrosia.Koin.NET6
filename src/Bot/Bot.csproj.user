@@ -2,7 +2,7 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ShowAllFiles>true</ShowAllFiles>
-    <_LastSelectedProfileId>D:\13. Project Source\GitHub\Dreamrosia.Koin.NET6\src\Bot\Properties\PublishProfiles\FolderProfileArm64.pubxml</_LastSelectedProfileId>
+    <_LastSelectedProfileId>D:\13. Project Source\GitHub\Dreamrosia.Koin.NET6\src\Bot\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
     <ActiveDebugProfile>Bot-Development</ActiveDebugProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

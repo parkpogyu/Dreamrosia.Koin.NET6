@@ -168,6 +168,20 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             return false;
         }
 
+        private void RowClickEvent(TableRowClickEventArgs<UserSummaryDto> args)
+        {
+            if (TableMode != UserTableMode.Admin || args.Item is null) { return; }
+
+            var user = _items.Single(f => f.Id.Equals(args.Item.Id));
+
+            foreach (var item in _items.Where(f => !f.Id.Equals(user.Id)))
+            {
+                item.ShowDetails = false;
+            }
+
+            user.ShowDetails = !user.ShowDetails;
+        }
+
         private void NavigateToProfile(string userId)
         {
             _navigationManager.NavigateTo($"/personal/subscription/{userId}");
@@ -242,20 +256,6 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
                 await SetDivHeightAsync();
             });
-        }
-
-        private void RowClickEvent(TableRowClickEventArgs<UserSummaryDto> args)
-        {
-            if (TableMode != UserTableMode.Admin || args.Item is null) { return; }
-
-            var user = _items.Single(f => f.Id.Equals(args.Item.Id));
-
-            foreach (var item in _items.Where(f => f.ShowDetails))
-            {
-                item.ShowDetails = !item.ShowDetails;
-            }
-
-            user.ShowDetails = !user.ShowDetails;
         }
 
         public void Dispose()

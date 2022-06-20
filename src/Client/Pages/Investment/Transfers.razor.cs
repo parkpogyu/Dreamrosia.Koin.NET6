@@ -137,6 +137,8 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
 
         private async Task SelectedTermChanged(DateRangeTerms value)
         {
+            if (_dateRangeTerm == value) { return; }
+
             _dateRangeTerm = value;
 
             await GetTransfersAsync();
