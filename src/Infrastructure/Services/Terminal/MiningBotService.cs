@@ -355,6 +355,26 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                 await _unitOfWork.Commit(new CancellationToken());
             }
 
+            // UPbit 중대오류 발생자 Ticket 삭제
+            var keys = await _context.Users
+                                     .Include(i => i.UPbitKey)
+                                     .Include(i => i.MiningBotTicket)
+                                     .Where(f => f.UPbitKey != null && 
+                                                 f.UPbitKey.IsOccurredFatalError && 
+                                                 f.MiningBotTicket != null)
+                                     .ToArrayAsync();
+            if (keys.Any())
+            {
+                foreach (var key in keys)
+                {
+                    key.MiningBotTicket.UserId = null;
+
+                    await _unitOfWork.Repository<MiningBotTicket>().UpdateAsync(key.MiningBotTicket);
+                }
+
+                await _unitOfWork.Commit(new CancellationToken());
+            }
+
             var unassigned = _context.MiningBotTickets
                                      .AsNoTracking()
                                      .Include(i => i.MiningBot)
