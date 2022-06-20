@@ -111,43 +111,44 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
             {
                 entity.ToTable(name: "Users", "Identity");
 
-                entity.Property(e => e.Id)
+                entity.Property(p => p.Id)
                       .ValueGeneratedOnAdd()
                       .HasMaxLength(36);
 
-                entity.Property(e => e.NickName)
+                entity.Property(p => p.NickName)
                       .HasMaxLength(50);
 
-                entity.Property(e => e.KoreanName)
+                entity.Property(p => p.KoreanName)
                       .HasMaxLength(50);
 
-                entity.Property(e => e.ProfileImage)
+                entity.Property(p => p.ProfileImage)
                       .HasColumnType("text");
 
-                entity.Property(e => e.IsActive)
+                entity.Property(p => p.IsActive)
                       .HasDefaultValue(true);
 
-                entity.Property(e => e.CreatedBy)
+                entity.Property(p => p.CreatedBy)
                       .HasMaxLength(36);
 
-                entity.Property(e => e.LastModifiedBy)
+                entity.Property(p => p.LastModifiedBy)
                       .HasMaxLength(36);
+
             });
 
             builder.Entity<BlazorHeroRole>(entity =>
             {
                 entity.ToTable(name: "Roles", "Identity");
 
-                entity.Property(e => e.Id)
+                entity.Property(p => p.Id)
                       .HasMaxLength(36);
 
-                entity.Property(e => e.Description)
+                entity.Property(p => p.Description)
                       .HasMaxLength(256);
 
-                entity.Property(e => e.CreatedBy)
+                entity.Property(p => p.CreatedBy)
                       .HasMaxLength(36);
 
-                entity.Property(e => e.LastModifiedBy)
+                entity.Property(p => p.LastModifiedBy)
                       .HasMaxLength(36);
             });
 
@@ -155,7 +156,7 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
             {
                 entity.ToTable("UserRoles", "Identity");
 
-                entity.Property(e => e.RoleId)
+                entity.Property(p => p.RoleId)
                       .HasMaxLength(36);
             });
 
@@ -168,13 +169,13 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
             {
                 entity.ToTable("UserLogins", "Identity");
 
-                entity.Property(e => e.LoginProvider)
+                entity.Property(p => p.LoginProvider)
                       .HasMaxLength(256);
 
-                entity.Property(e => e.ProviderKey)
+                entity.Property(p => p.ProviderKey)
                       .HasMaxLength(256);
 
-                entity.Property(e => e.ProviderDisplayName)
+                entity.Property(p => p.ProviderDisplayName)
                       .HasMaxLength(256);
             });
 
@@ -182,13 +183,13 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
             {
                 entity.ToTable(name: "RoleClaims", "Identity");
 
-                entity.Property(e => e.CreatedBy)
+                entity.Property(p => p.CreatedBy)
                       .HasMaxLength(36);
 
-                entity.Property(e => e.LastModifiedBy)
+                entity.Property(p => p.LastModifiedBy)
                       .HasMaxLength(36);
 
-                entity.Property(e => e.RoleId)
+                entity.Property(p => p.RoleId)
                       .HasMaxLength(36);
 
                 entity.HasOne(p => p.Role)
@@ -201,10 +202,10 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
             {
                 entity.ToTable("UserTokens", "Identity");
 
-                entity.Property(e => e.LoginProvider)
+                entity.Property(p => p.LoginProvider)
                       .HasMaxLength(256);
 
-                entity.Property(e => e.Name)
+                entity.Property(p => p.Name)
                       .HasMaxLength(256);
             });
 
@@ -266,6 +267,10 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .HasForeignKey<Subscription>(p => p.Id)
                       .OnDelete(DeleteBehavior.Cascade);
 
+                entity.HasOne(p => p.Recommender as BlazorHeroUser)
+                      .WithMany(p => p.Followers)
+                      .HasForeignKey(p => p.RecommenderId)
+                      .OnDelete(DeleteBehavior.SetNull);
             });
             #endregion
 
@@ -343,7 +348,6 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .WithMany(p => p.Orders)
                       .HasForeignKey(p => p.UserId)
                       .OnDelete(DeleteBehavior.Cascade);
-
             });
 
             builder.Entity<Position>(entity =>

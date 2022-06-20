@@ -40,7 +40,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private IEnumerable<CandleExtensionDto> _candles { get; set; } = new List<CandleExtensionDto>();
         private bool _isDivChartRendered { get; set; } = false;
         private string _divChartHeight { get; set; } = "100%";
-        private string _candleChartHeight { get; set; } = "85%";
+        private string _candleChartHeight { get; set; } = "100%";
         private readonly string _divChartId = Guid.NewGuid().ToString();
         private ApexChart<CandleExtensionDto> _refCandleChart { get; set; }
         private ApexChart<CandleExtensionDto> _refRangeChart { get; set; }
@@ -93,11 +93,18 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
             if (rect is null) { return; }
 
-            var divHeight = (window.Height - rect.Top - 8);
+            if (BoundingClientRect.IsMatchMimimumHeight(window.Height))
+            {
+                var divHeight = (window.Height - rect.Top - 8);
 
-            _divChartHeight = $"{divHeight}px";
-            _candleChartHeight = $"{(divHeight - 170)}px";
-
+                _divChartHeight = $"{divHeight}px";
+                _candleChartHeight = $"{(divHeight - 150)}px";
+            }
+            else
+            {
+                _divChartHeight = "auto";
+                _candleChartHeight = $"{window.Height - 48}px";
+            }
         }
 
         private void SetChartOptions()

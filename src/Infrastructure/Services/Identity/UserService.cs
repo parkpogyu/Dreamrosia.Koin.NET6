@@ -107,7 +107,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                 var user = (from usr in _context.Users
                                                 .AsNoTracking()
                                                 .Where(f => f.Id.Equals(userId))
-                                                .Include(i => i.Subscription)
+                                                .Include(i => i.Subscription).ThenInclude(i => i.Recommender)
                                                 .Include(i => i.Memberships)
                                                 .Include(i => i.MiningBotTicket)
                                                 .Include(i => i.TradingTerms)
@@ -116,10 +116,6 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                                                     .AsNoTracking()
                                                     .Where(f => f.UserId.Equals(usr.Id))
                                                     .AsEnumerable()
-                            from rec in _context.Users
-                                                .AsNoTracking()
-                                                .Where(f => f.Id.Equals(usr.Subscription.RecommenderId)).DefaultIfEmpty()
-                                                .AsEnumerable()
                             from reccode in _context.UserLogins
                                                     .AsNoTracking()
                                                     .Where(f => f.UserId.Equals(usr.Subscription.RecommenderId)).DefaultIfEmpty()
@@ -128,16 +124,15 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                             {
                                 var item = _mapper.Map<UserDetailDto>(usr);
 
-                                var membership = usr.Memberships.OrderByDescending(o => o.CreatedOn).First();
-
                                 item.UserCode = usrcode.ProviderKey;
-                                item.Membership = _mapper.Map<MembershipDto>(membership);
-
                                 item.AutoTrading = usr.TradingTerms.AutoTrading;
                                 item.TimeFrame = usr.TradingTerms.TimeFrame;
                                 item.IsAssignedBot = usr.MiningBotTicket is null ? false : true;
 
-                                item.Recommender = _mapper.Map<UserSummaryDto>(rec);
+                                var membership = usr.Memberships.OrderByDescending(o => o.CreatedOn).First();
+                                item.Membership = _mapper.Map<MembershipDto>(membership);
+
+                                item.Recommender = _mapper.Map<UserResponse>(usr.Subscription.Recommender);
 
                                 if (item.Recommender is not null)
                                 {

@@ -11,5 +11,6 @@ namespace Dreamrosia.Koin.Domain.Entities
         public string RecommenderId { get; set; }
 
         public IDomainUser User { get; set; }
+        public IDomainUser Recommender { get; set; }
     }
 }

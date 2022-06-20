@@ -7,6 +7,7 @@ namespace Dreamrosia.Koin.Application.Configurations
         public string Secret { get; set; }
 
         public ServerModes Mode { get; set; }
+        public string Version { get; set; }
         public string[] Urls { get; set; }
         public static string DefaultUrl => "http://localhost:5000";
     }

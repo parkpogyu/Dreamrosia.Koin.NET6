@@ -61,7 +61,7 @@
         <RowTemplate>
             @{
                 <MudTd DataLabel=@_localizer["BankingTransaction.done_at"] Style="text-align:center">
-                    @($"{context.done_at:g}")
+                    @($"{context.done_at:yyyy-MM-dd HH:mm}")
                 </MudTd>
                 <MudTd DataLabel=@_localizer["BankingTransaction.Contents"]>
                     <MudHighlighter Text="@context.Contents" HighlightedText="@_searchString" />

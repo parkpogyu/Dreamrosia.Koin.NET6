@@ -19,7 +19,7 @@ else
                            XAxisType="XAxisType.Category"
                            @ref="@_refCandleChart"
                            Options="@_candleOptions"
-                           Height="@(" 100%")">
+                           Height="@("100%")">
                     <ApexCandleSeries TItem="CandleExtensionDto"
                                       Items="_candles"
                                       XValue="@(e => e.candle_date_time_utc.Date)"
@@ -30,12 +30,12 @@ else
                                       OrderBy="@(e=> e.X)" />
                 </ApexChart>
             </div>
-            <div style="height:200px;" class="brush-chart">
+            <div style="height:150px;" class="brush-chart">
                 <ApexChart TItem="CandleExtensionDto"
                            XAxisType="XAxisType.Category"
                            @ref="@_refRangeChart"
                            Options="@_rangeOptions"
-                           Height="@(" 100%")">
+                           Height="@("100%")">
                     @*<ApexPointSeries TItem="CandleExtensionDto"
                         Items="_candles"
                         Name="@_localizer[" Candle.candle_acc_trade_volume"]"

@@ -37,6 +37,7 @@ namespace Dreamrosia.Koin.Infrastructure.Models.Identity
         public ICollection<Membership> Memberships { get; set; }
 
         public Subscription Subscription { get; set; }
+        public ICollection<Subscription> Followers { get; set; }
 
         public MiningBotTicket MiningBotTicket { get; set; }
 

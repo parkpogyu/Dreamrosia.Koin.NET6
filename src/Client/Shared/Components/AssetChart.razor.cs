@@ -33,7 +33,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private readonly string _divChartId = Guid.NewGuid().ToString();
         private bool _isDivChartRendered { get; set; } = false;
         private string _divChartHeight { get; set; } = "100%";
-        private string _assetChartHeight { get; set; } = "85%";
+        private string _assetChartHeight { get; set; } = "100%";
         private ApexChart<AssetDto> _refAssetChart { get; set; }
         private ApexChart<AssetDto> _refRangeChart { get; set; }
         private ApexChartOptions<AssetDto> _assetOptions;
@@ -92,10 +92,18 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
             if (rect is null) { return; }
 
-            var divHeight = (window.Height - rect.Top - 8);
+            if (BoundingClientRect.IsMatchMimimumHeight(window.Height))
+            {
+                var divHeight = (window.Height - rect.Top - 8);
 
-            _divChartHeight = $"{divHeight}px";
-            _assetChartHeight = $"{(divHeight - 150)}px";
+                _divChartHeight = $"{divHeight}px";
+                _assetChartHeight = $"{(divHeight - 150)}px";
+            }
+            else
+            {
+                _divChartHeight = "auto";
+                _assetChartHeight = $"{window.Height - 48}px";
+            }
         }
 
         private void SetChartOptions()

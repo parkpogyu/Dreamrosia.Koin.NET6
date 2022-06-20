@@ -98,9 +98,16 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
 
             if (rect is null) { return; }
 
-            var divHeight = (window.Height - rect.Top - 62 - 52 - 8);
+            if (BoundingClientRect.IsMatchMimimumHeight(window.Height))
+            {
+                var divHeight = (window.Height - rect.Top - 62 - 52 - 8);
 
-            _divTableHeight = $"{divHeight}px";
+                _divTableHeight = $"{divHeight}px";
+            }
+            else
+            {
+                _divTableHeight = "auto";
+            }
 
             StateHasChanged();
         }

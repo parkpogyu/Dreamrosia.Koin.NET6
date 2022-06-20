@@ -12,5 +12,12 @@ namespace Dreamrosia.Koin.Application.Responses.Identity
         public string ProfileImage { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedOn { get; set; }
+
+        #region Subscription
+        /// <summary>
+        /// 카카오 회원번호
+        /// </summary>
+        public string UserCode { get; set; }
+        #endregion
     }
 }
