@@ -19,7 +19,7 @@ namespace Dreamrosia.Koin.Application.DTO
         public string Memo { get; set; }
         public string UserCode { get; set; }
 
-        public UserProfileDto AccountHolder { get; set; }
+        public UserDto AccountHolder { get; set; }
 
         [JsonIgnore]
         public TransferType TransferType => Withdraw > 0 ? TransferType.withdraw : TransferType.deposit;

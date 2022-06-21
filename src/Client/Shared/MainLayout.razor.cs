@@ -93,7 +93,7 @@ namespace Dreamrosia.Koin.Client.Shared
 
                         if (role != null)
                         {
-                            var currentUserRolesResponse = await _userManager.GetRolesAsync(_userId);
+                            var currentUserRolesResponse = await _accountManager.GetRolesAsync(_userId);
 
                             if (currentUserRolesResponse.Succeeded && currentUserRolesResponse.Data.UserRoles.Any(x => x.RoleName == role.Name))
                             {

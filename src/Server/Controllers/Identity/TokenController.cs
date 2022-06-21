@@ -1,7 +1,6 @@
 ﻿using AspNet.Security.OAuth.KakaoTalk;
 using Dreamrosia.Koin.Application.Configurations;
 using Dreamrosia.Koin.Application.Interfaces.Services;
-using Dreamrosia.Koin.Application.Interfaces.Services.Account;
 using Dreamrosia.Koin.Application.Interfaces.Services.Identity;
 using Dreamrosia.Koin.Application.Requests.Identity;
 using Dreamrosia.Koin.Infrastructure.Models.Identity;
@@ -86,7 +85,7 @@ namespace Dreamrosia.Koin.Server.Controllers.Identity
         [HttpGet, AllowAnonymous]
         public async Task<IActionResult> SigninKakaoTalkCallback()
         {
-            var result = await _userService.RegisterOrUpdateKakaoUserAsync();
+            var result = await _accountService.RegisterOrUpdateKakaoUserAsync();
 
             return Redirect("/");
         }

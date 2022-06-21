@@ -36,7 +36,7 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
 
                 if (user != null)
                 {
-                    var response = await _userManager.GetRolesAsync(user.Id);
+                    var response = await _accountManager.GetRolesAsync(user.Id);
 
                     _items = response.Data.UserRoles;
                 }
@@ -52,7 +52,7 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
                 UserId = Id,
                 UserRoles = _items
             };
-            var result = await _userManager.UpdateRolesAsync(request);
+            var result = await _accountManager.UpdateRolesAsync(request);
             if (result.Succeeded)
             {
                 _snackBar.Add(result.Messages[0], Severity.Success);

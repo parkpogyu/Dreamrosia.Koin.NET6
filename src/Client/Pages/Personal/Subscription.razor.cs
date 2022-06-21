@@ -23,14 +23,14 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
         private bool _membershipValidated => _membershipValidator.Validate(options => { options.IncludeAllRuleSets(); });
         private bool _loaded;
         private string _userId { get; set; }
-        private UserDetailDto _user = new();
+        private SubscriptionDto _user = new();
         private MembershipDto _model { get; set; }
 
         private async Task ToggleUserStatus()
         {
             var request = new ToggleUserStatusRequest { ActivateUser = _user.IsActive, UserId = UserId };
 
-            var result = await _userManager.ToggleUserStatusAsync(request);
+            var result = await _accountManager.ToggleUserStatusAsync(request);
 
             if (result.Succeeded)
             {
@@ -70,16 +70,16 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
                 _userId = UserId;
             }
 
-            await GetUserAsync();
+            await GetSubscriptionAsync();
 
             _loaded = true;
         }
 
-        private async Task GetUserAsync()
+        private async Task GetSubscriptionAsync()
         {
-            var result = await _userManager.GetDetailAsync(_userId);
+            var result = await _userManager.GetSubscriptionAsync(_userId);
 
-            _user = result.Data ?? new UserDetailDto();
+            _user = result.Data ?? new SubscriptionDto();
             _model = _mapper.Map<MembershipDto>(_user.Membership ?? new MembershipDto());
 
             if (result.Succeeded) { return; }
@@ -111,7 +111,7 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
 
             if (result.Cancelled) { return; }
 
-            await GetUserAsync();
+            await GetSubscriptionAsync();
         }
 
         private void MembershipLevelChanged(MembershipLevel value)

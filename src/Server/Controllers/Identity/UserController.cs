@@ -1,4 +1,5 @@
 ﻿using Dreamrosia.Koin.Application.DTO;
+using Dreamrosia.Koin.Application.Interfaces.Services;
 using Dreamrosia.Koin.Application.Interfaces.Services.Identity;
 using Dreamrosia.Koin.Application.Requests.Identity;
 using Dreamrosia.Koin.Shared.Constants.Permission;
@@ -15,10 +16,13 @@ namespace Dreamrosia.Koin.Server.Controllers.Identity
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly ICurrentUserService _currentUser;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService,
+                              ICurrentUserService currentUser)
         {
             _userService = userService;
+            _currentUser = currentUser;
         }
 
         /// <summary>
@@ -35,10 +39,11 @@ namespace Dreamrosia.Koin.Server.Controllers.Identity
             return Ok(user);
         }
 
-        [HttpGet("detail/{userId}")]
-        public async Task<IActionResult> GetDetail(string userId)
+        [Authorize(Policy = Permissions.Users.View)]
+        [HttpGet("subscription/{userId}")]
+        public async Task<IActionResult> GetSubscription(string userId)
         {
-            var user = await _userService.GetDetailAsync(userId);
+            var user = await _userService.GetSubscriptionAsync(userId);
 
             return Ok(user);
         }
@@ -49,11 +54,11 @@ namespace Dreamrosia.Koin.Server.Controllers.Identity
         /// <returns>Status 200 OK</returns>
         [Authorize(Policy = Permissions.Users.View)]
         [HttpGet]
-        public async Task<IActionResult> GetSummarise(DateTime? head, DateTime? rear)
+        public async Task<IActionResult> GetSummaries(DateTime? head, DateTime? rear)
         {
             rear = rear is null ? DateTime.Now.Date : Convert.ToDateTime(rear);
 
-            var users = await _userService.GetSummariseAsync(Convert.ToDateTime(head), Convert.ToDateTime(rear));
+            var users = await _userService.GetSummariesAsync(Convert.ToDateTime(head), Convert.ToDateTime(rear));
 
             return Ok(users);
         }
@@ -110,67 +115,47 @@ namespace Dreamrosia.Koin.Server.Controllers.Identity
             return Ok(response);
         }
 
-        /// <summary>
-        /// Get User Roles By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns>Status 200 OK</returns>
-        [Authorize(Policy = Permissions.Users.View)]
-        [HttpGet("roles/{id}")]
-        public async Task<IActionResult> GetRolesAsync(string id)
+        [HttpGet("profile/{userId}")]
+        public async Task<ActionResult> GetProfile(string userId)
         {
-            var userRoles = await _userService.GetRolesAsync(id);
-            return Ok(userRoles);
+            var response = await _userService.GetProfileAsync(userId);
+
+            return Ok(response);
         }
 
         /// <summary>
-        /// Update Roles for User
+        /// Update Profile
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="model"></param>
         /// <returns>Status 200 OK</returns>
-        [Authorize(Policy = Permissions.Users.Edit)]
-        [HttpPut("roles/{id}")]
-        public async Task<IActionResult> UpdateRolesAsync(UpdateUserRolesRequest request)
+        [HttpPut(nameof(UpdateProfile))]
+        public async Task<ActionResult> UpdateProfile(UpdateProfileRequest model)
         {
-            return Ok(await _userService.UpdateRolesAsync(request));
+            var response = await _userService.UpdateProfileAsync(model, _currentUser.UserId);
+            return Ok(response);
         }
 
         /// <summary>
-        /// Register a User
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns>Status 200 OK</returns>
-        [AllowAnonymous]
-        [HttpPost]
-        public async Task<IActionResult> RegisterAsync(RegisterRequest request)
-        {
-            var origin = Request.Headers["origin"];
-
-            return Ok(await _userService.RegisterAsync(request, origin));
-        }
-
-        /// <summary>
-        /// Confirm Email
+        /// Get Profile picture by Id
         /// </summary>
         /// <param name="userId"></param>
-        /// <param name="code"></param>
-        /// <returns>Status 200 OK</returns>
-        [HttpGet("confirm-email")]
-        [AllowAnonymous]
-        public async Task<IActionResult> ConfirmEmailAsync([FromQuery] string userId, [FromQuery] string code)
+        /// <returns>Status 200 OK </returns>
+        [HttpGet("profile-picture/{userId}")]
+        [ResponseCache(NoStore = false, Location = ResponseCacheLocation.Client, Duration = 60)]
+        public async Task<IActionResult> GetProfilePictureAsync(string userId)
         {
-            return Ok(await _userService.ConfirmEmailAsync(userId, code));
+            return Ok(await _userService.GetProfilePictureAsync(userId));
         }
 
         /// <summary>
-        /// Toggle User Status (Activate and Deactivate)
+        /// Update Profile Picture
         /// </summary>
         /// <param name="request"></param>
         /// <returns>Status 200 OK</returns>
-        [HttpPost("toggle-status")]
-        public async Task<IActionResult> ToggleUserStatusAsync(ToggleUserStatusRequest request)
+        [HttpPost("profile-picture/{userId}")]
+        public async Task<IActionResult> UpdateProfilePictureAsync(UpdateProfilePictureRequest request)
         {
-            return Ok(await _userService.ToggleUserStatusAsync(request));
+            return Ok(await _userService.UpdateProfilePictureAsync(request, _currentUser.UserId));
         }
 
         /// <summary>

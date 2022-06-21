@@ -1,5 +1,5 @@
-﻿using Dreamrosia.Koin.Application.DTO;
-using Dreamrosia.Koin.Application.Requests.Identity;
+﻿using Dreamrosia.Koin.Application.Requests.Identity;
+using Dreamrosia.Koin.Application.Responses.Identity;
 using Dreamrosia.Koin.Client.Infrastructure.Extensions;
 using Dreamrosia.Koin.Shared.Wrapper;
 using System.Net.Http;
@@ -37,31 +37,32 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers.Identity.Account
             return await response.ToResult();
         }
 
-
-        public async Task<IResult> UpdateProfileAsync(UpdateProfileRequest model)
+        public async Task<IResult> RegisterUserAsync(RegisterRequest request)
         {
-            var response = await _httpClient.PutAsJsonAsync(Routes.AccountEndpoints.UpdateProfile, model);
+            var response = await _httpClient.PostAsJsonAsync(Routes.AccountEndpoints.Register, request);
+
             return await response.ToResult();
         }
 
-        public async Task<IResult<UserProfileDto>> GetProfileAsync(string userId)
+        public async Task<IResult> ToggleUserStatusAsync(ToggleUserStatusRequest request)
         {
-            var response = await _httpClient.GetAsync(Routes.AccountEndpoints.GetProfile(userId));
+            var response = await _httpClient.PostAsJsonAsync(Routes.AccountEndpoints.ToggleUserStatus, request);
 
-            return await response.ToResult<UserProfileDto>();
+            return await response.ToResult();
         }
 
-        public async Task<IResult<string>> GetProfilePictureAsync(string userId)
+        public async Task<IResult<UserRolesResponse>> GetRolesAsync(string userId)
         {
-            var response = await _httpClient.GetAsync(Routes.AccountEndpoints.GetProfilePicture(userId));
-            return await response.ToResult<string>();
+            var response = await _httpClient.GetAsync(Routes.AccountEndpoints.GetUserRoles(userId));
+
+            return await response.ToResult<UserRolesResponse>();
         }
 
-        public async Task<IResult<string>> UpdateProfilePictureAsync(UpdateProfilePictureRequest request, string userId)
+        public async Task<IResult> UpdateRolesAsync(UpdateUserRolesRequest request)
         {
-            var response = await _httpClient.PostAsJsonAsync(Routes.AccountEndpoints.UpdateProfilePicture(userId), request);
+            var response = await _httpClient.PutAsJsonAsync(Routes.AccountEndpoints.GetUserRoles(request.UserId), request);
 
-            return await response.ToResult<string>();
+            return await response.ToResult<UserRolesResponse>();
         }
     }
 }

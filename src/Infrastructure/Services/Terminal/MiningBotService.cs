@@ -359,8 +359,8 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             var keys = await _context.Users
                                      .Include(i => i.UPbitKey)
                                      .Include(i => i.MiningBotTicket)
-                                     .Where(f => f.UPbitKey != null && 
-                                                 f.UPbitKey.IsOccurredFatalError && 
+                                     .Where(f => f.UPbitKey != null &&
+                                                 f.UPbitKey.IsOccurredFatalError &&
                                                  f.MiningBotTicket != null)
                                      .ToArrayAsync();
             if (keys.Any())

@@ -1,25 +1,19 @@
 ﻿using AutoMapper;
-using Dreamrosia.Koin.Application.Configurations;
 using Dreamrosia.Koin.Application.DTO;
-using Dreamrosia.Koin.Application.Exceptions;
 using Dreamrosia.Koin.Application.Extensions;
 using Dreamrosia.Koin.Application.Interfaces.Repositories;
 using Dreamrosia.Koin.Application.Interfaces.Services;
 using Dreamrosia.Koin.Application.Interfaces.Services.Identity;
 using Dreamrosia.Koin.Application.Requests.Identity;
-using Dreamrosia.Koin.Application.Requests.Mail;
-using Dreamrosia.Koin.Application.Responses.Identity;
 using Dreamrosia.Koin.Domain.Entities;
 using Dreamrosia.Koin.Infrastructure.Contexts;
 using Dreamrosia.Koin.Infrastructure.Models.Identity;
 using Dreamrosia.Koin.Infrastructure.Specifications;
-using Dreamrosia.Koin.Shared.Constants.Permission;
 using Dreamrosia.Koin.Shared.Constants.Role;
 using Dreamrosia.Koin.Shared.Interfaces.Services;
 using Dreamrosia.Koin.Shared.Localization;
 using Dreamrosia.Koin.Shared.Wrapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -27,8 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -37,46 +29,46 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
     public class UserService : IUserService
     {
         private readonly UserManager<BlazorHeroUser> _userManager;
-        private readonly RoleManager<BlazorHeroRole> _roleManager;
         private readonly SignInManager<BlazorHeroUser> _signInManager;
         private readonly BlazorHeroContext _context;
         private readonly IUnitOfWork<string> _strUnitOfWork;
         private readonly IUnitOfWork<int> _intUnitOfWork;
+        private readonly IAccountService _accountService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IExcelService _excelService;
-        private readonly IMailService _mailService;
+        private readonly IUploadService _uploadService;
         private readonly IMapper _mapper;
         private readonly ILogger<UserService> _logger;
         private readonly IStringLocalizer<SharedLocalizerResources> _localizer;
 
         public UserService(UserManager<BlazorHeroUser> userManager,
-                           RoleManager<BlazorHeroRole> roleManager,
                            SignInManager<BlazorHeroUser> signInManager,
                            BlazorHeroContext context,
                            IUnitOfWork<string> strUnitOfWork,
                            IUnitOfWork<int> intUnitOfWork,
+                           IAccountService accountService,
                            ICurrentUserService currentUserService,
-                           IMailService mailService,
                            IExcelService excelService,
+                           IUploadService uploadService,
                            IMapper mapper,
                            ILogger<UserService> logger,
                            IStringLocalizer<SharedLocalizerResources> localizer)
         {
             _userManager = userManager;
-            _roleManager = roleManager;
             _signInManager = signInManager;
             _context = context;
             _strUnitOfWork = strUnitOfWork;
             _intUnitOfWork = intUnitOfWork;
+            _accountService = accountService;
             _currentUserService = currentUserService;
             _excelService = excelService;
-            _mailService = mailService;
+            _uploadService = uploadService;
             _mapper = mapper;
             _logger = logger;
             _localizer = localizer;
         }
 
-        public async Task<IResult<UserResponse>> GetAsync(string userId)
+        public async Task<IResult<UserDto>> GetAsync(string userId)
         {
             try
             {
@@ -86,21 +78,21 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
 
                 if (item is null)
                 {
-                    return await Result<UserResponse>.FailAsync(_localizer["User Not Found!"]);
+                    return await Result<UserDto>.FailAsync(_localizer["User Not Found!"]);
                 }
 
-                return await Result<UserResponse>.SuccessAsync(_mapper.Map<UserResponse>(item));
+                return await Result<UserDto>.SuccessAsync(_mapper.Map<UserDto>(item));
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<UserResponse>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result<UserDto>.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
 
-        public async Task<IResult<UserDetailDto>> GetDetailAsync(string userId)
+        public async Task<IResult<SubscriptionDto>> GetSubscriptionAsync(string userId)
         {
             try
             {
@@ -120,9 +112,9 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                                                     .AsNoTracking()
                                                     .Where(f => f.UserId.Equals(usr.Subscription.RecommenderId)).DefaultIfEmpty()
                                                     .AsEnumerable()
-                            select ((Func<UserDetailDto>)(() =>
+                            select ((Func<SubscriptionDto>)(() =>
                             {
-                                var item = _mapper.Map<UserDetailDto>(usr);
+                                var item = _mapper.Map<SubscriptionDto>(usr);
 
                                 item.UserCode = usrcode.ProviderKey;
                                 item.AutoTrading = usr.TradingTerms.AutoTrading;
@@ -130,9 +122,10 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                                 item.IsAssignedBot = usr.MiningBotTicket is null ? false : true;
 
                                 var membership = usr.Memberships.OrderByDescending(o => o.CreatedOn).First();
+
                                 item.Membership = _mapper.Map<MembershipDto>(membership);
 
-                                item.Recommender = _mapper.Map<UserResponse>(usr.Subscription.Recommender);
+                                item.Recommender = _mapper.Map<UserDto>(usr.Subscription.Recommender);
 
                                 if (item.Recommender is not null)
                                 {
@@ -144,21 +137,24 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
 
                 if (user is null)
                 {
-                    return await Result<UserDetailDto>.FailAsync(_localizer["User Not Found!"]);
+                    return await Result<SubscriptionDto>.FailAsync(_localizer["User Not Found!"]);
                 }
 
-                return await Result<UserDetailDto>.SuccessAsync(user);
+                return await Result<SubscriptionDto>.SuccessAsync(user);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<UserDetailDto>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result<SubscriptionDto>.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
 
-        private IEnumerable<UserSummaryDto> GetUsers(DateTime head, DateTime rear, string userId = null, bool? goBoast = null)
+        private async Task<IEnumerable<UserSummaryDto>> GetUsersAsync(DateTime head, DateTime rear, string userId = null, bool? goBoast = null)
         {
+            var user = await _userManager.FindByIdAsync(_currentUserService.UserId);
+            var isAdmin = await _userManager.IsInRoleAsync(user, RoleConstants.AdministratorRole);
+
             var items = (from usr in _context.Users
                                              .AsNoTracking()
                                              .Include(i => i.Subscription)
@@ -182,7 +178,8 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
 
                              item.UserCode = ext.ProviderKey;
                              item.MembershipLevel = membership.Level;
-                             item.MaximumAsset = membership.MaximumAsset;
+                             item.MaximumAsset = isAdmin ? membership.MaximumAsset : 0;
+                             item.DailyDeductionPoint = isAdmin ? membership.DailyDeductionPoint : 0;
 
                              item.AutoTrading = usr.TradingTerms.AutoTrading;
                              item.TimeFrame = usr.TradingTerms.TimeFrame;
@@ -194,11 +191,11 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
             return items;
         }
 
-        public async Task<IResult<IEnumerable<UserSummaryDto>>> GetSummariseAsync(DateTime head, DateTime rear)
+        public async Task<IResult<IEnumerable<UserSummaryDto>>> GetSummariesAsync(DateTime head, DateTime rear)
         {
             try
             {
-                var items = GetUsers(head, rear);
+                var items = await GetUsersAsync(head, rear);
 
                 var currentUser = await _userManager.FindByIdAsync(_currentUserService.UserId);
 
@@ -208,7 +205,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                 {
                     foreach (var item in items)
                     {
-                        var roles = await GetRolesAsync(item.Id);
+                        var roles = await _accountService.GetRolesAsync(item.Id);
 
                         if (roles.Succeeded)
                         {
@@ -234,7 +231,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
         {
             try
             {
-                var items = GetUsers(head, rear, userId);
+                var items = await GetUsersAsync(head, rear, userId);
 
                 return await Result<IEnumerable<UserSummaryDto>>.SuccessAsync(items);
             }
@@ -250,7 +247,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
         {
             try
             {
-                var items = GetUsers(head, rear, null, true);
+                var items = await GetUsersAsync(head, rear, null, true);
 
                 return await Result<IEnumerable<UserSummaryDto>>.SuccessAsync(items);
 
@@ -263,7 +260,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
             }
         }
 
-        public async Task<IResult<UserResponse>> GetRecommenderAsync(RecommenderDto model)
+        public async Task<IResult<UserDto>> GetRecommenderAsync(RecommenderDto model)
         {
             try
             {
@@ -282,20 +279,20 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                                                               f.CreatedOn < usr.CreatedOn).DefaultIfEmpty()
                                                  .Include(i => i.Subscription)
                                                  .AsEnumerable()
-                             select ((Func<UserResponse>)(() =>
+                             select ((Func<UserDto>)(() =>
                              {
-                                 var item = _mapper.Map<UserResponse>(rec);
+                                 var item = _mapper.Map<UserDto>(rec);
 
                                  return item;
                              }))()).SingleOrDefault();
 
-                return await Result<UserResponse>.SuccessAsync(items);
+                return await Result<UserDto>.SuccessAsync(items);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<UserResponse>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result<UserDto>.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
 
@@ -329,7 +326,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
             }
         }
 
-        public async Task<IResult<UserResponse>> GetAccountHolderAsync(string userCode)
+        public async Task<IResult<UserDto>> GetAccountHolderAsync(string userCode)
         {
             var item = (from ext in _context.UserLogins
                                             .AsNoTracking()
@@ -341,16 +338,16 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                                             .Include(f => f.Subscription)
                                             .AsEnumerable()
                         where usr is not null
-                        select ((Func<UserResponse>)(() =>
+                        select ((Func<UserDto>)(() =>
                         {
-                            var item = _mapper.Map<UserResponse>(usr);
+                            var item = _mapper.Map<UserDto>(usr);
 
                             //_mapper.Map(ext, item.Subscription);
 
                             return item;
                         }))()).SingleOrDefault();
 
-            return await Result<UserResponse>.SuccessAsync(item);
+            return await Result<UserDto>.SuccessAsync(item);
         }
 
         public async Task<IResult<MembershipDto>> ChangeMembershipAsync(MembershipDto model)
@@ -394,224 +391,77 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
             }
         }
 
-        public async Task<IResult> RegisterAsync(RegisterRequest request, string origin)
+        public async Task<int> GetCountAsync()
         {
-            var user = new BlazorHeroUser
-            {
-                Email = request.Email,
-                NickName = request.NickName,
-                PhoneNumber = request.PhoneNumber,
-                IsActive = request.ActivateUser,
-                EmailConfirmed = request.AutoConfirmEmail
-            };
+            var count = await _userManager.Users.CountAsync();
+            return count;
+        }
 
+        public async Task<IResult<UserDto>> GetProfileAsync(string userId)
+        {
+            var user = await _userManager.Users.SingleOrDefaultAsync(f => f.Id.Equals(userId));
+
+            var result = _mapper.Map<UserDto>(user);
+
+            return await Result<UserDto>.SuccessAsync(result);
+        }
+
+        public async Task<IResult> UpdateProfileAsync(UpdateProfileRequest request, string userId)
+        {
             if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
             {
                 var userWithSamePhoneNumber = await _userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == request.PhoneNumber);
                 if (userWithSamePhoneNumber != null)
                 {
-                    return await Result.FailAsync(string.Format(_localizer["Phone number {0} is already registered."], request.PhoneNumber));
+                    return await Result.FailAsync(string.Format(_localizer["Phone number {0} is already used."], request.PhoneNumber));
                 }
             }
 
             var userWithSameEmail = await _userManager.FindByEmailAsync(request.Email);
-            if (userWithSameEmail == null)
+            if (userWithSameEmail == null || userWithSameEmail.Id == userId)
             {
-                var result = await _userManager.CreateAsync(user, request.Password);
-                if (result.Succeeded)
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
                 {
-                    await _userManager.AddToRoleAsync(user, RoleConstants.BasicRole);
-                    if (!request.AutoConfirmEmail)
-                    {
-                        var verificationUri = await SendVerificationEmail(user, origin);
-                        var mailRequest = new MailRequest
-                        {
-                            From = "mail@codewithmukesh.com",
-                            To = user.Email,
-                            Body = string.Format(_localizer["Please confirm your account by <a href='{0}'>clicking here</a>."], verificationUri),
-                            Subject = _localizer["Confirm Registration"]
-                        };
-                        //BackgroundJob.Enqueue(() => _mailService.SendAsync(mailRequest));
-                        return await Result<string>.SuccessAsync(user.Id, string.Format(_localizer["User {0} Registered. Please check your Mailbox to verify!"], user.NickName));
-                    }
-                    return await Result<string>.SuccessAsync(user.Id, string.Format(_localizer["User {0} Registered."], user.NickName));
+                    return await Result.FailAsync(_localizer["User Not Found!"]);
                 }
-                else
+                user.NickName = request.NickName;
+                user.PhoneNumber = request.PhoneNumber;
+                var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+                if (request.PhoneNumber != phoneNumber)
                 {
-                    return await Result.FailAsync(result.Errors.Select(a => _localizer[a.Description].ToString()).ToList());
+                    var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, request.PhoneNumber);
                 }
-            }
-            else
-            {
-                return await Result.FailAsync(string.Format(_localizer["Email {0} is already registered."], request.Email));
-            }
-        }
-
-        private async Task<string> SendVerificationEmail(BlazorHeroUser user, string origin)
-        {
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-            var route = "api/identity/user/confirm-email/";
-            var endpointUri = new Uri(string.Concat($"{origin}/", route));
-            var verificationUri = QueryHelpers.AddQueryString(endpointUri.ToString(), "userId", user.Id);
-            verificationUri = QueryHelpers.AddQueryString(verificationUri, "code", code);
-            return verificationUri;
-        }
-
-        public async Task<IResult> RegisterOrUpdateKakaoUserAsync()
-        {
-            var external = await _signInManager.GetExternalLoginInfoAsync();
-
-            if (external == null)
-            {
-                return await Result<UserResponse>.FailAsync(_localizer["You are not Authorized."]);
-            }
-
-            var user = await _userManager.FindByEmailAsync(external.Principal.Claims.SingleOrDefault(f => f.Type == ClaimTypes.Email)?.Value);
-
-            if (user is null)
-            {
-                user = new BlazorHeroUser
-                {
-                    Email = external.Principal.Claims.SingleOrDefault(f => f.Type == ClaimTypes.Email)?.Value,
-                    PhoneNumber = external.Principal.Claims.SingleOrDefault(f => f.Type == ClaimTypes.MobilePhone)?.Value,
-                    UserName = external.Principal.Claims.SingleOrDefault(f => f.Type == ClaimTypes.Email)?.Value,
-                    NickName = external.Principal.Claims.SingleOrDefault(f => f.Type == ClaimTypes.Name)?.Value,
-                    KoreanName = external.Principal.Claims.SingleOrDefault(f => f.Type == ApplicationClaimTypes.KoreanName)?.Value,
-                    ProfileImage = external.Principal.Claims.SingleOrDefault(f => f.Type == ApplicationClaimTypes.ThumbnailImage)?.Value,
-                };
-
-                var result = await _userManager.CreateAsync(user);
-
-                if (result.Succeeded)
-                {
-                    var access_token = external.AuthenticationTokens.SingleOrDefault(f => f.Name.Equals(KakaoConfiguration.TockenName));
-
-                    /// 오류 시 처리방안 모색
-                    await _userManager.AddLoginAsync(user, new UserLoginInfo(external.LoginProvider, external.ProviderKey, external.ProviderDisplayName));
-                    await _userManager.SetAuthenticationTokenAsync(user, external.LoginProvider, KakaoConfiguration.TockenName, access_token?.Value);
-                    await _userManager.AddToRoleAsync(user, RoleConstants.BasicRole);
-
-                    _context.Database.ExecuteSqlRaw($"CALL PRC_Initialize_User_Terms('{user.Id}')");
-
-                    return await Result<UserResponse>.SuccessAsync(_localizer["User Registered"]);
-                }
-                else
-                {
-                    return await Result.FailAsync(result.Errors.Select(a => _localizer[a.Description].ToString()).ToList());
-                }
-            }
-            else
-            {
-                user.Email = external.Principal.Claims.SingleOrDefault(f => f.Type == ClaimTypes.Email)?.Value;
-                user.PhoneNumber = external.Principal.Claims.SingleOrDefault(f => f.Type == ClaimTypes.MobilePhone)?.Value;
-                user.UserName = external.Principal.Claims.SingleOrDefault(f => f.Type == ClaimTypes.Email)?.Value;
-                user.NickName = external.Principal.Claims.SingleOrDefault(f => f.Type == ClaimTypes.Name)?.Value;
-                user.KoreanName = external.Principal.Claims.SingleOrDefault(f => f.Type == ApplicationClaimTypes.KoreanName)?.Value;
-                user.ProfileImage = external.Principal.Claims.SingleOrDefault(f => f.Type == ApplicationClaimTypes.ThumbnailImage)?.Value;
-
-                var tocken_name = KakaoConfiguration.TockenName;    // "access_token";
-                var access_token = external.AuthenticationTokens.SingleOrDefault(f => f.Name.Equals(tocken_name));
-
-                await _userManager.SetAuthenticationTokenAsync(user, external.LoginProvider, tocken_name, access_token?.Value);
-
-                var result = await _userManager.UpdateAsync(user);
-
-                return await Result<UserResponse>.SuccessAsync(_localizer["User Already Registered"]);
-            }
-        }
-
-        public async Task<IResult> ToggleUserStatusAsync(ToggleUserStatusRequest request)
-        {
-            var user = await _userManager.Users.Where(u => u.Id == request.UserId).FirstOrDefaultAsync();
-            var isAdmin = await _userManager.IsInRoleAsync(user, RoleConstants.AdministratorRole);
-            if (isAdmin)
-            {
-                return await Result.FailAsync(_localizer["Administrators Profile's Status cannot be toggled"]);
-            }
-            if (user != null)
-            {
-                user.IsActive = request.ActivateUser;
                 var identityResult = await _userManager.UpdateAsync(user);
-            }
-            return await Result.SuccessAsync();
-        }
-
-        public async Task<IResult<UserRolesResponse>> GetRolesAsync(string userId)
-        {
-            var viewModel = new List<UserRoleModel>();
-            var user = await _userManager.FindByIdAsync(userId);
-            var roles = await _roleManager.Roles.ToListAsync();
-
-            foreach (var role in roles)
-            {
-                var userRolesViewModel = new UserRoleModel
-                {
-                    RoleName = role.Name,
-                    RoleDescription = role.Description
-                };
-                if (await _userManager.IsInRoleAsync(user, role.Name))
-                {
-                    userRolesViewModel.Selected = true;
-                }
-                else
-                {
-                    userRolesViewModel.Selected = false;
-                }
-                viewModel.Add(userRolesViewModel);
-            }
-            var result = new UserRolesResponse { UserRoles = viewModel };
-            return await Result<UserRolesResponse>.SuccessAsync(result);
-        }
-
-        public async Task<IResult> UpdateRolesAsync(UpdateUserRolesRequest request)
-        {
-            var user = await _userManager.FindByIdAsync(request.UserId);
-
-            if (user.Email == "mjtobi@gmail.com")
-            {
-                return await Result.FailAsync(_localizer["Not Allowed."]);
-            }
-
-            var roles = await _userManager.GetRolesAsync(user);
-            var selectedRoles = request.UserRoles.Where(x => x.Selected).ToList();
-
-            var currentUser = await _userManager.FindByIdAsync(_currentUserService.UserId);
-            if (!await _userManager.IsInRoleAsync(currentUser, RoleConstants.AdministratorRole))
-            {
-                var tryToAddAdministratorRole = selectedRoles
-                    .Any(x => x.RoleName == RoleConstants.AdministratorRole);
-                var userHasAdministratorRole = roles.Any(x => x == RoleConstants.AdministratorRole);
-                if (tryToAddAdministratorRole && !userHasAdministratorRole || !tryToAddAdministratorRole && userHasAdministratorRole)
-                {
-                    return await Result.FailAsync(_localizer["Not Allowed to add or delete Administrator Role if you have not this role."]);
-                }
-            }
-
-            var result = await _userManager.RemoveFromRolesAsync(user, roles);
-            result = await _userManager.AddToRolesAsync(user, selectedRoles.Select(y => y.RoleName));
-            return await Result.SuccessAsync(_localizer["Roles Updated"]);
-        }
-
-        public async Task<IResult<string>> ConfirmEmailAsync(string userId, string code)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
-            var result = await _userManager.ConfirmEmailAsync(user, code);
-            if (result.Succeeded)
-            {
-                return await Result<string>.SuccessAsync(user.Id, string.Format(_localizer["Account Confirmed for {0}. You can now use the /api/identity/token endpoint to generate JWT."], user.Email));
+                var errors = identityResult.Errors.Select(e => _localizer[e.Description].ToString()).ToList();
+                await _signInManager.RefreshSignInAsync(user);
+                return identityResult.Succeeded ? await Result.SuccessAsync() : await Result.FailAsync(errors);
             }
             else
             {
-                throw new ApiException(string.Format(_localizer["An error occurred while confirming {0}"], user.Email));
+                return await Result.FailAsync(string.Format(_localizer["Email {0} is already used."], request.Email));
             }
         }
 
-        public async Task<int> GetCountAsync()
+        public async Task<IResult<string>> GetProfilePictureAsync(string userId)
         {
-            var count = await _userManager.Users.CountAsync();
-            return count;
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return await Result<string>.FailAsync(_localizer["User Not Found"]);
+            }
+            return await Result<string>.SuccessAsync(data: user.ProfileImage);
+        }
+
+        public async Task<IResult<string>> UpdateProfilePictureAsync(UpdateProfilePictureRequest request, string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) return await Result<string>.FailAsync(message: _localizer["User Not Found"]);
+            var filePath = _uploadService.UploadAsync(request);
+            user.ProfileImage = filePath;
+            var identityResult = await _userManager.UpdateAsync(user);
+            var errors = identityResult.Errors.Select(e => _localizer[e.Description].ToString()).ToList();
+            return identityResult.Succeeded ? await Result<string>.SuccessAsync(data: filePath) : await Result<string>.FailAsync(errors);
         }
 
         public async Task<string> ExportToExcelAsync(string searchString = "")

@@ -1,6 +1,5 @@
 ﻿using Blazored.FluentValidation;
 using Dreamrosia.Koin.Application.DTO;
-using Dreamrosia.Koin.Application.Responses.Identity;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Threading.Tasks;
@@ -15,7 +14,7 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
         private FluentValidationValidator _fluentValidationValidator;
         private bool Validated => _fluentValidationValidator.Validate(options => { options.IncludeAllRuleSets(); });
         private readonly RecommenderDto _model = new();
-        private UserResponse _recommender { get; set; } = new UserResponse();
+        private UserDto _recommender { get; set; } = new UserDto();
 
         protected override async Task OnInitializedAsync()
         {
@@ -38,7 +37,7 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
 
             if (response.Succeeded)
             {
-                _recommender = response.Data is null ? new UserResponse() : response.Data;
+                _recommender = response.Data is null ? new UserDto() : response.Data;
             }
             else
             {

@@ -70,7 +70,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                              {
                                  var item = _mapper.Map<BankingTransactionDto>(trn);
 
-                                 item.AccountHolder = _mapper.Map<UserProfileDto>(usr);
+                                 item.AccountHolder = _mapper.Map<UserDto>(usr);
 
                                  return item;
                              }))()).ToArray();

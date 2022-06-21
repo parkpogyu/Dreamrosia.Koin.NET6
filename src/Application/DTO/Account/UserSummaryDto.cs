@@ -1,15 +1,15 @@
-﻿using Dreamrosia.Koin.Application.Responses.Identity;
-using Dreamrosia.Koin.Domain.Enums;
+﻿using Dreamrosia.Koin.Domain.Enums;
 using Dreamrosia.Koin.Shared.Enums;
 using System.Text.Json.Serialization;
 
 namespace Dreamrosia.Koin.Application.DTO
 {
-    public class UserSummaryDto : UserResponse
+    public class UserSummaryDto : UserDto
     {
         #region Membership
         public MembershipLevel MembershipLevel { get; set; }
         public long MaximumAsset { get; set; }
+        public int DailyDeductionPoint { get; set; }
         #endregion
 
         #region TradingTerms

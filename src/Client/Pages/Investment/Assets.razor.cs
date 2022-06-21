@@ -48,7 +48,7 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
                 _userId = UserId;
             }
 
-            var response = await _userManager.GetDetailAsync(_userId);
+            var response = await _userManager.GetSubscriptionAsync(_userId);
 
             if (response.Succeeded)
             {

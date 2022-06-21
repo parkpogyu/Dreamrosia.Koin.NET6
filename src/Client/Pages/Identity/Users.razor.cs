@@ -29,7 +29,7 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
             _dateRange.Start = now.GetBefore(_dateRangeTerm);
             _dateRange.End = now;
 
-            var response = await _userManager.GetSummariseAsync(_dateRange.Start, _dateRange.End);
+            var response = await _userManager.GetSummariesAsync(_dateRange.Start, _dateRange.End);
 
             _items = response.Data ?? new List<UserSummaryDto>();
 

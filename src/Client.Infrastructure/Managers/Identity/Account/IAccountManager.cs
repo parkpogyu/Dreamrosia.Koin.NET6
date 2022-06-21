@@ -1,5 +1,5 @@
-﻿using Dreamrosia.Koin.Application.DTO;
-using Dreamrosia.Koin.Application.Requests.Identity;
+﻿using Dreamrosia.Koin.Application.Requests.Identity;
+using Dreamrosia.Koin.Application.Responses.Identity;
 using Dreamrosia.Koin.Shared.Wrapper;
 using System.Threading.Tasks;
 
@@ -13,12 +13,12 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers.Identity.Account
 
         Task<IResult> ResetPasswordAsync(ResetPasswordRequest request);
 
-        Task<IResult> UpdateProfileAsync(UpdateProfileRequest model);
+        Task<IResult<UserRolesResponse>> GetRolesAsync(string userId);
 
-        Task<IResult<UserProfileDto>> GetProfileAsync(string userId);
+        Task<IResult> RegisterUserAsync(RegisterRequest request);
 
-        Task<IResult<string>> GetProfilePictureAsync(string userId);
+        Task<IResult> ToggleUserStatusAsync(ToggleUserStatusRequest request);
 
-        Task<IResult<string>> UpdateProfilePictureAsync(UpdateProfilePictureRequest request, string userId);
+        Task<IResult> UpdateRolesAsync(UpdateUserRolesRequest request);
     }
 }

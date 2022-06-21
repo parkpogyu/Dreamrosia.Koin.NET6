@@ -9,12 +9,7 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Routes
             return $"api/identity/user/{userId}";
         }
 
-        public static string GetDetail(string userId)
-        {
-            return $"api/identity/user/detail/{userId}";
-        }
-
-        public static string GetSummarise(DateTime? head, DateTime? rear)
+        public static string GetSummaries(DateTime? head, DateTime? rear)
         {
             return $"api/identity/user?head={head?.ToString("d")}&rear={rear?.ToString("d")}";
         }
@@ -49,19 +44,9 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Routes
             return $"api/identity/user/subscription/{userId}";
         }
 
-        public static string UpdateSubscription(string userId)
-        {
-            return $"api/identity/user/subscription/{userId}";
-        }
-
         public static string ChangeMembership(string userId)
         {
             return $"api/identity/user/membership/{userId}";
-        }
-
-        public static string GetUserRoles(string userId)
-        {
-            return $"api/identity/user/roles/{userId}";
         }
 
         public static string ExportFiltered(string searchString)
@@ -70,7 +55,21 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Routes
         }
 
         public static string Export = "api/identity/user/export";
-        public static string Register = "api/identity/user";
-        public static string ToggleUserStatus = "api/identity/user/toggle-status";
+        public static string UpdateProfile = "api/identity/account/updateprofile";
+
+        public static string GetProfile(string userId)
+        {
+            return $"api/identity/account/profile/{userId}";
+        }
+
+        public static string GetProfilePicture(string userId)
+        {
+            return $"api/identity/account/profile-picture/{userId}";
+        }
+
+        public static string UpdateProfilePicture(string userId)
+        {
+            return $"api/identity/account/profile-picture/{userId}";
+        }
     }
 }
