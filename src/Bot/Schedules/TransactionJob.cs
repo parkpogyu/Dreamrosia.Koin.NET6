@@ -43,7 +43,7 @@ namespace Dreamrosia.Koin.Bot.Schedules
 
                 await Task.WhenAll(tasks).ConfigureAwait(false);
 
-                //await _tradeOrderService.DoTradeAsync();
+                await _tradeOrderService.DoTradeAsync();
             }
             catch (Exception ex)
             {

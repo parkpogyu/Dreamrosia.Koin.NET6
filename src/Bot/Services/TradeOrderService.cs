@@ -30,7 +30,12 @@ namespace Dreamrosia.Koin.Bot.Services
         private PositionDto Cash => Depot.Positions?.Where(f => f.code.Equals("KRW")).SingleOrDefault();
         private IEnumerable<SeasonSignalDto> Signals => Depot.TradingTerms?.Signals;
 
-        private readonly List<OrderPostParameterDto> OriginalBidOrders = new List<OrderPostParameterDto>();
+        private readonly List<Order> OriginalBidOrders = new List<Order>();
+
+        /// <summary>
+        /// 포지션이 정상 적용 시 까지 대기
+        /// </summary>
+        private readonly int DelayPositionCheckTime = 3;
 
         private double BidAmount { get; set; }
 
@@ -86,8 +91,10 @@ namespace Dreamrosia.Koin.Bot.Services
 
         private IEnumerable<OrderPostParameterDto> GetAskOrders()
         {
-            var sellables = Coins.Where(f => OrderPostParameterDto.MinimumOrderableAmount < f.BalEvalAmt &&
-                                             0 < f.balance).ToArray();
+            var sellables = (from coin in Coins.Where(f => OrderPostParameterDto.MinimumOrderableAmount < f.BalEvalAmt && 0 < f.balance)
+                             from order in OriginalBidOrders.Where(f => f.market.Equals(coin.market)).DefaultIfEmpty()
+                             where order is null
+                             select coin).ToArray();
 
             List<OrderPostParameterDto> orders = new List<OrderPostParameterDto>();
 
@@ -140,7 +147,11 @@ namespace Dreamrosia.Koin.Bot.Services
                         market = item.market,
                         ord_type = OrderType.market,
                         volume = item.balance,
-                        Remark = string.Format("{0}, {1:N2}", reason.ToDescriptionString(), item.PnLRat),
+                        Remark = string.Format("{0}, {1} / {2}, {3:N2}%", 
+                                 reason.ToDescriptionString(), 
+                                 GetPriceText( item.trade_price),
+                                 GetPriceText( item.avg_buy_price),
+                                 item.PnLRat),
                     });
                 }
             }
@@ -225,14 +236,14 @@ namespace Dreamrosia.Koin.Bot.Services
                 }); ;
             }
 
-            OriginalBidOrders.AddRange(orders);
-
             return orders;
         }
 
         private void AdjustOriginalBidOrders()
         {
-            var items = (from order in OriginalBidOrders
+            DateTime now = DateTime.Now;
+
+            var items = (from order in OriginalBidOrders.Where(f => now.Subtract(f.created_at).TotalSeconds > DelayPositionCheckTime)
                          from coin in Coins.Where(f => f.market.Equals(order.market)).DefaultIfEmpty()
                          where coin is not null
                          select order).ToArray();
@@ -316,42 +327,79 @@ namespace Dreamrosia.Koin.Bot.Services
 
                 ExOrderPost exOrderPost = new ExOrderPost();
                 ExOrderPost.ExParameter parameter = null;
-                IResult<Order> result = null;
+                IResult<Order> response = null;
+
+                Order result;
 
                 foreach (var order in orders)
                 {
                     parameter = _mapper.Map<ExOrderPost.ExParameter>(order);
 #if DEBUG
-                    result = await Result<Order>.SuccessAsync(new Order(), "Test");
+                    response = await Result<Order>.SuccessAsync(new Order(), "Test");
 #else
-                    result = await exOrderPost.OrderPostAsync(parameter);
+                    response = await exOrderPost.OrderPostAsync(parameter);
 #endif
+                    result = response.Data;
+
                     builder.Clear();
                     builder.AppendLine("\n-----------------------------------------------");
-                    builder.AppendLine(string.Format("\t마켓코드: {0}", order.market));
-                    builder.AppendLine(string.Format("\t주문종류: {0}", order.side.ToDescriptionString()));
-                    builder.AppendLine(string.Format("\t주문방식: {0}", order.ord_type.ToDescriptionString()));
+                    builder.AppendLine($"\t마켓코드: {order.market}");
+                    builder.AppendLine($"\t주문종류: {order.side.ToDescriptionString()}");
+                    builder.AppendLine($"\t주문방식: {order.ord_type.ToDescriptionString()}");
                     builder.AppendLine(order.side == OrderSide.ask ?
-                                       string.Format("\t주문수량: {0:N8}", order.volume) :
-                                       string.Format("\t주문금액: {0:N0}", order.price));
-                    builder.AppendLine(string.Format("\t주문결과: {0}", result.Succeeded ? "완료" : result.Messages.First()));
-                    builder.AppendLine(string.Format("\t비    고: {0}", order.Remark));
+                                       $"\t주문수량: {order.volume:N8}" :
+                                       $"\t주문금액: {order.price:N0}");
+
+                    if (response.Succeeded)
+                    {
+                        builder.AppendLine($"\t예치금액: {result.locked:N4}");
+
+                        if (result.avg_price > 0)
+                        {
+                            builder.AppendLine($"\t평균단가: {GetPriceText(result.avg_price)}");
+                        }
+
+                        if (result.executed_volume is not null)
+                        {
+                            builder.AppendLine($"\t체결수량: {result.executed_volume:N8}");
+                        }
+
+                        if (result.remaining_volume is not null)
+                        {
+                            builder.AppendLine($"\t잔여수량: {result.remaining_volume:N8}");
+                        }
+
+                        if (result.side == OrderSide.bid)
+                        {
+                            OriginalBidOrders.Add(result);
+                        }
+                    }
+
+                    builder.AppendLine(string.Format("\t주문결과: {0}", response.Succeeded ? OrderState.done.ToDescriptionString() : response.FullMessage));
+                    builder.AppendLine($"\t비    고: {order.Remark}");
 
                     _logger.LogInformation(builder.ToString());
-
-                    if (result.Succeeded) { continue; }
-
-                    var failed = OriginalBidOrders.SingleOrDefault(f => f.market.Equals(order.market));
-
-                    if (failed is OrderPostParameterDto)
-                    {
-                        OriginalBidOrders.Remove(failed);
-                    }
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
+            }
+        }
+
+        private string GetPriceText(double price)
+        {
+            if (0 < price && price < 1)
+            {
+                return $"{price:N4}";
+            }
+            else if (1 < price && price < 100)
+            {
+                return $"{price:N2}";
+            }
+            else
+            {
+                return $"{price:N0}";
             }
         }
     }
