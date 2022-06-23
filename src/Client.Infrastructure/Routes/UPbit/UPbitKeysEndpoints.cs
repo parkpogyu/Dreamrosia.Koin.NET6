@@ -1,10 +1,17 @@
-﻿namespace Dreamrosia.Koin.Client.Infrastructure.Routes
+﻿using System;
+
+namespace Dreamrosia.Koin.Client.Infrastructure.Routes
 {
     public static class UPbitKeysEndpoints
     {
-        public static string GetByUserId(string userId)
+        public static string GetUPbitKey(string userId)
         {
             return $"api/upbitkeys/{userId}";
+        }
+
+        public static string GetUPbitKeys(DateTime head, DateTime rear)
+        {
+            return $"api/upbitkeys?head={head:d}&rear={rear:d}";
         }
 
         public static string UpdateUPbitKey(string userId)

@@ -28,7 +28,7 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
             _canEditUsers = (await _authorizationService.AuthorizeAsync(_user, Permissions.Users.Edit)).Succeeded;
 
             var userId = Id;
-            var result = await _userManager.GetAsync(userId);
+            var result = await _userManager.GetUserBriefAsync(userId);
 
             if (result.Succeeded)
             {
@@ -36,7 +36,7 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
 
                 if (user != null)
                 {
-                    var response = await _accountManager.GetRolesAsync(user.Id);
+                    var response = await _accountManager.GetRolesAsync(userId);
 
                     _items = response.Data.UserRoles;
                 }

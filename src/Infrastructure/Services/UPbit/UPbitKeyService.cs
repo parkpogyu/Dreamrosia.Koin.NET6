@@ -74,6 +74,44 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             }
         }
 
+        public async Task<IResult<IEnumerable<UPbitKeyDto>>> GetUPbitKeysAsync(DateTime head, DateTime rear)
+        {
+            try
+            {
+                var items = (from key in _context.UPbitKeys
+                                                 .AsNoTracking()
+                                                 .Where(f => head.Date <= f.CreatedOn && f.CreatedOn < rear.Date.AddDays(1))
+                                                 .Include(i => i.User)
+                                                 .AsEnumerable()
+                             from code in _context.UserLogins
+                                                  .AsNoTracking()
+                                                  .Where(f => f.UserId.Equals(key.Id))
+                                                  .AsEnumerable()
+                             orderby key.expire_at descending
+                             select ((Func<UPbitKeyDto>)(() =>
+                             {
+                                 var item = _mapper.Map<UPbitKeyDto>(key);
+
+                                 item.access_key = string.Empty;
+                                 item.secret_key = string.Empty;
+
+                                 item.User.UserCode = code?.ProviderKey;
+
+                                 return item;
+                             }))()).ToArray();
+
+                return await Result<IEnumerable<UPbitKeyDto>>.SuccessAsync(_mapper.Map<IEnumerable<UPbitKeyDto>>(items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return await Result<IEnumerable<UPbitKeyDto>>.FailAsync(_localizer["An unhandled error has occurred."]);
+            }
+        }
+
+
         public async Task<IResult> UpdateUPbitKeyAsync(UPbitKeyDto model)
         {
             try
@@ -194,7 +232,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                 }
                 else
                 {
-                    model.Messages.Add($"{_localizer["UPbitKey.Authenticated"]}:{accessKeys.Result.FullMessage}");
+                    model.Messages.Add($"{_localizer["UPbitKey.IsAuthenticated"]}:{accessKeys.Result.FullMessage}");
                 }
 
                 model.IsAllowedPositions = positions.Result.Succeeded;

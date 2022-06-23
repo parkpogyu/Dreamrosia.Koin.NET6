@@ -1,5 +1,7 @@
-﻿using Dreamrosia.Koin.Application.DTO;
+﻿using AutoMapper;
+using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Extensions;
+using Dreamrosia.Koin.Application.Mappings;
 using Dreamrosia.Koin.Domain.Enums;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -14,12 +16,14 @@ namespace Dreamrosia.Koin.Client.Pages.Market
         [Parameter] public string UserId { get; set; }
 
         private bool _loaded;
-        private IEnumerable<UserSummaryDto> _items = new List<UserSummaryDto>();
+        private IEnumerable<FollowerDto> _items = new List<FollowerDto>();
         private DateRange _dateRange { get; set; } = new DateRange();
         private DateRangeTerms _dateRangeTerm { get; set; } = DateRangeTerms._1W;
 
         protected override async Task OnInitializedAsync()
         {
+            _mapper = new MapperConfiguration(c => { c.AddProfile<UserProfile>(); }).CreateMapper();
+
             var now = DateTime.Now.Date;
 
             _dateRange.Start = now.GetBefore(_dateRangeTerm);
@@ -34,7 +38,7 @@ namespace Dreamrosia.Koin.Client.Pages.Market
         {
             var response = await _userManager.GetBoastersAsync(_dateRange.Start, _dateRange.End);
 
-            _items = response.Data ?? new List<UserSummaryDto>();
+            _items = _mapper.Map<IEnumerable<FollowerDto>>(response.Data);
 
             if (response.Succeeded) { return; }
 

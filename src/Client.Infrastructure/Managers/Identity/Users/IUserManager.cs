@@ -10,31 +10,20 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers.Identity.Users
     public interface IUserManager : IManager
     {
         Task<IResult<UserDto>> GetAsync(string userId);
-
-        Task<IResult<SubscriptionDto>> GetSubscriptionAsync(string userId);
-
-        Task<IResult<IEnumerable<UserSummaryDto>>> GetSummariesAsync(DateTime? head = null, DateTime? rear = null);
-
-        Task<IResult<IEnumerable<UserSummaryDto>>> GetFollowersAsync(string userId, DateTime? head = null, DateTime? rear = null);
-
-        Task<IResult<IEnumerable<UserSummaryDto>>> GetBoastersAsync(DateTime? head = null, DateTime? rear = null);
-
+        Task<IResult<UserBriefDto>> GetUserBriefAsync(string userId);
+        Task<IResult<UserFullInfoDto>> GetFullInfoAsync(string userId);
+        Task<IResult<IEnumerable<UserFullInfoDto>>> GetFullInfosAsync(DateTime? head, DateTime? rear);
+        Task<IResult<IEnumerable<FollowerDto>>> GetFollowersAsync(string userId, DateTime? head, DateTime? rear);
+        Task<IResult<IEnumerable<BoasterDto>>> GetBoastersAsync(DateTime? head, DateTime? rear);
         Task<IResult<UserDto>> GetRecommenderAsync(RecommenderDto model);
-
         Task<IResult> UpdateRecommenderAsync(RecommenderDto model);
-
+        Task<IResult<MembershipDto>> ChangeMembershipAsync(MembershipDto model);
         Task<IResult<UserDto>> GetAccountHolderAsync(string userCode);
 
-        Task<IResult<MembershipDto>> ChangeMembershipAsync(MembershipDto model);
-
         Task<IResult> UpdateProfileAsync(UpdateProfileRequest model);
-
         Task<IResult<UserDto>> GetProfileAsync(string userId);
-
         Task<IResult<string>> GetProfilePictureAsync(string userId);
-
         Task<IResult<string>> UpdateProfilePictureAsync(UpdateProfilePictureRequest request, string userId);
-
         Task<string> ExportToExcelAsync(string searchString = "");
     }
 }

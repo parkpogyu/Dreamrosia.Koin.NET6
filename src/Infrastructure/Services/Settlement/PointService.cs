@@ -44,8 +44,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                                           .AsNoTracking()
                                           .Include(i => i.Transaction)
                                           .Where(f => f.UserId.Equals(model.UserId) &&
-                                                      f.done_at >= model.HeadDate.Date &&
-                                                      f.done_at <= model.RearDate.Date.AddDays(1).AddSeconds(-1))
+                                                      model.HeadDate.Date <= f.done_at && f.done_at < model.RearDate.Date.AddDays(1))
                                           .OrderByDescending(o => o.done_at)
                                           .ToArrayAsync();
 

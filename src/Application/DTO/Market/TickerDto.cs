@@ -37,11 +37,7 @@ namespace Dreamrosia.Koin.Application.DTO
 
         public static string GetPriceText(double price)
         {
-            if (price == 0)
-            {
-                return $"{price:N0}";
-            }
-            else if (0 < price && price < 1)
+            if (0 < price && price < 1)
             {
                 return $"{price:N4}";
             }

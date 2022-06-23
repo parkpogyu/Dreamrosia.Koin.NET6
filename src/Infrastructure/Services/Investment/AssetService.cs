@@ -43,6 +43,14 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
             try
             {
+                var code = await _context.UserLogins
+                                         .AsNoTracking()
+                                         .SingleOrDefaultAsync(f => f.ProviderKey.Equals(userId));
+                if (code is not null)
+                {
+                    userId = code.UserId;
+                }
+
                 AssetReportDto report = new AssetReportDto();
 
                 var orders = _context.Orders

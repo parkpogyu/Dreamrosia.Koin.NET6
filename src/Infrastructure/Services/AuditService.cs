@@ -36,12 +36,12 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             _localizer = localizer;
         }
 
-        public async Task<IResult<IEnumerable<AuditResponse>>> GetUserAuditTrailsAsync(string userId, DateTime rear, DateTime head)
+        public async Task<IResult<IEnumerable<AuditResponse>>> GetUserAuditTrailsAsync(string userId, DateTime head, DateTime rear)
         {
             var trails = await _context.AuditTrails
                                        .AsNoTracking()
                                        .Where(f => (string.IsNullOrEmpty(userId) ? true : f.UserId == userId) &&
-                                                   rear.Date <= f.DateTime && f.DateTime <= head.Date.AddDays(1).AddSeconds(-1))
+                                                   head.Date <= f.DateTime && f.DateTime < rear.Date.AddDays(1))
                                        .Include(i => i.User)
                                        .OrderByDescending(o => o.DateTime)
                                        .ToArrayAsync();

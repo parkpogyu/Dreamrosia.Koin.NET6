@@ -10,9 +10,12 @@ namespace Dreamrosia.Koin.Infrastructure.Mappings
         public UserProfile()
         {
             CreateMap<UserResponse, BlazorHeroUser>().ReverseMap();
+            CreateMap<BlazorHeroUser, UserCardDto>();
+            CreateMap<BlazorHeroUser, UserBriefDto>();
             CreateMap<BlazorHeroUser, UserDto>();
-            CreateMap<BlazorHeroUser, UserSummaryDto>();
-            CreateMap<BlazorHeroUser, SubscriptionDto>();
+            CreateMap<BlazorHeroUser, BoasterDto>();
+            CreateMap<BlazorHeroUser, FollowerDto>();
+            CreateMap<BlazorHeroUser, UserFullInfoDto>();
         }
     }
 }

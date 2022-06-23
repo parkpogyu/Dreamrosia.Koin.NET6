@@ -8,7 +8,6 @@ namespace Dreamrosia.Koin.Application.Interfaces.Services
     public interface ICrixService
     {
         Task<IResult<IEnumerable<CrixDto>>> GetCrixesAsync();
-
         Task<IResult> SaveCrixesAsync(IEnumerable<CrixDto> models);
     }
 }

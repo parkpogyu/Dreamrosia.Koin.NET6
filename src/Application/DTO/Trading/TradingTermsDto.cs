@@ -55,6 +55,5 @@ namespace Dreamrosia.Koin.Application.DTO
         public UPbitKeyDto UPbitKey { get; set; }
 
         public IEnumerable<string> ChosenSymbols { get; set; } = new List<string>();
-
     }
 }

@@ -9,7 +9,6 @@ using Dreamrosia.Koin.Domain.Entities;
 using Dreamrosia.Koin.Infrastructure.Contexts;
 using Dreamrosia.Koin.Infrastructure.Models.Identity;
 using Dreamrosia.Koin.Infrastructure.Specifications;
-using Dreamrosia.Koin.Shared.Constants.Role;
 using Dreamrosia.Koin.Shared.Interfaces.Services;
 using Dreamrosia.Koin.Shared.Localization;
 using Dreamrosia.Koin.Shared.Wrapper;
@@ -92,11 +91,43 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
             }
         }
 
-        public async Task<IResult<SubscriptionDto>> GetSubscriptionAsync(string userId)
+        public async Task<IResult<UserBriefDto>> GetUserBriefAsync(string userId)
         {
             try
             {
-                var user = (from usr in _context.Users
+                var code = await _context.UserLogins
+                                                    .AsNoTracking()
+                                                    .SingleOrDefaultAsync(f => f.ProviderKey.Equals(userId));
+                if (code is not null)
+                {
+                    userId = code.UserId;
+                }
+
+                var item = await _context.Users
+                                         .AsNoTracking()
+                                         .SingleOrDefaultAsync(f => f.Id.Equals(userId));
+
+                if (item is null)
+                {
+                    return await Result<UserBriefDto>.FailAsync(_localizer["User Not Found!"]);
+                }
+
+                return await Result<UserBriefDto>.SuccessAsync(_mapper.Map<UserBriefDto>(item));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return await Result<UserBriefDto>.FailAsync(_localizer["An unhandled error has occurred."]);
+            }
+        }
+
+        public async Task<IResult<UserFullInfoDto>> GetFullInfoAsync(string userId)
+        {
+            try
+            {
+                var item = (from usr in _context.Users
                                                 .AsNoTracking()
                                                 .Where(f => f.Id.Equals(userId))
                                                 .Include(i => i.Subscription).ThenInclude(i => i.Recommender)
@@ -112,151 +143,193 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                                                     .AsNoTracking()
                                                     .Where(f => f.UserId.Equals(usr.Subscription.RecommenderId)).DefaultIfEmpty()
                                                     .AsEnumerable()
-                            select ((Func<SubscriptionDto>)(() =>
+                            select ((Func<UserFullInfoDto>)(() =>
                             {
-                                var item = _mapper.Map<SubscriptionDto>(usr);
+                                var item = _mapper.Map<UserFullInfoDto>(usr);
 
                                 item.UserCode = usrcode.ProviderKey;
-                                item.AutoTrading = usr.TradingTerms.AutoTrading;
-                                item.TimeFrame = usr.TradingTerms.TimeFrame;
-                                item.IsAssignedBot = usr.MiningBotTicket is null ? false : true;
 
                                 var membership = usr.Memberships.OrderByDescending(o => o.CreatedOn).First();
 
-                                item.Membership = _mapper.Map<MembershipDto>(membership);
+                                item.Subscription.Membership = _mapper.Map<MembershipDto>(membership);
+                                item.TradingTerms = _mapper.Map<TradingTermsDto>(usr.TradingTerms);
+                                item.MiningBotTicket = _mapper.Map<MiningBotTicketDto>(usr.MiningBotTicket);
+                                item.UPbitKey = _mapper.Map<UPbitKeyDto>(usr.UPbitKey);
 
-                                item.Recommender = _mapper.Map<UserDto>(usr.Subscription.Recommender);
-
-                                if (item.Recommender is not null)
+                                if (item.Subscription.Recommender is not null)
                                 {
-                                    item.Recommender.UserCode = reccode?.ProviderKey;
+                                    item.Subscription.Recommender.UserCode = reccode?.ProviderKey;
                                 }
+
+                                if (item.UPbitKey is not null)
+                                {
+                                    item.UPbitKey.access_key = string.Empty;
+                                    item.UPbitKey.secret_key = string.Empty;
+                                }
+
 
                                 return item;
                             }))()).SingleOrDefault();
 
-                if (user is null)
+                if (item is null)
                 {
-                    return await Result<SubscriptionDto>.FailAsync(_localizer["User Not Found!"]);
+                    return await Result<UserFullInfoDto>.FailAsync(_localizer["User Not Found!"]);
                 }
 
-                return await Result<SubscriptionDto>.SuccessAsync(user);
+                return await Result<UserFullInfoDto>.SuccessAsync(item);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<SubscriptionDto>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result<UserFullInfoDto>.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
 
-        private async Task<IEnumerable<UserSummaryDto>> GetUsersAsync(DateTime head, DateTime rear, string userId = null, bool? goBoast = null)
-        {
-            var user = await _userManager.FindByIdAsync(_currentUserService.UserId);
-            var isAdmin = await _userManager.IsInRoleAsync(user, RoleConstants.AdministratorRole);
-
-            var items = (from usr in _context.Users
-                                             .AsNoTracking()
-                                             .Include(i => i.Subscription)
-                                             .Include(i => i.Memberships)
-                                             .Include(i => i.MiningBotTicket)
-                                             .Include(i => i.TradingTerms)
-                                             .Where(f => (string.IsNullOrEmpty(userId) ? true : userId.Equals(f.Subscription.RecommenderId)) &&
-                                                         (head.Date <= f.CreatedOn && f.CreatedOn < rear.Date.AddDays(1)) &&
-                                                         (goBoast == null ? true : f.Subscription.GoBoast == goBoast))
-                                             .AsEnumerable()
-                         from ext in _context.UserLogins
-                                             .AsNoTracking()
-                                             .Where(f => f.UserId.Equals(usr.Id))
-                                             .AsEnumerable()
-                         orderby usr.CreatedOn descending
-                         select ((Func<UserSummaryDto>)(() =>
-                         {
-                             var item = _mapper.Map<UserSummaryDto>(usr);
-
-                             var membership = usr.Memberships.OrderByDescending(o => o.CreatedOn).First();
-
-                             item.UserCode = ext.ProviderKey;
-                             item.MembershipLevel = membership.Level;
-                             item.MaximumAsset = isAdmin ? membership.MaximumAsset : 0;
-                             item.DailyDeductionPoint = isAdmin ? membership.DailyDeductionPoint : 0;
-
-                             item.AutoTrading = usr.TradingTerms.AutoTrading;
-                             item.TimeFrame = usr.TradingTerms.TimeFrame;
-                             item.IsAssignedBot = usr.MiningBotTicket is null ? false : true;
-
-                             return item;
-                         }))()).ToArray();
-
-            return items;
-        }
-
-        public async Task<IResult<IEnumerable<UserSummaryDto>>> GetSummariesAsync(DateTime head, DateTime rear)
+        public async Task<IResult<IEnumerable<UserFullInfoDto>>> GetFullInfosAsync(DateTime head, DateTime rear)
         {
             try
             {
-                var items = await GetUsersAsync(head, rear);
+                var items = (from usr in _context.Users
+                                                 .AsNoTracking()
+                                                 .Where(f => head.Date <= f.CreatedOn && f.CreatedOn < rear.Date.AddDays(1))
+                                                 .Include(i => i.Subscription).ThenInclude(i => i.Recommender)
+                                                 .Include(i => i.Memberships)
+                                                 .Include(i => i.MiningBotTicket)
+                                                 .Include(i => i.TradingTerms)
+                                                 .Include(i => i.UPbitKey)
+                                                 .AsEnumerable()
+                             from ext in _context.UserLogins
+                                                 .AsNoTracking()
+                                                 .Where(f => f.UserId.Equals(usr.Id))
+                                                 .AsEnumerable()
+                             orderby usr.CreatedOn descending
+                             select ((Func<UserFullInfoDto>)(() =>
+                             {
+                                 var item = _mapper.Map<UserFullInfoDto>(usr);
 
-                var currentUser = await _userManager.FindByIdAsync(_currentUserService.UserId);
+                                 var membership = usr.Memberships.OrderByDescending(o => o.CreatedOn).First();
 
-                var isAdmin = await _userManager.IsInRoleAsync(currentUser, RoleConstants.AdministratorRole);
+                                 item.UserCode = ext.ProviderKey;
 
-                if (isAdmin)
+                                 item.Subscription.Membership = _mapper.Map<MembershipDto>(membership);
+                                 item.TradingTerms = _mapper.Map<TradingTermsDto>(usr.TradingTerms);
+                                 item.MiningBotTicket = _mapper.Map<MiningBotTicketDto>(usr.MiningBotTicket);
+                                 item.UPbitKey = _mapper.Map<UPbitKeyDto>(usr.UPbitKey);
+
+                                 if (item.UPbitKey is not null)
+                                 {
+                                     item.UPbitKey.access_key = string.Empty;
+                                     item.UPbitKey.secret_key = string.Empty;
+                                 }
+
+                                 return item;
+                             }))()).ToArray();
+
+                foreach (var item in items)
                 {
-                    foreach (var item in items)
-                    {
-                        var roles = await _accountService.GetRolesAsync(item.Id);
+                    var roles = await _accountService.GetRolesAsync(item.TradingTerms.UserId);
 
-                        if (roles.Succeeded)
-                        {
-                            item.RolesDescription = string.Join(",", roles.Data
-                                                                          .UserRoles
-                                                                          .Where(f => f.Selected)
-                                                                          .Select(f => f.RoleName));
-                        }
+                    if (roles.Succeeded)
+                    {
+                        item.RolesDescription = string.Join(",", roles.Data
+                                                                      .UserRoles
+                                                                      .Where(f => f.Selected)
+                                                                      .Select(f => f.RoleName));
                     }
                 }
 
-                return await Result<IEnumerable<UserSummaryDto>>.SuccessAsync(items);
+                return await Result<IEnumerable<UserFullInfoDto>>.SuccessAsync(items);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<IEnumerable<UserSummaryDto>>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result<IEnumerable<UserFullInfoDto>>.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
 
-        public async Task<IResult<IEnumerable<UserSummaryDto>>> GetFollowersAsync(string userId, DateTime head, DateTime rear)
+        public async Task<IResult<IEnumerable<FollowerDto>>> GetFollowersAsync(string userId, DateTime head, DateTime rear)
         {
             try
             {
-                var items = await GetUsersAsync(head, rear, userId);
+                var items = (from usr in _context.Users
+                                                 .AsNoTracking()
+                                                 .Include(i => i.Subscription).ThenInclude(i => i.Recommender)
+                                                 .Include(i => i.Memberships)
+                                                 .Include(i => i.TradingTerms)
+                                                 .Include(i => i.MiningBotTicket)
+                                                 .Where(f => userId.Equals(f.Subscription.RecommenderId) &&
+                                                            (head.Date <= f.CreatedOn && f.CreatedOn < rear.Date.AddDays(1)))
+                                                 .AsEnumerable()
+                             from ext in _context.UserLogins
+                                                 .AsNoTracking()
+                                                 .Where(f => f.UserId.Equals(usr.Id))
+                                                 .AsEnumerable()
+                             orderby usr.CreatedOn descending
+                             select ((Func<FollowerDto>)(() =>
+                             {
+                                 var item = _mapper.Map<FollowerDto>(usr);
 
-                return await Result<IEnumerable<UserSummaryDto>>.SuccessAsync(items);
+                                 var membership = usr.Memberships.OrderByDescending(o => o.CreatedOn).First();
+
+                                 item.UserCode = ext.ProviderKey;
+                                 item.MembershipLevel = membership.Level;
+                                 item.TimeFrame = usr.TradingTerms.TimeFrame;
+                                 item.AutoTrading = usr.TradingTerms.AutoTrading;
+                                 item.IsAssignedBot = usr.MiningBotTicket is null ? false : true;
+
+                                 return item;
+                             }))()).ToArray();
+
+                return await Result<IEnumerable<FollowerDto>>.SuccessAsync(items);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<IEnumerable<UserSummaryDto>>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result<IEnumerable<FollowerDto>>.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
 
-        public async Task<IResult<IEnumerable<UserSummaryDto>>> GetBoastersAsync(DateTime head, DateTime rear)
+        public async Task<IResult<IEnumerable<BoasterDto>>> GetBoastersAsync(DateTime head, DateTime rear)
         {
             try
             {
-                var items = await GetUsersAsync(head, rear, null, true);
+                var items = (from usr in _context.Users
+                                                 .AsNoTracking()
+                                                 .Include(i => i.Subscription)
+                                                 .Include(i => i.Memberships)
+                                                 .Include(i => i.TradingTerms)
+                                                 .Where(f => (head.Date <= f.CreatedOn && f.CreatedOn < rear.Date.AddDays(1)) &&
+                                                             f.Subscription.GoBoast)
+                                                 .AsEnumerable()
+                             from ext in _context.UserLogins
+                                                 .AsNoTracking()
+                                                 .Where(f => f.UserId.Equals(usr.Id))
+                                                 .AsEnumerable()
+                             orderby usr.CreatedOn descending
+                             select ((Func<BoasterDto>)(() =>
+                             {
+                                 var item = _mapper.Map<BoasterDto>(usr);
 
-                return await Result<IEnumerable<UserSummaryDto>>.SuccessAsync(items);
+                                 var membership = usr.Memberships.OrderByDescending(o => o.CreatedOn).First();
+
+                                 item.UserCode = ext.ProviderKey;
+                                 item.MembershipLevel = membership.Level;
+                                 item.TimeFrame = usr.TradingTerms.TimeFrame;
+
+                                 return item;
+                             }))()).ToArray();
+
+                return await Result<IEnumerable<BoasterDto>>.SuccessAsync(items);
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<IEnumerable<UserSummaryDto>>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result<IEnumerable<BoasterDto>>.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
 

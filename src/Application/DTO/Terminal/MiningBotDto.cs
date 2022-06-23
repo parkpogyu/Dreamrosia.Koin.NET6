@@ -10,10 +10,6 @@ namespace Dreamrosia.Koin.Application.DTO
     {
         public string Id { get; set; }
 
-        public string Ticket { get; set; }
-
-        public string UserId { get; set; }
-
         public string MachineName { get; set; }
 
         public string Version { get; set; }
@@ -42,11 +38,5 @@ namespace Dreamrosia.Koin.Application.DTO
 
         [JsonIgnore]
         public TimeSpan? Elapsed => Touched is null ? null : DateTime.Now.Subtract(Convert.ToDateTime(Touched));
-
-        #region User
-        public string NickName { get; set; }
-
-        public string ProfileImage { get; set; }
-        #endregion
     }
 }

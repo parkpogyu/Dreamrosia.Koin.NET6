@@ -17,9 +17,11 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers.Audit
             _httpClient = httpClient;
         }
 
-        public async Task<IResult<IEnumerable<AuditResponse>>> GetUserAuditTrailsAsync(string userId, DateTime head, DateTime rear)
+        public async Task<IResult<IEnumerable<AuditResponse>>> GetUserAuditTrailsAsync(string userId, DateTime? head, DateTime? rear)
         {
-            var response = await _httpClient.GetAsync(Routes.AuditEndpoints.GetUserAuditTrails(userId, head, rear));
+            var response = await _httpClient.GetAsync(Routes.AuditEndpoints.GetUserAuditTrails(userId,
+                                                                                               Convert.ToDateTime(head),
+                                                                                               Convert.ToDateTime(rear)));
 
             var data = await response.ToResult<IEnumerable<AuditResponse>>();
 

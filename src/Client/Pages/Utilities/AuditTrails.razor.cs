@@ -120,8 +120,8 @@ namespace Dreamrosia.Koin.Client.Pages.Utilities
         private async Task GetAuditTrailsAsync()
         {
             var response = await AuditManager.GetUserAuditTrailsAsync(_chkIsAllUser ? null : _userId,
-                                                                      Convert.ToDateTime(_dateRange.Start),
-                                                                      Convert.ToDateTime(_dateRange.End));
+                                                                      _dateRange.Start,
+                                                                      _dateRange.End);
 
             if (response.Succeeded)
             {

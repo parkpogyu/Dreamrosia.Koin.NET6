@@ -10,7 +10,7 @@
 </style>
 
 <div id="@_divTableId">
-    <MudTable T="UserSummaryDto"
+    <MudTable T="UserFullInfoDto"
               @ref="_table"
               OnRowClick="RowClickEvent"
               Items="@_items"
@@ -18,7 +18,7 @@
               Hover="true" Dense="true" Bordered="true" Striped="true"
               FixedHeader="true" FixedFooter="true"
               RowsPerPage="@TablePager.DefaultPageSize"
-              Filter="new Func<UserSummaryDto, bool>(Search)"
+              Filter="new Func<UserFullInfoDto, bool>(Search)"
               Height="@_divTableHeight">
         <ToolBarContent>
             <div class="flex-x-scroll-container pa-2" style="width:100%">
@@ -39,15 +39,12 @@
                     }
                 </MudSelect>
 
-                @if (TableMode != UserTableMode.Boast)
-                {
-                    <MudCheckBox T="bool?" TriState="true"
+                <MudCheckBox T="bool?" TriState="true"
                              Label="@_localizer["Trading.AutoTrading"]"
                              Checked="@_chkIsAutoTrading"
                              CheckedChanged="@((value) => CheckAutoTradingChanged(value))"
                              Color="MudBlazor.Color.Primary"
                              Class="auto-min-width align-self-end ml-4 mb-n2" />
-                }
                 <MudSelect T="string"
                            Label="@_localizer["TimeFrames"]"
                            MultiSelection="true" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetSelectionText))"
@@ -62,15 +59,12 @@
                     <MudSelectItem T="string" Value="@(TimeFrames.Week.ToDescriptionString())">@(TimeFrames.Week.ToDescriptionString())</MudSelectItem>
                 </MudSelect>
 
-                @if (TableMode != UserTableMode.Boast)
-                {
-                    <MudCheckBox T="bool?" TriState="true"
+                <MudCheckBox T="bool?" TriState="true"
                              Label="@_localizer["User.IsAssignedBot"]"
                              Checked="@_chkIsAssignedBot"
                              CheckedChanged="@((value) => CheckAssignedBotChanged(value))"
                              Color="MudBlazor.Color.Primary"
                              Class="auto-min-width align-self-end ml-4 mb-n2" />
-                }
                 <MudTextField @bind-Value="@_searchString"
                               Immediate="false"
                               FullWidth=false
@@ -80,60 +74,20 @@
             </div>
         </ToolBarContent>
         <HeaderContent>
-            <MudTh>
-                <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.UserCode)">@_localizer["Subscription.UserCode"]</MudTableSortLabel>
-            </MudTh>
-            <MudTh>
-                <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.NickName)">@_localizer["User.NickName"]</MudTableSortLabel>
-            </MudTh>
-            @if (TableMode != UserTableMode.Boast)
-            {
-                <MudTh>
-                    <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.Email)">@_localizer["User.Email"]</MudTableSortLabel>
-                </MudTh>
-                <MudTh>
-                    <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.PhoneNumber)">@_localizer["User.PhoneNumber"]</MudTableSortLabel>
-                </MudTh>
-            }
-            <MudTh>
-                <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.CreatedOn)">@_localizer["User.SignupDate"]</MudTableSortLabel>
-            </MudTh>
-            <MudTh>
-                <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.MembershipLevel)">@_localizer["Membership.Level"]</MudTableSortLabel>
-            </MudTh>
-            @if (TableMode == UserTableMode.Admin)
-            {
-                <MudTh>
-                    <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.MaximumAsset)">@_localizer["Membership.MaximumAsset"]</MudTableSortLabel>
-                </MudTh>
-            }
-            @if (TableMode != UserTableMode.Boast)
-            {
-                <MudTh>
-                    <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.AutoTrading)">@_localizer["Trading.AutoTrading"]</MudTableSortLabel>
-                </MudTh>
-            }
-            <MudTh>
-                <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.TimeFrame)">@_localizer["TimeFrames"]</MudTableSortLabel>
-            </MudTh>
-            @if (TableMode != UserTableMode.Boast)
-            {
-                <MudTh>
-                    <MudTableSortLabel SortBy="new Func<UserSummaryDto, object>(x => x.IsAssignedBot)">@_localizer["User.IsAssignedBot"]</MudTableSortLabel>
-                </MudTh>
-            }
-            @if (TableMode == UserTableMode.Admin)
-            {
-                <MudTh>@_localizer["Roles"]</MudTh>
-            }
-            else
-            {
-                <MudTh>@_localizer["Assets"]</MudTh>
-            }
+            <MudTh> @_localizer["Subscription.UserCode"] </MudTh>
+            <MudTh> @_localizer["User.NickName"] </MudTh>
+            <MudTh> @_localizer["User.Email"] </MudTh>
+            <MudTh> @_localizer["User.PhoneNumber"] </MudTh>
+            <MudTh> @_localizer["User.SignupDate"] </MudTh>
+            <MudTh> @_localizer["Membership.Level"] </MudTh>
+            <MudTh> @_localizer["Trading.AutoTrading"] </MudTh>
+            <MudTh> @_localizer["TimeFrames"] </MudTh>
+            <MudTh> @_localizer["User.IsAssignedBot"] </MudTh>
+            <MudTh>@_localizer["Roles"]</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel=@_localizer["Subscription.UserCode"]  Style="text-align:center">
-                <MudHighlighter Text="@context.UserCode" HighlightedText="@_searchString"/>
+            <MudTd DataLabel=@_localizer["Subscription.UserCode"] Style="text-align:center">
+                <MudHighlighter Text="@context.UserCode" HighlightedText="@_searchString" />
             </MudTd>
             <MudTd DataLabel=@_localizer["User.NickName"]>
                 <div class="d-flex justify-start align-center pl-1">
@@ -141,26 +95,19 @@
                     <MudHighlighter Text="@context.NickName" HighlightedText="@_searchString" />
                 </div>
             </MudTd>
-            @if (TableMode != UserTableMode.Boast)
-            {
-                <MudTd DataLabel=@_localizer["User.Email"]>
-                    <MudHighlighter Text="@context.Email" HighlightedText="@_searchString" />
-                </MudTd>
-                <MudTd DataLabel=@_localizer["User.PhoneNumber"]>
-                    <MudHighlighter Text="@context.PhoneNumber" HighlightedText="@_searchString" />
-                </MudTd>
-            }
+            <MudTd DataLabel=@_localizer["User.Email"]>
+                <MudHighlighter Text="@context.Email" HighlightedText="@_searchString" />
+            </MudTd>
+            <MudTd DataLabel=@_localizer["User.PhoneNumber"]>
+                <MudHighlighter Text="@context.PhoneNumber" HighlightedText="@_searchString" />
+            </MudTd>
             <MudTd DataLabel=@_localizer["User.SignupDate"] Style="text-align:center">
                 @($"{context.CreatedOn:d}")
             </MudTd>
 
-            @*<MudTd DataLabel=@_localizer["User.Duration"] Style="text-align:right">
-                @($"{DateTime.Now.Subtract(context.Subscription.CreatedOn).TotalDays + .5D:N0}")
-                </MudTd>*@
-
             <MudTd DataLabel=@_localizer["Membership.Level"] Style="text-align:center">
                 @{
-                    var level = context.MembershipLevel;
+                    var level = context.Subscription.Membership.Level;
 
                     if (level == MembershipLevel.Free)
                     {
@@ -176,50 +123,25 @@
                     }
                 }
             </MudTd>
-            @if (TableMode == UserTableMode.Admin)
-            {
-                <MudTd DataLabel=@_localizer["Membership.MaximumAsset"] Style="text-align:right">
-                    @($"{context.MaximumAsset:N0}")
-                </MudTd>
-            }
-            @if (TableMode != UserTableMode.Boast)
-            {
-                <MudTd DataLabel=@_localizer["Trading.AutoTrading"] Style="text-align:center">
-                    <div class="mb-n2">
-                        <MudCheckBox Checked="@context.AutoTrading" ReadOnly></MudCheckBox>
-                    </div>
-                </MudTd>
-            }
-            <MudTd DataLabel=@_localizer["TimeFrames"] Style="text-align:center">
-                @(context.TimeFrame.ToDescriptionString())
+            <MudTd DataLabel=@_localizer["Trading.AutoTrading"] Style="text-align:center">
+                @if (context.TradingTerms.AutoTrading)
+                {
+                    <MudIcon Icon="@Icons.Filled.Check" Size="Size.Small" />
+                }
             </MudTd>
-            @if (TableMode != UserTableMode.Boast)
-            {
-                <MudTd DataLabel=@_localizer["User.IsAssignedBot"] Style="text-align:center">
-                    <div class="mb-n2">
-                        <MudCheckBox Checked="@context.IsAssignedBot" ReadOnly></MudCheckBox>
-                    </div>
-                </MudTd>
-            }
+            <MudTd DataLabel=@_localizer["TimeFrames"] Style="text-align:center">
+                @(context.TradingTerms.TimeFrame.ToDescriptionString())
+            </MudTd>
+            <MudTd DataLabel=@_localizer["User.IsAssignedBot"] Style="text-align:center">
+                @if (context.MiningBotTicket is not null)
+                {
+                    <MudIcon Icon="@Icons.Filled.Check" Size="Size.Small" />
+                }
+            </MudTd>
 
-            @if (TableMode == UserTableMode.Admin)
-            {
-                <MudTd DataLabel=@_localizer["Roles"]>
-                    @(context.RolesDescription)
-                </MudTd>
-            }
-            else
-            {
-                <MudTd DataLabel=@_localizer["Assets"] Style="text-align:center">
-                    <MudButton DisableElevation
-                           OnClick="(() => NavigateToAssets(context.Id))"
-                           Variant="Variant.Filled"
-                           Color="MudBlazor.Color.Info"
-                           Size="Size.Small">
-                        @_localizer["Shortcut"]
-                    </MudButton>
-                </MudTd>
-            }
+            <MudTd DataLabel=@_localizer["Roles"]>
+                @(context.RolesDescription)
+            </MudTd>
         </RowTemplate>
         <ChildRowContent>
             @if (context.ShowDetails)
@@ -227,7 +149,7 @@
                 <MudTr>
                     <td colspan="12">
                         <div class="flex-x-scroll-container pa-2 justify-center" style="width:100%">
-                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToProfile(context.Id))">@_localizer["Subscriptions"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToSubscription(context.Id))">@_localizer["Subscriptions"]</MudButton>
                             <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToPositions(context.Id))">@_localizer["Positions"]</MudButton>
                             <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToOrders(context.Id))">@_localizer["Orders"]</MudButton>
                             <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToTransfers(context.Id))">@_localizer["Transfers"]</MudButton>
@@ -237,6 +159,195 @@
                             <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToFollowers(context.Id))">@_localizer["Follower"]</MudButton>
                             <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1 mr-1" OnClick="@(() => NavigateToMangeRoles(context.Id, context.Email))">@_localizer["Manage Roles"]</MudButton>
                         </div>
+                    </td>
+                </MudTr>
+                <MudTr>
+                    <td colspan="12" class="pa-2">
+                        <MudTabs Elevation="25"
+                             Color="MudBlazor.Color.Transparent"
+                             Rounded="true"
+                             PanelClass="mt-1">
+
+                            <MudTabPanel Text="@_localizer["Subscriptions"]">
+                                <MudSimpleTable Hover="true" Dense="true" Striped="true" Bordered="true">
+                                    <thead>
+                                        <tr>
+                                            <th>@_localizer["Membership.Level"]</th>
+                                            <th>@_localizer["Membership.CommissionRate"]</th>
+                                            <th>@_localizer["Membership.DailyDeductionPoint"]</th>
+                                            <th>@_localizer["Membership.MaximumAsset"]</th>
+                                            <th>@_localizer["Subscription.GoBoast"]</th>
+                                            <th>@_localizer["Subscription.Recommender"]</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="text-align:center">
+                                                @{
+                                                    var level = context.Subscription.Membership.Level;
+                                                    if (level == MembershipLevel.Free)
+                                                    {
+                                                        <MudText Typo="Typo.body2" Class="winter"> @(level.ToDescriptionString()) </MudText>
+                                                    }
+                                                    else if (level == MembershipLevel.Basic)
+                                                    {
+                                                        <MudText Typo="Typo.body2" Class="spring"> @(level.ToDescriptionString()) </MudText>
+                                                    }
+                                                    else if (level == MembershipLevel.Advanced)
+                                                    {
+                                                        <MudText Typo="Typo.body2" Class="summer"> @(level.ToDescriptionString()) </MudText>
+                                                    }
+                                                }
+                                            </td>
+                                            <td style="text-align:right">
+                                                @($"{context.Subscription.Membership.CommissionRate:N2}")
+                                            </td>
+                                            <td style="text-align:right">
+                                                @($"{context.Subscription.Membership.DailyDeductionPoint:N0}")
+                                            </td>
+                                            <td style="text-align:right">
+                                                @($"{context.Subscription.Membership.MaximumAsset:N0}")
+                                            </td>
+                                            <td style="text-align:center">
+                                                @if (context.Subscription.GoBoast)
+                                                {
+                                                    <MudIcon Icon="@Icons.Filled.Check" Size="Size.Small" />
+                                                }
+                                            </td>
+                                            <td style="text-align:center">
+
+                                                <div class="d-flex justify-start align-center pl-1">
+                                                    <UserAvatar Image="@context.Subscription.Recommender?.ProfileImage" />
+                                                    <MudText Typo="Typo.body2">@context.Subscription.Recommender?.NickName</MudText>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </MudSimpleTable>
+                            </MudTabPanel>
+
+                            <MudTabPanel Text="@_localizer["TradingTerms"]">
+                                <MudSimpleTable Hover="true" Dense="true" Striped="true" Bordered="true">
+                                    <thead>
+                                        <tr>
+                                            <th>@_localizer["AskTerms.UseTakeProfit"]</th>
+                                            <th>@_localizer["AskTerms.TakeProfit"]</th>
+                                            <th>@_localizer["AskTerms.UseStopLoss"]</th>
+                                            <th>@_localizer["AskTerms.StopLoss"]</th>
+                                            <th>@_localizer["AskTerms.LiquidatePositions"]</th>
+                                            <th>@_localizer["BidTerms.AmountOption"]</th>
+                                            @if (context.TradingTerms.AmountOption == BidAmountOption.Fixed)
+                                            {
+                                                <th>@_localizer["BidTerms.Amount"]</th>
+                                            }
+                                            else
+                                            {
+                                                @if (context.TradingTerms.AmountOption == BidAmountOption.Manual)
+                                                {
+                                                    <th>@_localizer["BidTerms.AmountRate"]</th>
+                                                }
+                                                <th>@_localizer["BidTerms.Minimum"]</th>
+                                                <th>@_localizer["BidTerms.Maximum"]</th>
+                                            }
+                                            <th>@_localizer["Trading.AutoTrading"]</th>
+                                            <th>@_localizer["TimeFrames"]</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="text-align:center">
+                                                @if (context.TradingTerms.UseTakeProfit)
+                                                {
+                                                    <MudIcon Icon="@Icons.Filled.Check" Size="Size.Small" />
+                                                }
+                                            </td>
+                                            <td style="text-align:right">
+                                                @if (context.TradingTerms.UseTakeProfit)
+                                                {
+                                                    @($"{context.TradingTerms.TakeProfit:N2}")
+                                                }
+                                            </td>
+                                            <td style="text-align:center">
+                                                @if (context.TradingTerms.UseStopLoss)
+                                                {
+                                                    <MudIcon Icon="@Icons.Filled.Check" Size="Size.Small" />
+                                                }
+                                            </td>
+                                            <td style="text-align:right">
+                                                @if (context.TradingTerms.UseStopLoss)
+                                                {
+                                                    @($"{context.TradingTerms.StopLoss:N2}")
+                                                }
+                                            </td>
+                                            <td style="text-align:center">
+                                                @if (context.TradingTerms.LiquidatePositions)
+                                                {
+                                                    <MudIcon Icon="@Icons.Filled.Check" Size="Size.Small" />
+                                                }
+                                            </td>
+                                            <td style="text-align:center">
+                                                @($"{context.TradingTerms.AmountOption.ToDescriptionString()}")
+                                            </td>
+
+                                            @if (context.TradingTerms.AmountOption == BidAmountOption.Fixed)
+                                            {
+                                                <td style="text-align:right">
+                                                    @($"{context.TradingTerms.Amount:N0}")
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                @if (context.TradingTerms.AmountOption == BidAmountOption.Manual)
+                                                {
+                                                    <td style="text-align:right">
+                                                        @($"{context.TradingTerms.AmountRate:N2}")
+                                                    </td>
+                                                }
+                                                <td style="text-align:right">
+                                                    @($"{context.TradingTerms.Minimum:N0}")
+                                                </td>
+                                                <td style="text-align:right">
+                                                    @($"{context.TradingTerms.Maximum:N0}")
+                                                </td>
+                                            }
+                                            <td style="text-align:center">
+                                                @if (context.TradingTerms.AutoTrading)
+                                                {
+                                                    <MudIcon Icon="@Icons.Filled.Check" Size="Size.Small" />
+                                                }
+                                            </td>
+                                            <td style="text-align:center">
+                                                @($"{context.TradingTerms.TimeFrame.ToDescriptionString()}")
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </MudSimpleTable>
+                            </MudTabPanel>
+
+                            @if (context.UPbitKey is not null)
+                            {
+                                <MudTabPanel Text="@_localizer["UPbit.AuthKey"]">
+                                    <MudSimpleTable Hover="true" Dense="true" Striped="true" Bordered="true">
+                                        <thead>
+                                            <tr>
+                                                <th>@_localizer["UPbitKey.expire_at"]</th>
+                                                <th>@_localizer["UPbitKey.FatalError"]</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="text-align:center">
+                                                    @($"{context.UPbitKey.expire_at:g}")
+                                                </td>
+                                                <td style="text-align:center">
+                                                    @($"{context.UPbitKey.FatalError}")
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </MudSimpleTable>
+                                </MudTabPanel>
+                            }
+                        </MudTabs>
                     </td>
                 </MudTr>
             }

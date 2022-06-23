@@ -2,10 +2,12 @@
 using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Interfaces.Services;
 using Dreamrosia.Koin.Shared.Constants.Permission;
+using Dreamrosia.Koin.Shared.Constants.Role;
 using Dreamrosia.Koin.Shared.Wrapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -28,9 +30,18 @@ namespace Dreamrosia.Koin.Server.Controllers
 
         [Authorize(Policy = Permissions.UPbitKeys.View)]
         [HttpGet("{userId}")]
-        public async Task<IActionResult> GetUPbitKeyByUserId(string userId)
+        public async Task<IActionResult> GetUPbitKey(string userId)
         {
             var response = await _upbitKeyService.GetUPbitKeyAsync(userId);
+
+            return Ok(response);
+        }
+
+        [Authorize(Roles = RoleConstants.AdministratorRole)]
+        [HttpGet]
+        public async Task<IActionResult> GetUPbitKeys(DateTime head, DateTime rear)
+        {
+            var response = await _upbitKeyService.GetUPbitKeysAsync(head, rear);
 
             return Ok(response);
         }

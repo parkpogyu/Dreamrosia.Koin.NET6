@@ -16,7 +16,7 @@ namespace Dreamrosia.Koin.Client.Pages.Terminal
     {
         [Inject] private IMiningBotManager MiningBotManager { get; set; }
 
-        private IEnumerable<MiningBotDto> _items { get; set; } = new List<MiningBotDto>();
+        private IEnumerable<MiningBotTicketDto> _items { get; set; } = new List<MiningBotTicketDto>();
 
         private bool _loaded;
         private string _searchString = "";
@@ -27,11 +27,11 @@ namespace Dreamrosia.Koin.Client.Pages.Terminal
 
         protected override async Task OnInitializedAsync()
         {
-            await GetMiningBotsAsync();
+            await GetMiningBotTicketsAsync();
 
             _timer = new System.Threading.Timer(async (object? stateInfo) =>
             {
-                await GetMiningBotsAsync();
+                await GetMiningBotTicketsAsync();
 
                 StateHasChanged(); // NOTE: MUST CALL StateHasChanged() BECAUSE THIS IS TRIGGERED BY A TIMER INSTEAD OF A USER EVENT
 
@@ -85,11 +85,11 @@ namespace Dreamrosia.Koin.Client.Pages.Terminal
             StateHasChanged();
         }
 
-        private async Task GetMiningBotsAsync()
+        private async Task GetMiningBotTicketsAsync()
         {
-            var response = await MiningBotManager.GetMiningBotsAsync();
+            var response = await MiningBotManager.GetMiningBotTicketsAsync();
 
-            _items = response.Data ?? new List<MiningBotDto>();
+            _items = response.Data ?? new List<MiningBotTicketDto>();
 
             if (response.Succeeded) { return; }
 
@@ -99,16 +99,16 @@ namespace Dreamrosia.Koin.Client.Pages.Terminal
             }
         }
 
-        private bool Search(MiningBotDto item)
+        private bool Search(MiningBotTicketDto item)
         {
             if (string.IsNullOrWhiteSpace(_searchString)) return true;
 
-            return (item.Ticket?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true ||
-                    item.Id?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true ||
-                    item.NickName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true ||
-                    item.MachineName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true ||
-                    item.Version?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true ||
-                    item.CurrentDirectory?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true) ? true : false;
+            return (item.Id?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true ||
+                    item.MiningBot?.Id.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true ||
+                    item.MiningBot?.MachineName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true ||
+                    item.MiningBot?.Version?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true ||
+                    item.MiningBot?.CurrentDirectory?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true ||
+                    item.User?.NickName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true) ? true : false;
         }
 
         private void OnWindowResized(object sender, BrowserWindowSize e)

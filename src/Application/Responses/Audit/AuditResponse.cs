@@ -1,5 +1,4 @@
 ﻿using Dreamrosia.Koin.Application.DTO;
-using Dreamrosia.Koin.Application.Responses.Identity;
 using System;
 
 namespace Dreamrosia.Koin.Application.Responses.Audit
@@ -16,6 +15,6 @@ namespace Dreamrosia.Koin.Application.Responses.Audit
         public string AffectedColumns { get; set; }
         public string PrimaryKey { get; set; }
 
-        public UserDto User { get; set; }
+        public UserCardDto User { get; set; }
     }
 }

@@ -1,0 +1,115 @@
+﻿@page "/upbitkeys"
+@attribute [Authorize(Roles = RoleConstants.AdministratorRole)]
+@using Dreamrosia.Koin.Application.DTO
+@using Dreamrosia.Koin.Application.Extensions
+@using Dreamrosia.Koin.Client.Shared.Components
+@using Dreamrosia.Koin.Shared.Enums
+
+<style>
+    .mud-toolbar {
+        height: auto;
+    }
+</style>
+
+<PageMenuTitle Menus="@(new []
+{
+    $"{_localizer["Administrator"]}",
+    $"{_localizer["UPbit.AuthKey"]}",
+})" />
+
+@if (!_loaded)
+{
+    <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudPaper Elevation="25" Class="flex-x-scroll-container pa-2 mb-1 ">
+        <FullSpacer />
+        <DateRangePicker DateRange="_dateRange"
+                     SelectedTerm="_dateRangeTerm"
+                     SelectedTermChanged="SelectedTermChanged" />
+
+        <MudButton DisableElevation
+               OnClick="GetUPbitKeysAsync"
+               Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface"
+               Color="MudBlazor.Color.Primary"
+               Size="Size.Small"
+               Class="align-self-end-button ml-4">
+            @_localizer["Reload"]
+        </MudButton>
+    </MudPaper>
+
+    <div id="@_divTableId">
+        <MudTable Items="@_items"
+              Elevation="25"
+              Hover="true" Dense="true" Bordered="true" Striped="true"
+              FixedHeader="true" FixedFooter="true"
+              RowsPerPage="@TablePager.DefaultPageSize"
+              Filter="new Func<UPbitKeyDto, bool>(Search)"
+              Height="@_divTableHeight">
+            <ToolBarContent>
+                <div class="flex-x-scroll-container pa-2" style="width:100%">
+                    <FullSpacer />
+
+                    <MudCheckBox T="bool?" TriState="true"
+                             Label="@_localizer["UPbitKey.IsOccurredFatalError"]"
+                             Checked="@_isOccurredFatalError"
+                             CheckedChanged="@((value) => CheckAssignedBotChanged(value))"
+                             Color="MudBlazor.Color.Primary"
+                             Class="auto-min-width align-self-end ml-4 mb-n2" />
+
+                    <MudTextField @bind-Value="@_searchString"
+                              Immediate="false"
+                              FullWidth="false"
+                              Placeholder="@_localizer["Search"]"
+                              Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small"
+                              Class="ml-4 search-box" />
+                </div>
+            </ToolBarContent>
+            <HeaderContent>
+
+                <MudTh> @_localizer["Subscription.UserCode"] </MudTh>
+                <MudTh> @_localizer["User.NickName"] </MudTh>
+                <MudTh> @_localizer["User.Email"] </MudTh>
+                <MudTh> @_localizer["User.PhoneNumber"] </MudTh>
+                <MudTh> @_localizer["User.SignupDate"]</MudTh>
+                <MudTh> @_localizer["UPbitKey.expire_at"] </MudTh>
+                <MudTh> @_localizer["UPbitKey.FatalError"] </MudTh>
+                <MudTh> @_localizer["LastModifiedOn"] </MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel=@_localizer["Subscription.UserCode"] Style="text-align:center">
+                    <MudHighlighter Text="@context.User.UserCode" HighlightedText="@_searchString" />
+                </MudTd>
+                <MudTd DataLabel=@_localizer["User.NickName"]>
+                    <div class="d-flex justify-start align-center pl-1">
+                        <UserAvatar Image="@context.User.ProfileImage" />
+                        <MudHighlighter Text="@context.User.NickName" HighlightedText="@_searchString" />
+                    </div>
+                </MudTd>
+                <MudTd DataLabel=@_localizer["User.Email"]>
+                    <MudHighlighter Text="@context.User.Email" HighlightedText="@_searchString" />
+                </MudTd>
+                <MudTd DataLabel=@_localizer["User.PhoneNumber"]>
+                    <MudHighlighter Text="@context.User.PhoneNumber" HighlightedText="@_searchString" />
+                </MudTd>
+                <MudTd DataLabel=@_localizer["User.SignupDate"] Style="text-align:center">
+                    @($"{context.User.CreatedOn:d}")
+                </MudTd>
+                <MudTd DataLabel=@_localizer["UPbitKey.expire_at"] Style="text-align:center">
+                    @($"{context.expire_at:g}")
+                </MudTd>
+                <MudTd DataLabel=@_localizer["UPbitKey.FatalError"] >
+                    <MudHighlighter Text="@context.FatalError" HighlightedText="@_searchString"/>
+                </MudTd>
+                <MudTd DataLabel=@_localizer["LastModifiedOn"] Style="text-align:center">
+                    @($"{context.LastModifiedOn:g}")
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <TablePager />
+            </PagerContent>
+        </MudTable>
+    </div>
+}

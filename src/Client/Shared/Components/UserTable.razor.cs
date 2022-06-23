@@ -17,7 +17,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
     public partial class UserTable : IDisposable
     {
         [CascadingParameter(Name = "Users")]
-        private IEnumerable<UserSummaryDto> Users
+        private IEnumerable<UserFullInfoDto> Users
         {
             get => _sources;
             set
@@ -28,14 +28,12 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             }
         }
 
-        [Parameter] public UserTableMode TableMode { get; set; } = UserTableMode.Admin;
-
-        private MudTable<UserSummaryDto> _table;
+        private MudTable<UserFullInfoDto> _table;
 
         private bool _canViewRoles;
 
-        private IEnumerable<UserSummaryDto> _items = new List<UserSummaryDto>();
-        private IEnumerable<UserSummaryDto> _sources;
+        private IEnumerable<UserFullInfoDto> _items = new List<UserFullInfoDto>();
+        private IEnumerable<UserFullInfoDto> _sources;
         private bool _isDivTableRendered { get; set; } = false;
         private string _divTableHeight { get; set; } = "100%";
         private readonly string _divTableId = Guid.NewGuid().ToString();
@@ -102,11 +100,11 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private void SetItems()
         {
             _items = _sources.Where(f => (_selectedMemberships is null ? true :
-                                          _selectedMemberships.Any() ? _selectedMemberships.Contains(f.MembershipLevel.ToDescriptionString()) : true) &&
-                                         (_chkIsAutoTrading is null ? true : f.AutoTrading == (bool)_chkIsAutoTrading) &&
+                                          _selectedMemberships.Any() ? _selectedMemberships.Contains(f.Subscription.Membership.Level.ToDescriptionString()) : true) &&
+                                         (_chkIsAutoTrading is null ? true : f.TradingTerms.AutoTrading == (bool)_chkIsAutoTrading) &&
                                          (_selectedTimeFrames is null ? true :
-                                          _selectedTimeFrames.Any() ? _selectedTimeFrames.Contains(f.TimeFrame.ToDescriptionString()) : true) &&
-                                         (_chkIsAssignedBot is null ? true : f.IsAssignedBot == (bool)_chkIsAssignedBot)).ToArray();
+                                          _selectedTimeFrames.Any() ? _selectedTimeFrames.Contains(f.TradingTerms.TimeFrame.ToDescriptionString()) : true) &&
+                                         (_chkIsAssignedBot is null ? true : (f.MiningBotTicket is not null) == (bool)_chkIsAssignedBot)).ToArray();
         }
 
         private void MembershipSelectionChanged(IEnumerable<string> values)
@@ -155,7 +153,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             }
         }
 
-        private bool Search(UserSummaryDto user)
+        private bool Search(UserFullInfoDto user)
         {
             if (string.IsNullOrWhiteSpace(_searchString)) return true;
 
@@ -168,13 +166,13 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             return false;
         }
 
-        private void RowClickEvent(TableRowClickEventArgs<UserSummaryDto> args)
+        private void RowClickEvent(TableRowClickEventArgs<UserFullInfoDto> args)
         {
-            if (TableMode != UserTableMode.Admin || args.Item is null) { return; }
+            if (args.Item is null) { return; }
 
-            var user = _items.Single(f => f.Id.Equals(args.Item.Id));
+            var user = _items.Single(f => f.UserCode.Equals(args.Item.UserCode));
 
-            foreach (var item in _items.Where(f => !f.Id.Equals(user.Id)))
+            foreach (var item in _items.Where(f => !f.UserCode.Equals(user.UserCode)))
             {
                 item.ShowDetails = false;
             }
@@ -182,7 +180,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             user.ShowDetails = !user.ShowDetails;
         }
 
-        private void NavigateToProfile(string userId)
+        private void NavigateToSubscription(string userId)
         {
             _navigationManager.NavigateTo($"/personal/subscription/{userId}");
         }
@@ -261,13 +259,6 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         public void Dispose()
         {
             _resizeListener.OnResized -= OnWindowResized;
-        }
-
-        public enum UserTableMode
-        {
-            Admin,
-            Follower,
-            Boast
         }
     }
 }

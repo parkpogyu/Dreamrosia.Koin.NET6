@@ -19,5 +19,9 @@ namespace Dreamrosia.Koin.Application.DTO
         public bool IsOccurredFatalError { get; set; }
 
         public string FatalError { get; set; }
+
+        public DateTime? LastModifiedOn { get; set; }
+
+        public UserDto User { get; set; }
     }
 }

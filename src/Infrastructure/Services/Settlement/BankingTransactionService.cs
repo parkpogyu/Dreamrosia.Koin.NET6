@@ -53,8 +53,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                 var items = (from trn in _context.BankingTransactions
                                                  .AsNoTracking()
                                                  .AsEnumerable()
-                                                 .Where(f => f.done_at >= model.HeadDate &&
-                                                             f.done_at <= model.RearDate.AddDays(1).AddSeconds(-1))
+                                                 .Where(f => model.HeadDate.Date <= f.done_at && f.done_at < model.RearDate.Date.AddDays(1))
                              from ext in _context.UserLogins
                                                  .AsNoTracking()
                                                  .AsEnumerable()

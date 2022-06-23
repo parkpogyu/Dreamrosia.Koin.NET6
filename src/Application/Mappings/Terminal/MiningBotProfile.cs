@@ -12,6 +12,8 @@ namespace Dreamrosia.Koin.Application.Mappings
             CreateMap<MiningBot, MiningBotDto>().ReverseMap()
                                                 .ForMember(p => p.Ticket, o => o.Ignore())
                                                 .ForMember(p => p.Touched, o => o.MapFrom(s => DateTime.Now));
+
+            CreateMap<MiningBotTicket, MiningBotTicketDto>();
         }
     }
 }

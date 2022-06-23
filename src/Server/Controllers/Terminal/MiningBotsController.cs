@@ -29,25 +29,17 @@ namespace Dreamrosia.Koin.Server.Controllers
         /// <returns>Status 200 OK</returns>
         [Authorize(Policy = Permissions.MiningBots.View)]
         [HttpGet]
-        public async Task<IActionResult> GetMiningBots()
+        public async Task<IActionResult> GetMiningBotTickets()
         {
-            var response = await _miningBotService.GetMiningBotsAsync();
+            var response = await _miningBotService.GetMiningBotTicketsAsync();
 
             return Ok(response);
         }
 
-        //[HttpGet("test")]
-        //public async Task<IActionResult> GetTestMiningBots()
-        //{
-        //    var response = await _miningBotService.GetTestMiningBotsAsync();
-
-        //    return Ok(response);
-        //}
-
         [HttpGet("test")]
-        public async Task<ContentResult> GetTestMiningBots()
+        public async Task<ContentResult> GetTestMiningBotTickets()
         {
-            var response = await _miningBotService.GetMiningBotsAsync();
+            var response = await _miningBotService.GetMiningBotTicketsAsync();
 
             if (response.Succeeded)
             {
@@ -79,33 +71,33 @@ namespace Dreamrosia.Koin.Server.Controllers
                     <th>{_localizer["MiningBot.Touched"]}</th>
                     <th>{_localizer["MiningBot.Elapsed"]}</th>");
 
-                foreach (var bot in response.Data)
+                foreach (var ticket in response.Data)
                 {
                     builder.AppendLine("<tr>");
 
                     builder.AppendLine("<td align='center'>");
-                    builder.AppendLine($"{bot.Ticket}");
+                    builder.AppendLine($"{ticket.Id}");
                     builder.AppendLine("</td>");
                     builder.AppendLine("<td align='center'>");
-                    builder.AppendLine($"{bot.Id}");
+                    builder.AppendLine($"{ticket.MiningBot?.Id}");
                     builder.AppendLine("</td>");
                     builder.AppendLine("<td align='center'>");
-                    builder.AppendLine($"{bot.Version}");
+                    builder.AppendLine($"{ticket.MiningBot?.Version}");
                     builder.AppendLine("</td>");
                     builder.AppendLine("<td align='center'>");
-                    builder.AppendLine($"{bot.MachineName}");
+                    builder.AppendLine($"{ticket.MiningBot?.MachineName}");
                     builder.AppendLine("</td>");
                     builder.AppendLine("<td>");
-                    builder.AppendLine($"{bot.CurrentDirectory}");
+                    builder.AppendLine($"{ticket.MiningBot?.CurrentDirectory}");
                     builder.AppendLine("</td>");
                     builder.AppendLine("<td>");
-                    builder.AppendLine($"{bot.NickName}");
+                    builder.AppendLine($"{ticket.User?.NickName}");
                     builder.AppendLine("</td>");
                     builder.AppendLine("<td align='center'>");
-                    builder.AppendLine($"{bot.Touched:HH:mm:ss}");
+                    builder.AppendLine($"{ticket.MiningBot?.Touched:HH:mm:ss}");
                     builder.AppendLine("</td>");
                     builder.AppendLine("<td align='center'>");
-                    builder.AppendLine($"{bot.Elapsed:dd\\,hh\\:mm\\:ss}");
+                    builder.AppendLine($"{ticket.MiningBot?.Elapsed:dd\\,hh\\:mm\\:ss}");
                     builder.AppendLine("</td>");
 
                     builder.AppendLine("</tr>");

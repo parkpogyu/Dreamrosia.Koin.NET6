@@ -11,7 +11,7 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
     public partial class Users
     {
         private bool _loaded;
-        private IEnumerable<UserSummaryDto> _items = new List<UserSummaryDto>();
+        private IEnumerable<UserFullInfoDto> _items = new List<UserFullInfoDto>();
         private DateRange _dateRange { get; set; } = new DateRange();
         private DateRangeTerms _dateRangeTerm { get; set; } = DateRangeTerms._1W;
 
@@ -29,9 +29,9 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
             _dateRange.Start = now.GetBefore(_dateRangeTerm);
             _dateRange.End = now;
 
-            var response = await _userManager.GetSummariesAsync(_dateRange.Start, _dateRange.End);
+            var response = await _userManager.GetFullInfosAsync(_dateRange.Start, _dateRange.End);
 
-            _items = response.Data ?? new List<UserSummaryDto>();
+            _items = response.Data ?? new List<UserFullInfoDto>();
 
             if (response.Succeeded) { return; }
 

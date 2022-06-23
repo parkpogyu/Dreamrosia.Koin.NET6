@@ -801,9 +801,6 @@
   <data name="UPbitKey.expire_at" xml:space="preserve">
     <value>인증 만료일</value>
   </data>
-  <data name="UPbitKey.IsAuthenticated" xml:space="preserve">
-    <value>업비트 인증</value>
-  </data>
   <data name="UPbitKey.secret_key" xml:space="preserve">
     <value>Secret Key</value>
   </data>
@@ -993,7 +990,7 @@
   <data name="UPbitKey.AllowedWithdraws" xml:space="preserve">
     <value>출금조회 허용</value>
   </data>
-  <data name="UPbitKey.Authenticated" xml:space="preserve">
+  <data name="UPbitKey.IsAuthenticated" xml:space="preserve">
     <value>인증여부</value>
   </data>
   <data name="Symbol.DailySignal" xml:space="preserve">
@@ -1497,7 +1494,7 @@
   <data name="BankingTransaction.AccountHolder" xml:space="preserve">
     <value>예금주명</value>
   </data>
-  <data name="Membership.FeeRate" xml:space="preserve">
+  <data name="Membership.CommissionRate" xml:space="preserve">
     <value>수수료율</value>
   </data>
   <data name="Market.unit_currency" xml:space="preserve">
@@ -1565,5 +1562,14 @@
   </data>
   <data name="{0} UPbit error occurred." xml:space="preserve">
     <value>{0} 에러가 발생하였습니다. 인증키를 다시 발급받으신 후 저장하세요</value>
+  </data>
+  <data name="UPbitKey.FatalError" xml:space="preserve">
+    <value>중대오류 메시지</value>
+  </data>
+  <data name="UPbitKey.IsOccurredFatalError" xml:space="preserve">
+    <value>중대오류</value>
+  </data>
+  <data name="LastModifiedOn" xml:space="preserve">
+    <value>변경일시</value>
   </data>
 </root>

@@ -147,10 +147,10 @@ namespace Dreamrosia.Koin.Bot.Services
                         market = item.market,
                         ord_type = OrderType.market,
                         volume = item.balance,
-                        Remark = string.Format("{0}, {1} / {2}, {3:N2}%", 
-                                 reason.ToDescriptionString(), 
-                                 GetPriceText( item.trade_price),
-                                 GetPriceText( item.avg_buy_price),
+                        Remark = string.Format("{0}, {1} / {2}, {3:N2}%",
+                                 reason.ToDescriptionString(),
+                                 GetPriceText(item.trade_price),
+                                 GetPriceText(item.avg_buy_price),
                                  item.PnLRat),
                     });
                 }

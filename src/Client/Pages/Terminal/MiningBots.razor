@@ -21,7 +21,7 @@ else
                   Hover="true" Dense="true" Bordered="true" Striped="true"
                   FixedHeader="true" FixedFooter="true"
                   RowsPerPage="@TablePager.DefaultPageSize"
-                  Filter="new Func<MiningBotDto, bool>(Search)"
+                  Filter="new Func<MiningBotTicketDto, bool>(Search)"
                   Height="@_divTableHeight">
             <ToolBarContent>
                 <div class="d-flex" style="width:100%">
@@ -35,63 +35,55 @@ else
                 </div>
             </ToolBarContent>
             <HeaderContent>
+                <MudTh> @_localizer["MiningBot.Ticket"] </MudTh>
+                <MudTh> @_localizer["MiningBot.Id"] </MudTh>
                 <MudTh>
-                    <MudTableSortLabel SortBy="new Func<MiningBotDto, object>(x => x.Ticket)">@_localizer["MiningBot.Ticket"]</MudTableSortLabel>
+                    <MudTableSortLabel SortBy="new Func<MiningBotTicketDto, object>(x => x.MiningBot?.Version)">@_localizer["MiningBot.Version"]</MudTableSortLabel>
                 </MudTh>
                 <MudTh>
-                    <MudTableSortLabel SortBy="new Func<MiningBotDto, object>(x => x.Id)">@_localizer["MiningBot.Id"]</MudTableSortLabel>
+                    <MudTableSortLabel SortBy="new Func<MiningBotTicketDto, object>(x => x.MiningBot?.MachineName)">@_localizer["MiningBot.MachineName"]</MudTableSortLabel>
                 </MudTh>
                 <MudTh>
-                    <MudTableSortLabel SortBy="new Func<MiningBotDto, object>(x => x.Version)">@_localizer["MiningBot.Version"]</MudTableSortLabel>
+                    <MudTableSortLabel SortBy="new Func<MiningBotTicketDto, object>(x => x.MiningBot?.CurrentDirectory)">@_localizer["MiningBot.CurrentDirectory"]</MudTableSortLabel>
                 </MudTh>
+                <MudTh> @_localizer["Users"] </MudTh>
+                <MudTh> @_localizer["MiningBot.Touched"] </MudTh>
                 <MudTh>
-                    <MudTableSortLabel SortBy="new Func<MiningBotDto, object>(x => x.MachineName)">@_localizer["MiningBot.MachineName"]</MudTableSortLabel>
-                </MudTh>
-                <MudTh>
-                    <MudTableSortLabel SortBy="new Func<MiningBotDto, object>(x => x.CurrentDirectory)">@_localizer["MiningBot.CurrentDirectory"]</MudTableSortLabel>
-                </MudTh>
-                <MudTh>
-                    <MudTableSortLabel SortBy="new Func<MiningBotDto, object>(x => x.NickName)">@_localizer["Users"]</MudTableSortLabel>
-                </MudTh>
-                <MudTh>
-                    <MudTableSortLabel SortBy="new Func<MiningBotDto, object>(x => x.Touched)">@_localizer["MiningBot.Touched"]</MudTableSortLabel>
-                </MudTh>
-                <MudTh>
-                    <MudTableSortLabel SortBy="new Func<MiningBotDto, object>(x => x.Elapsed)">@_localizer["MiningBot.Elapsed"]</MudTableSortLabel>
+                    <MudTableSortLabel SortBy="new Func<MiningBotTicketDto, object>(x => x.MiningBot?.Elapsed)">@_localizer["MiningBot.Elapsed"]</MudTableSortLabel>
                 </MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel=@_localizer["MiningBot.Ticket"] Style="text-align:center">
-                    <MudHighlighter Text="@context.Ticket" HighlightedText="@_searchString" />
-                </MudTd>
-                <MudTd DataLabel=@_localizer["MiningBot.Id"] Style="text-align:center">
                     <MudHighlighter Text="@context.Id" HighlightedText="@_searchString" />
                 </MudTd>
+                <MudTd DataLabel=@_localizer["MiningBot.Id"] Style="text-align:center">
+                    <MudHighlighter Text="@context.MiningBot?.Id" HighlightedText="@_searchString" />
+                </MudTd>
                 <MudTd DataLabel=@_localizer["MiningBot.Version"] Style="text-align:center">
-                    <MudHighlighter Text="@context.Version" HighlightedText="@_searchString" />
+                    <MudHighlighter Text="@context.MiningBot?.Version" HighlightedText="@_searchString" />
                 </MudTd>
                 <MudTd DataLabel=@_localizer["MiningBot.MachineName"]>
-                    <MudHighlighter Text="@context.MachineName" HighlightedText="@_searchString" />
+                    <MudHighlighter Text="@context.MiningBot?.MachineName" HighlightedText="@_searchString" />
                 </MudTd>
                 <MudTd DataLabel=@_localizer["MiningBot.CurrentDirectory"]>
-                    <MudTooltip Text="@context.CurrentDirectory">
-                        <MudHighlighter Text="@context.LastDirectory" HighlightedText="@_searchString" />
+                    <MudTooltip Text="@context.MiningBot?.CurrentDirectory">
+                        <MudHighlighter Text="@context.MiningBot?.LastDirectory" HighlightedText="@_searchString" />
                     </MudTooltip>
                 </MudTd>
                 <MudTd DataLabel=@_localizer["Users"]>
                     <div class="d-flex justify-start align-center pl-1">
-                        @if (!string.IsNullOrEmpty(context.NickName))
+                        @if (!string.IsNullOrEmpty(context.User?.NickName))
                         { 
-                            <UserAvatar Image="@context.ProfileImage" />
-                            <MudHighlighter Text="@context.NickName" HighlightedText="@_searchString" />
+                            <UserAvatar Image="@context.User?.ProfileImage" />
+                            <MudHighlighter Text="@context.User?.NickName" HighlightedText="@_searchString" />
                         }
                     </div>
                 </MudTd>
                 <MudTd DataLabel=@_localizer["MiningBot.Touched"] Style="text-align:center">
-                    @($"{context.Touched:t}")
+                    @($"{context.MiningBot?.Touched:t}")
                 </MudTd>
                 <MudTd DataLabel=@_localizer["MiningBot.Elapsed"] Style="text-align:center">
-                    @($"{context.Elapsed:dd\\,hh\\:mm\\:ss}")
+                    @($"{context.MiningBot?.Elapsed:dd\\,hh\\:mm\\:ss}")
                 </MudTd>
             </RowTemplate>
             <PagerContent>

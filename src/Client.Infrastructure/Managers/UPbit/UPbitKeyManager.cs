@@ -1,6 +1,7 @@
 ﻿using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Client.Infrastructure.Extensions;
 using Dreamrosia.Koin.Shared.Wrapper;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -19,9 +20,16 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers
 
         public async Task<IResult<UPbitKeyDto>> GetUPbitKeyAsync(string userId)
         {
-            var response = await _httpClient.GetAsync(Routes.UPbitKeysEndpoints.GetByUserId(userId));
+            var response = await _httpClient.GetAsync(Routes.UPbitKeysEndpoints.GetUPbitKey(userId));
 
             return await response.ToResult<UPbitKeyDto>();
+        }
+
+        public async Task<IResult<IEnumerable<UPbitKeyDto>>> GetUPbitKeysAsync(DateTime? head, DateTime? rear)
+        {
+            var response = await _httpClient.GetAsync(Routes.UPbitKeysEndpoints.GetUPbitKeys(Convert.ToDateTime(head), Convert.ToDateTime(rear)));
+
+            return await response.ToResult<IEnumerable<UPbitKeyDto>>();
         }
 
         public async Task<IResult> UpdateUPbitKeyAsync(UPbitKeyDto model)

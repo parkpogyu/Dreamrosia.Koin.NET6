@@ -9,10 +9,10 @@
     {
         <MudListSubheader Class="mt-2 mb-n2">@_localizer["Administrator"]</MudListSubheader>
 
-        @if (_canEditUsers)
+        @if (_canViewAuditTrails)
         {
-            <MudNavLink Href="/identity/users" Icon="@Icons.Material.Outlined.ManageAccounts">
-                @_localizer["Manage Users"]
+            <MudNavLink Href="/audit-trails" Icon="@Icons.Material.Outlined.Security">
+                @_localizer["Audit Trails"]
             </MudNavLink>
         }
 
@@ -30,10 +30,14 @@
             </MudNavLink>
         }
 
-        @if (_canViewAuditTrails)
+        @if (_canEditUsers)
         {
-            <MudNavLink Href="/audit-trails" Icon="@Icons.Material.Outlined.Security">
-                @_localizer["Audit Trails"]
+            <MudNavLink Href="/identity/users" Icon="@Icons.Material.Outlined.ManageAccounts">
+                @_localizer["Manage Users"]
+            </MudNavLink>
+
+            <MudNavLink Href="/upbitkeys" Icon="@Icons.Material.Outlined.Key">
+                @_localizer["UPbit.AuthKey"]
             </MudNavLink>
         }
     }

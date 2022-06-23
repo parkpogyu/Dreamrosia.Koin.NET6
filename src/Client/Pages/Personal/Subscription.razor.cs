@@ -3,7 +3,6 @@ using Blazored.FluentValidation;
 using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Extensions;
 using Dreamrosia.Koin.Application.Mappings;
-using Dreamrosia.Koin.Application.Requests.Identity;
 using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Shared.Dialogs;
 using Dreamrosia.Koin.Domain.Enums;
@@ -21,30 +20,30 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
 
         private FluentValidationValidator _membershipValidator;
         private bool _membershipValidated => _membershipValidator.Validate(options => { options.IncludeAllRuleSets(); });
-        private bool _loaded;
+        private bool _loaded, _succeeded;
         private string _userId { get; set; }
-        private SubscriptionDto _user = new();
-        private MembershipDto _model { get; set; }
+        private UserFullInfoDto _user = new();
+        private MembershipDto _model { get; set; } = new();
 
         private async Task ToggleUserStatus()
         {
-            var request = new ToggleUserStatusRequest { ActivateUser = _user.IsActive, UserId = UserId };
+            //var request = new ToggleUserStatusRequest { ActivateUser = _user.IsActive, UserId = UserId };
 
-            var result = await _accountManager.ToggleUserStatusAsync(request);
+            //var result = await _accountManager.ToggleUserStatusAsync(request);
 
-            if (result.Succeeded)
-            {
-                _snackBar.Add(_localizer["Updated User Status."], Severity.Success);
+            //if (result.Succeeded)
+            //{
+            //    _snackBar.Add(_localizer["Updated User Status."], Severity.Success);
 
-                _navigationManager.NavigateTo("/identity/users");
-            }
-            else
-            {
-                foreach (var error in result.Messages)
-                {
-                    _snackBar.Add(error, Severity.Error);
-                }
-            }
+            //    _navigationManager.NavigateTo("/identity/users");
+            //}
+            //else
+            //{
+            //    foreach (var error in result.Messages)
+            //    {
+            //        _snackBar.Add(error, Severity.Error);
+            //    }
+            //}
         }
 
         protected override async Task OnInitializedAsync()
@@ -77,12 +76,15 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
 
         private async Task GetSubscriptionAsync()
         {
-            var result = await _userManager.GetSubscriptionAsync(_userId);
+            var result = await _userManager.GetFullInfoAsync(_userId);
 
-            _user = result.Data ?? new SubscriptionDto();
-            _model = _mapper.Map<MembershipDto>(_user.Membership ?? new MembershipDto());
+            if (result.Succeeded)
+            {
+                _user = result.Data ?? new UserFullInfoDto();
+                _model = _mapper.Map<MembershipDto>(_user.Subscription.Membership ?? new MembershipDto());
+            }
 
-            if (result.Succeeded) { return; }
+            _succeeded = result.Succeeded;
 
             foreach (var error in result.Messages)
             {
@@ -95,7 +97,7 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
             var parameters = new DialogParameters();
 
             parameters.Add("UserId", _userId);
-            parameters.Add("UserCode", _user.Recommender?.UserCode);
+            parameters.Add("UserCode", _user.Subscription.Recommender?.UserCode);
 
             var options = new DialogOptions
             {
@@ -205,7 +207,7 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
 
                     _model = _mapper.Map<MembershipDto>(response.Data);
 
-                    //_mapper.Map(response.Data, _user.Subscription.Membership);
+                    _mapper.Map(response.Data, _user.Subscription.Membership);
                 }
             }
             else

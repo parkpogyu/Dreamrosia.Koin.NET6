@@ -19,7 +19,7 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers
 
         public async Task<IResult<IEnumerable<CandleDto>>> GetCandlesAsync(string market, DateTime? head, DateTime? rear)
         {
-            var response = await _httpClient.GetAsync(Routes.MarketEndpoints.GetCandles(market, head, rear));
+            var response = await _httpClient.GetAsync(Routes.MarketEndpoints.GetCandles(market, Convert.ToDateTime(head), Convert.ToDateTime(rear)));
 
             return await response.ToResult<IEnumerable<CandleDto>>();
         }

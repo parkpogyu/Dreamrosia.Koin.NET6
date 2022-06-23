@@ -26,32 +26,39 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers.Identity.Users
             return await response.ToResult<UserDto>();
         }
 
-        public async Task<IResult<SubscriptionDto>> GetSubscriptionAsync(string userId)
+        public async Task<IResult<UserBriefDto>> GetUserBriefAsync(string userId)
         {
-            var response = await _httpClient.GetAsync(Routes.UserEndpoints.GetSubscription(userId));
+            var response = await _httpClient.GetAsync(Routes.UserEndpoints.GetUserBrief(userId));
 
-            return await response.ToResult<SubscriptionDto>();
+            return await response.ToResult<UserBriefDto>();
         }
 
-        public async Task<IResult<IEnumerable<UserSummaryDto>>> GetSummariesAsync(DateTime? head = null, DateTime? rear = null)
+        public async Task<IResult<UserFullInfoDto>> GetFullInfoAsync(string userId)
         {
-            var response = await _httpClient.GetAsync(Routes.UserEndpoints.GetSummaries(head, rear));
+            var response = await _httpClient.GetAsync(Routes.UserEndpoints.GetFullInfo(userId));
 
-            return await response.ToResult<IEnumerable<UserSummaryDto>>();
+            return await response.ToResult<UserFullInfoDto>();
         }
 
-        public async Task<IResult<IEnumerable<UserSummaryDto>>> GetFollowersAsync(string userId, DateTime? head = null, DateTime? rear = null)
+        public async Task<IResult<IEnumerable<UserFullInfoDto>>> GetFullInfosAsync(DateTime? head, DateTime? rear)
         {
-            var response = await _httpClient.GetAsync(Routes.UserEndpoints.GetFollowers(userId, head, rear));
+            var response = await _httpClient.GetAsync(Routes.UserEndpoints.GetFullInfos(Convert.ToDateTime(head), Convert.ToDateTime(rear)));
 
-            return await response.ToResult<IEnumerable<UserSummaryDto>>();
+            return await response.ToResult<IEnumerable<UserFullInfoDto>>();
         }
 
-        public async Task<IResult<IEnumerable<UserSummaryDto>>> GetBoastersAsync(DateTime? head = null, DateTime? rear = null)
+        public async Task<IResult<IEnumerable<FollowerDto>>> GetFollowersAsync(string userId, DateTime? head, DateTime? rear)
         {
-            var response = await _httpClient.GetAsync(Routes.UserEndpoints.GetBoasters(head, rear));
+            var response = await _httpClient.GetAsync(Routes.UserEndpoints.GetFollowers(userId, Convert.ToDateTime(head), Convert.ToDateTime(rear)));
 
-            return await response.ToResult<IEnumerable<UserSummaryDto>>();
+            return await response.ToResult<IEnumerable<FollowerDto>>();
+        }
+
+        public async Task<IResult<IEnumerable<BoasterDto>>> GetBoastersAsync(DateTime? head, DateTime? rear)
+        {
+            var response = await _httpClient.GetAsync(Routes.UserEndpoints.GetBoasters(Convert.ToDateTime(head), Convert.ToDateTime(rear)));
+
+            return await response.ToResult<IEnumerable<BoasterDto>>();
         }
 
         public async Task<IResult<UserDto>> GetRecommenderAsync(RecommenderDto model)

@@ -10,15 +10,10 @@ namespace Dreamrosia.Koin.Application.Interfaces.Services
     {
 
         DateTime FirstSignalDate { get; }
-
         PaperPositionDto Position { get; }
-
         List<PaperPositionDto> Positions { get; }
-
         List<PaperOrderDto> Orders { get; }
-
         Task Prepare(BackTestingRequestDto model, string market, DateTime head, DateTime rear);
-
         void Simulate(DateTime date, TimeFrames frame);
     }
 }

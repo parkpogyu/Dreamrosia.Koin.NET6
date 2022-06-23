@@ -7,7 +7,6 @@ namespace Dreamrosia.Koin.Application.Interfaces.Services
     public interface ITradingTermsService
     {
         Task<IResult<TradingTermsDto>> GetTradingTermsAsync(string userId);
-
         Task<IResult> UpdateTradingTermsAsync(TradingTermsDto model);
     }
 }

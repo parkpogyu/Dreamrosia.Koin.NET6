@@ -8,7 +8,7 @@
 {
     <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
 }
-else
+else if (_succeeded)
 {
     <AuthorizeView Roles="@RoleConstants.AdministratorRole">
         <Authorized>
@@ -29,12 +29,12 @@ else
 
                     <div class="d-flex justify-center align-end flex-x-scroll-container">
                         <MudSpacer />
-                        <MudCheckBox @bind-Checked="@_user.IsActive"
+@*                        <MudCheckBox @bind-Checked="@_user.IsActive"
                                      Label="@_localizer["User.Active"]"
                                      Color="MudBlazor.Color.Secondary"
                                      Class="ml-4">
                         </MudCheckBox>
-
+*@
                         <MudButton Variant="Variant.Filled"
                                    Color="MudBlazor.Color.Secondary"
                                    Class="ml-4"
@@ -105,8 +105,8 @@ else
 
                                     <div class="d-flex justify-space-between align-center">
                                         <div class="d-flex justify-start align-center">
-                                            <UserAvatar Image="@_user.Recommender?.ProfileImage" />
-                                            <MudText> @_user.Recommender?.NickName</MudText>
+                                            <UserAvatar Image="@_user.Subscription.Recommender?.ProfileImage" />
+                                            <MudText> @_user.Subscription.Recommender?.NickName</MudText>
                                         </div>
                                         <MudButton Variant="Variant.Filled"
                                                    Color="MudBlazor.Color.Secondary"
@@ -122,7 +122,7 @@ else
                                 <MudField Label=@_localizer["Trading.AutoTrading"]
                                           Variant="Variant.Outlined"
                                           Margin="Margin.Dense">
-                                    <MudSwitch @bind-Checked="@_user.AutoTrading"
+                                    <MudSwitch Checked="@_user.TradingTerms.AutoTrading"
                                                Color="MudBlazor.Color.Primary"
                                                ReadOnly="true"
                                                Class="mb-n2 mt-n2" />
@@ -132,7 +132,7 @@ else
                                 <MudField Label=@_localizer["User.IsAssignedBot"]
                                           Variant="Variant.Outlined"
                                           Margin="Margin.Dense">
-                                    <MudCheckBox @bind-Checked="@_user.IsAssignedBot"
+                                    <MudCheckBox Checked="@(_user.MiningBotTicket is not null)"
                                                  Dense="true" ReadOnly="true "
                                                  Style="margin-top:-3px;margin-bottom:-8px" />
                                 </MudField>
@@ -151,7 +151,7 @@ else
                                 </MudSelect>
                             </MudItem>
                             <MudItem xs="12" sm="4">
-                                @if (_model.Level == Domain.Enums.MembershipLevel.Advanced)
+                                @if (_model.Level == MembershipLevel.Advanced)
                                 {
                                     <MudNumericField T="float"
                                                      Label=@_localizer["Trading.MaximumAsset"]
@@ -181,8 +181,8 @@ else
                                                Size="Size.Small"
                                                Class="ml-2 mr-3"
                                                OnClick="ChangeMembershipAsync"
-                                               Disabled="@((_model.Level == _user.Membership.Level && _model.MaximumAsset == _user.Membership.MaximumAsset) ||
-                                                            DateTime.Now.Subtract( _user.Membership.CreatedOn).TotalDays < 1)">
+                                               Disabled="@((_model.Level == _user.Subscription?.Membership.Level && _model.MaximumAsset == _user.Subscription.Membership.MaximumAsset) ||
+                                                            DateTime.Now.Subtract( _user.Subscription.Membership.CreatedOn).TotalDays < 1)">
                                         @_localizer["Change"]
                                     </MudButton>
                                 </div>

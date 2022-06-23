@@ -45,7 +45,7 @@
     {
         if (string.IsNullOrEmpty(UserId)) { return; }
 
-        var result = await _userManager.GetAsync(UserId);
+        var result = await _userManager.GetUserBriefAsync(UserId);
 
         if (result.Succeeded)
         {

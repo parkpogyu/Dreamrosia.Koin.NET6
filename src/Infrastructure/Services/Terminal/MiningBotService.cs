@@ -43,7 +43,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             _localizer = localizer;
         }
 
-        public async Task<IResult<IEnumerable<MiningBotDto>>> GetMiningBotsAsync()
+        public async Task<IResult<IEnumerable<MiningBotTicketDto>>> GetMiningBotTicketsAsync()
         {
             try
             {
@@ -55,17 +55,9 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                                                       .Include(i => i.MiningBot)
                                                       .AsEnumerable()
                                orderby ((BlazorHeroUser)ticket.User) is null ? now : ((BlazorHeroUser)ticket.User)?.CreatedOn ascending
-                               select ((Func<MiningBotDto>)(() =>
+                               select ((Func<MiningBotTicketDto>)(() =>
                                {
-                                   var item = _mapper.Map<MiningBotDto>(ticket.MiningBot) ?? new MiningBotDto();
-
-                                   item.Ticket = item.Ticket ?? ticket.Id;
-
-                                   if (ticket.User is not null)
-                                   {
-                                       item.NickName = ((BlazorHeroUser)ticket.User).NickName;
-                                       item.ProfileImage = ((BlazorHeroUser)ticket.User).ProfileImage;
-                                   }
+                                   var item = _mapper.Map<MiningBotTicketDto>(ticket);
 
                                    return item;
                                }))()).ToArray();
@@ -73,22 +65,23 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                 var unassigned = (from bot in _context.MiningBots
                                                       .AsNoTracking()
                                                       .AsEnumerable()
-                                  from ticket in tickets.Where(f => f.Ticket.Equals(bot.Ticket)).DefaultIfEmpty()
+                                  from ticket in tickets.Where(f => f.Id.Equals(bot.Ticket)).DefaultIfEmpty()
                                   where ticket is null
-                                  select ((Func<MiningBotDto>)(() =>
+                                  select ((Func<MiningBotTicketDto>)(() =>
                                   {
-                                      var item = _mapper.Map<MiningBotDto>(bot);
-
-                                      return item;
+                                      return new MiningBotTicketDto()
+                                      {
+                                          MiningBot = _mapper.Map<MiningBotDto>(bot),
+                                      };
                                   }))()).ToArray();
 
-                return await Result<IEnumerable<MiningBotDto>>.SuccessAsync(tickets.Union(unassigned));
+                return await Result<IEnumerable<MiningBotTicketDto>>.SuccessAsync(tickets.Union(unassigned));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<IEnumerable<MiningBotDto>>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result<IEnumerable<MiningBotTicketDto>>.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
 

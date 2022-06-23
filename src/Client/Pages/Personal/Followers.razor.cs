@@ -17,7 +17,7 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
 
         private bool _loaded;
         private string _userId { get; set; }
-        private IEnumerable<UserSummaryDto> _items = new List<UserSummaryDto>();
+        private IEnumerable<FollowerDto> _items = new List<FollowerDto>();
         private DateRange _dateRange { get; set; } = new DateRange();
         private DateRangeTerms _dateRangeTerm { get; set; } = DateRangeTerms._1W;
         private readonly OrdersRequestDto _model = new OrdersRequestDto();
@@ -54,7 +54,7 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
         {
             var response = await _userManager.GetFollowersAsync(_userId, _dateRange.Start, _dateRange.End);
 
-            _items = response.Data ?? new List<UserSummaryDto>();
+            _items = response.Data ?? new List<FollowerDto>();
 
             if (response.Succeeded) { return; }
 

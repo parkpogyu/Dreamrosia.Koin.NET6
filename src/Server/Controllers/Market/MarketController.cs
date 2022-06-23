@@ -31,11 +31,11 @@ namespace Dreamrosia.Koin.Server.Controllers
         /// <returns></returns>
         [Authorize(Policy = Permissions.Candles.View)]
         [HttpGet("candles")]
-        public async Task<IActionResult> GetCandles(string market, DateTime? head, DateTime? rear)
+        public async Task<IActionResult> GetCandles(string market, DateTime head, DateTime rear)
         {
             var response = await _candleService.GetCandlesAsync(market,
-                                                                Convert.ToDateTime(head).ToUniversalDate(),
-                                                                Convert.ToDateTime(rear).ToUniversalDate());
+                                                                head.ToUniversalDate(),
+                                                                rear.ToUniversalDate());
 
             return Ok(response);
         }

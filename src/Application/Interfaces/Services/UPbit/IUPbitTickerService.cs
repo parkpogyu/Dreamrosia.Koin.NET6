@@ -8,9 +8,7 @@ namespace Dreamrosia.Koin.Application.Interfaces.Services
     public interface IUPbitTickerService
     {
         void RequestTickers(IEnumerable<string> codes);
-
         Task<IResult<IEnumerable<TickerDto>>> GetTradePricesAsync();
-
         Task<IResult<int>> InitializeAsync();
     }
 }

@@ -46,8 +46,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                 var items = await _context.Transfers
                                           .AsNoTracking()
                                           .Where(f => f.UserId.Equals(model.UserId) &&
-                                                      f.created_at >= model.HeadDate &&
-                                                      f.created_at <= model.RearDate.AddDays(1).AddSeconds(-1))
+                                                    model.HeadDate.Date <= f.created_at && f.created_at < model.RearDate.Date.AddDays(1))
                                           .OrderByDescending(o => o.created_at)
                                           .ToArrayAsync();
 

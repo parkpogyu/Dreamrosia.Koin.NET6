@@ -8,7 +8,7 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers
 {
     public interface IMarketManager : IManager
     {
-        Task<IResult<IEnumerable<CandleDto>>> GetCandlesAsync(string market, DateTime? head = null, DateTime? rear = null);
+        Task<IResult<IEnumerable<CandleDto>>> GetCandlesAsync(string market, DateTime? head, DateTime? rear);
 
         Task<IResult<IEnumerable<SymbolDto>>> GetSymbolsAsync();
     }

@@ -9,19 +9,24 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Routes
             return $"api/identity/user/{userId}";
         }
 
-        public static string GetSummaries(DateTime? head, DateTime? rear)
+        public static string GetUserBrief(string userId)
         {
-            return $"api/identity/user?head={head?.ToString("d")}&rear={rear?.ToString("d")}";
+            return $"api/identity/user/brief/{userId}";
         }
 
-        public static string GetFollowers(string userId, DateTime? head, DateTime? rear)
+        public static string GetFullInfos(DateTime head, DateTime rear)
         {
-            return $"api/identity/user/followers/?id={userId}&head={head?.ToString("d")}&rear={rear?.ToString("d")}";
+            return $"api/identity/user?head={head:d}&rear={rear:d}";
         }
 
-        public static string GetBoasters(DateTime? head, DateTime? rear)
+        public static string GetFollowers(string userId, DateTime head, DateTime rear)
         {
-            return $"api/identity/user/boasters/?head={head?.ToString("d")}&rear={rear?.ToString("d")}";
+            return $"api/identity/user/followers/{userId}?head={head:d}&rear={rear:d}";
+        }
+
+        public static string GetBoasters(DateTime head, DateTime rear)
+        {
+            return $"api/identity/user/boasters?head={head:d}&rear={rear:d}";
         }
 
         public static string GetRecommender(string userId)
@@ -39,7 +44,7 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Routes
             return $"api/identity/user/recommender/update/{userId}";
         }
 
-        public static string GetSubscription(string userId)
+        public static string GetFullInfo(string userId)
         {
             return $"api/identity/user/subscription/{userId}";
         }

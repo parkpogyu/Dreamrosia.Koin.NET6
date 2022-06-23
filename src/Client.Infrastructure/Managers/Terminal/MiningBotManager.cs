@@ -16,42 +16,11 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers
             _httpClient = httpClient;
         }
 
-        public async Task<IResult<IEnumerable<MiningBotDto>>> GetMiningBotsAsync()
+        public async Task<IResult<IEnumerable<MiningBotTicketDto>>> GetMiningBotTicketsAsync()
         {
-            try
-            {
-                var response = await _httpClient.GetAsync(Routes.MiningBotsEndpoints.GetAll());
+            var response = await _httpClient.GetAsync(Routes.MiningBotsEndpoints.GetAll);
 
-                return await response.ToResult<IEnumerable<MiningBotDto>>();
-
-            }
-            catch (System.Exception ex)
-            {
-                throw;
-            }
+            return await response.ToResult<IEnumerable<MiningBotTicketDto>>();
         }
-
-        public async Task<IResult<IEnumerable<MiningBotDto>>> GetTestMiningBotsAsync()
-        {
-            try
-            {
-                var response = await _httpClient.GetAsync(Routes.MiningBotsEndpoints.GetTestAll());
-
-                return await response.ToResult<IEnumerable<MiningBotDto>>();
-
-            }
-            catch (System.Exception ex)
-            {
-                throw;
-            }
-        }
-
-        public async Task<IResult<MiningBotDto>> GetMiningBotAsync(string userId)
-        {
-            var response = await _httpClient.GetAsync(Routes.MiningBotsEndpoints.GetByUserId(userId));
-
-            return await response.ToResult<MiningBotDto>();
-        }
-
     }
 }

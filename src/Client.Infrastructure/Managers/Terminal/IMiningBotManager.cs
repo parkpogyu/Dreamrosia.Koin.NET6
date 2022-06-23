@@ -7,8 +7,6 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers
 {
     public interface IMiningBotManager : IManager
     {
-        Task<IResult<IEnumerable<MiningBotDto>>> GetMiningBotsAsync();
-        Task<IResult<IEnumerable<MiningBotDto>>> GetTestMiningBotsAsync();
-        Task<IResult<MiningBotDto>> GetMiningBotAsync(string userId);
+        Task<IResult<IEnumerable<MiningBotTicketDto>>> GetMiningBotTicketsAsync();
     }
 }

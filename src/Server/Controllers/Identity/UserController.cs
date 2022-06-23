@@ -3,6 +3,7 @@ using Dreamrosia.Koin.Application.Interfaces.Services;
 using Dreamrosia.Koin.Application.Interfaces.Services.Identity;
 using Dreamrosia.Koin.Application.Requests.Identity;
 using Dreamrosia.Koin.Shared.Constants.Permission;
+using Dreamrosia.Koin.Shared.Constants.Role;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -40,10 +41,19 @@ namespace Dreamrosia.Koin.Server.Controllers.Identity
         }
 
         [Authorize(Policy = Permissions.Users.View)]
+        [HttpGet("brief/{userId}")]
+        public async Task<IActionResult> GetUserBrief(string userId)
+        {
+            var user = await _userService.GetUserBriefAsync(userId);
+
+            return Ok(user);
+        }
+
+        [Authorize(Policy = Permissions.Users.View)]
         [HttpGet("subscription/{userId}")]
         public async Task<IActionResult> GetSubscription(string userId)
         {
-            var user = await _userService.GetSubscriptionAsync(userId);
+            var user = await _userService.GetFullInfoAsync(userId);
 
             return Ok(user);
         }
@@ -52,40 +62,34 @@ namespace Dreamrosia.Koin.Server.Controllers.Identity
         /// Get User Details
         /// </summary>
         /// <returns>Status 200 OK</returns>
-        [Authorize(Policy = Permissions.Users.View)]
+        [Authorize(Roles = RoleConstants.AdministratorRole)]
         [HttpGet]
-        public async Task<IActionResult> GetSummaries(DateTime? head, DateTime? rear)
+        public async Task<IActionResult> GetFullInfos(DateTime head, DateTime rear)
         {
-            rear = rear is null ? DateTime.Now.Date : Convert.ToDateTime(rear);
-
-            var users = await _userService.GetSummariesAsync(Convert.ToDateTime(head), Convert.ToDateTime(rear));
+            var users = await _userService.GetFullInfosAsync(head, rear);
 
             return Ok(users);
         }
 
         [Authorize(Policy = Permissions.Users.View)]
-        [HttpGet("followers")]
-        public async Task<IActionResult> GetFollowers(string id, DateTime? head, DateTime? rear)
+        [HttpGet("followers/{userId}")]
+        public async Task<IActionResult> GetFollowers(string userId, DateTime head, DateTime rear)
         {
-            rear = rear is null ? DateTime.Now.Date : Convert.ToDateTime(rear);
-
-            var users = await _userService.GetFollowersAsync(id, Convert.ToDateTime(head), Convert.ToDateTime(rear));
+            var users = await _userService.GetFollowersAsync(userId, head, rear);
 
             return Ok(users);
         }
 
         [Authorize(Policy = Permissions.Users.View)]
         [HttpGet("boasters")]
-        public async Task<IActionResult> GetBoasters(DateTime? head, DateTime? rear)
+        public async Task<IActionResult> GetBoasters(DateTime head, DateTime rear)
         {
-            rear = rear is null ? DateTime.Now.Date : Convert.ToDateTime(rear);
-
-            var users = await _userService.GetBoastersAsync(Convert.ToDateTime(head), Convert.ToDateTime(rear));
+            var users = await _userService.GetBoastersAsync(head, rear);
 
             return Ok(users);
         }
 
-        [HttpPost("recommender/{id}")]
+        [HttpPost("recommender/{userId}")]
         public async Task<IActionResult> GetRecommender(RecommenderDto model)
         {
             var recommenders = await _userService.GetRecommenderAsync(model);
@@ -93,7 +97,7 @@ namespace Dreamrosia.Koin.Server.Controllers.Identity
             return Ok(recommenders);
         }
 
-        [HttpPost("recommender/update/{id}")]
+        [HttpPost("recommender/update/{userId}")]
         public async Task<IActionResult> UpdateRecommender(RecommenderDto model)
         {
             return Ok(await _userService.UpdateRecommenderAsync(model));
