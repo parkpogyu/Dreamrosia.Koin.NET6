@@ -67,8 +67,8 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             }
 
             var head = traders.Min(f => f.FirstSignalDate);
-            var rear = Convert.ToDateTime(model.RearDate).Date;
-            var startDate = Convert.ToDateTime(model.HeadDate).Date;
+            var rear = Convert.ToDateTime(model.RearDate).ToUniversalDate();
+            var startDate = Convert.ToDateTime(model.HeadDate).ToUniversalDate();
 
             head = head > startDate ? head : startDate;
 
