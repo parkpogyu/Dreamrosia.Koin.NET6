@@ -1123,10 +1123,10 @@
     <value>매도건수</value>
   </data>
   <data name="Report.AvgLoss" xml:space="preserve">
-    <value>매도 평균 손실</value>
+    <value>평균 매도손실</value>
   </data>
   <data name="Report.AvgProfit" xml:space="preserve">
-    <value>매도 평균 수익</value>
+    <value>평균 매도수익</value>
   </data>
   <data name="Report.BidCount" xml:space="preserve">
     <value>매수건수</value>
@@ -1135,31 +1135,31 @@
     <value>시작일</value>
   </data>
   <data name="Report.Loss" xml:space="preserve">
-    <value>매도 총 손실</value>
+    <value>총 매도손실</value>
   </data>
   <data name="Report.LossCount" xml:space="preserve">
     <value>손실건수</value>
   </data>
   <data name="Report.MaxLoss" xml:space="preserve">
-    <value>매도 최대 손실</value>
+    <value>최대 매도손실</value>
   </data>
   <data name="Report.MaxProfit" xml:space="preserve">
-    <value>매도 최대 수익</value>
+    <value>최대 매도수익</value>
   </data>
   <data name="Report.MinLoss" xml:space="preserve">
-    <value>매도 최소 손실</value>
+    <value>최소 매도손실</value>
   </data>
   <data name="Report.MinProfit" xml:space="preserve">
-    <value>매도 최소 수익</value>
+    <value>최소 매도수익</value>
   </data>
   <data name="Report.PnLRatio" xml:space="preserve">
     <value>손익비</value>
   </data>
   <data name="Report.Profit" xml:space="preserve">
-    <value>매도 총 수익</value>
+    <value>총 매도수익</value>
   </data>
   <data name="Report.PnL" xml:space="preserve">
-    <value>매도 총 손익</value>
+    <value>총 매도손익</value>
   </data>
   <data name="Report.ProfitCount" xml:space="preserve">
     <value>수익건수</value>
@@ -1372,7 +1372,7 @@
     <value>투자손익 평균 하락률(%)</value>
   </data>
   <data name="Report.MaxInvsPnL" xml:space="preserve">
-    <value>최대 투자손익</value>
+    <value>최대 투자수익</value>
   </data>
   <data name="Report.MaxMDDInvsPnL" xml:space="preserve">
     <value>투자손익 최대 하락폭</value>
@@ -1381,7 +1381,7 @@
     <value>투자손익 최대 하락률(%)</value>
   </data>
   <data name="Report.MinInvsPnL" xml:space="preserve">
-    <value>최소 투자손익</value>
+    <value>최대 투자손실</value>
   </data>
   <data name="Report.MinMDDDssAmt" xml:space="preserve">
     <value>보유자산 최소 하락폭</value>
@@ -1571,5 +1571,8 @@
   </data>
   <data name="LastModifiedOn" xml:space="preserve">
     <value>변경일시</value>
+  </data>
+  <data name="User.IsAssignedBotTicket" xml:space="preserve">
+    <value>티켓 할당</value>
   </data>
 </root>

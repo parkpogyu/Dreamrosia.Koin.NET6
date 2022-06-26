@@ -249,13 +249,13 @@
         </MudItem>
 
         <MudItem xs="12" sm="4">
-            <MudField Label="@_localizer["Report.Profit"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
-                <MudText Class="positive"> @($"{_report.Profit:N0}") </MudText>
+            <MudField Label="@_localizer["Report.Loss"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
+                <MudText Class="negative"> @($"{_report.Loss:N0}") </MudText>
             </MudField>
         </MudItem>
         <MudItem xs="12" sm="4">
-            <MudField Label="@_localizer["Report.Loss"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
-                <MudText Class="negative"> @($"{_report.Loss:N0}") </MudText>
+            <MudField Label="@_localizer["Report.Profit"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
+                <MudText Class="positive"> @($"{_report.Profit:N0}") </MudText>
             </MudField>
         </MudItem>
         <MudItem xs="12" sm="4">
@@ -279,12 +279,12 @@
 
         <MudItem xs="12" sm="4">
             <MudField Label="@_localizer["Report.MinProfit"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
-                @($"{_report.MinProfit:N0}")
+                <MudText Class="positive"> @($"{_report.MinProfit:N0}") </MudText>
             </MudField>
         </MudItem>
         <MudItem xs="12" sm="4">
             <MudField Label="@_localizer["Report.MaxProfit"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
-                @($"{_report.MaxProfit:N0}")
+                <MudText Class="positive"> @($"{_report.MaxProfit:N0}") </MudText>
             </MudField>
         </MudItem>
         <MudItem xs="12" sm="4">
@@ -295,12 +295,12 @@
 
         <MudItem xs="12" sm="4">
             <MudField Label="@_localizer["Report.MinLoss"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
-                @($"{_report.MinLoss:N0}")
+                <MudText Class="negative"> @($"{_report.MinLoss:N0}") </MudText>
             </MudField>
         </MudItem>
         <MudItem xs="12" sm="4">
             <MudField Label="@_localizer["Report.MaxLoss"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
-                @($"{_report.MaxLoss:N0}")
+                <MudText Class="negative"> @($"{_report.MaxLoss:N0}") </MudText>
             </MudField>
         </MudItem>
         <MudItem xs="12" sm="4">
@@ -322,12 +322,12 @@
 
         <MudItem xs="12" sm="6">
             <MudField Label="@_localizer["Report.LossCount"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
-                @($"{_report.LossCount:N0}")
+                <MudText Class="negative"> @($"{_report.LossCount:N0}") </MudText>
             </MudField>
         </MudItem>
         <MudItem xs="12" sm="6">
             <MudField Label="@_localizer["Report.ProfitCount"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
-                @($"{_report.ProfitCount:N0}")
+                <MudText Class="positive"> @($"{_report.ProfitCount:N0}") </MudText>
             </MudField>
         </MudItem>
 
@@ -337,7 +337,7 @@
                 @{
                     if (_report.PnLRatio < 1)
                     {
-                        <MudText Class="negative"> @($"{_report.PnLRatio:N2}") </MudText>
+                        <MudText Class="negative" Style="font-weight:bold" > @($"{_report.PnLRatio:N2}") </MudText>
                     }
                     else if (_report.PnLRatio == 1)
                     {
@@ -345,7 +345,7 @@
                     }
                     else
                     {
-                        <MudText Class="positive"> @($"{_report.PnLRatio:N2}") </MudText>
+                        <MudText Class="positive" Style="font-weight:bold"> @($"{_report.PnLRatio:N2}") </MudText>
                     }
                 }
             </MudField>
@@ -353,7 +353,7 @@
         <MudItem xs="12" sm="6">
             <MudField Label="@_localizer["Report.WinningRate"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right"
                       HelperText="@(_viewHelp ? $"({_localizer["Report.ProfitCount"]} / {_localizer["Report.AskCount"]}) x 100" :   string.Empty )">
-                @($"{_report.WinningRate:N2}")
+                <MudText Style="color:darkred;font-weight:bold"> @($"{_report.WinningRate:N2}") </MudText>
             </MudField>
         </MudItem>
 
