@@ -130,8 +130,6 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                     var mapped = _mapper.Map<UPbitKey>(model);
 
                     await _unitOfWork.Repository<UPbitKey>().AddAsync(mapped);
-
-                    _context.Database.ExecuteSqlRaw($"CALL PRC_Assign_MiningBotTicket('{model.UserId}')");
                 }
                 else
                 {
@@ -141,6 +139,13 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                     item.FatalError = string.Empty;
 
                     await _unitOfWork.Repository<UPbitKey>().UpdateAsync(item);
+                }
+
+                var ticket = _context.MiningBotTickets.SingleOrDefaultAsync(f => f.UserId.Equals(model.UserId));
+
+                if (ticket is null)
+                {
+                    _context.Database.ExecuteSqlRaw($"CALL PRC_Assign_MiningBotTicket('{model.UserId}')");
                 }
 
                 await _unitOfWork.Commit(new CancellationToken());
