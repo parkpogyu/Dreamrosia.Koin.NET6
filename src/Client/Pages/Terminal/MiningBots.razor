@@ -1,5 +1,6 @@
 ﻿@page "/terminal/bots"
 @attribute [Authorize(Policy = Permissions.MiningBots.View)]
+
 @using Dreamrosia.Koin.Application.DTO
 @using Dreamrosia.Koin.Client.Shared.Components
 
@@ -26,12 +27,19 @@ else
             <ToolBarContent>
                 <div class="d-flex" style="width:100%">
                     <FullSpacer />
+                    <MudCheckBox T="bool?" TriState="true"
+                             Label="@_localizer["User.IsAssignedBotTicket"]"
+                             Checked="@_chkIsAssignedBotTicket"
+                             CheckedChanged="@((value) => CheckAssignedBotTicketChanged(value))"
+                             Color="MudBlazor.Color.Primary"
+                             Class="auto-min-width align-self-end ml-4 mb-n2" />
+
                     <MudTextField @bind-Value="@_searchString"
                                   Immediate="false"
                                   FullWidth=false
                                   Placeholder="@_localizer["Search"]"
                                   Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small"
-                                  Class="search-box" />
+                                  Class="search-box ml-4" />
                 </div>
             </ToolBarContent>
             <HeaderContent>

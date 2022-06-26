@@ -8,6 +8,7 @@ using Microsoft.JSInterop;
 using MudBlazor;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Pages.Terminal
@@ -17,8 +18,10 @@ namespace Dreamrosia.Koin.Client.Pages.Terminal
         [Inject] private IMiningBotManager MiningBotManager { get; set; }
 
         private IEnumerable<MiningBotTicketDto> _items { get; set; } = new List<MiningBotTicketDto>();
+        private IEnumerable<MiningBotTicketDto> _sources { get; set; } = new List<MiningBotTicketDto>();
 
         private bool _loaded;
+        private bool? _chkIsAssignedBotTicket { get; set; } = true;
         private string _searchString = "";
         private bool _isDivTableRendered { get; set; } = false;
         private string _divTableHeight { get; set; } = "100%";
@@ -64,6 +67,19 @@ namespace Dreamrosia.Koin.Client.Pages.Terminal
             }
         }
 
+        private void SetItems()
+        {
+            _items = _sources.Where(f => (_chkIsAssignedBotTicket is null ? true : (f.User is not null) == (bool)_chkIsAssignedBotTicket)).ToArray();
+        }
+
+
+        private void CheckAssignedBotTicketChanged(bool? value)
+        {
+            _chkIsAssignedBotTicket = value;
+
+            SetItems();
+        }
+
         private async Task SetDivHeightAsync()
         {
             var window = await _jsRuntime.InvokeAsync<BoundingClientRect>("func_getWindowSize");
@@ -89,7 +105,9 @@ namespace Dreamrosia.Koin.Client.Pages.Terminal
         {
             var response = await MiningBotManager.GetMiningBotTicketsAsync();
 
-            _items = response.Data ?? new List<MiningBotTicketDto>();
+            _sources = response.Data ?? new List<MiningBotTicketDto>();
+
+            SetItems();
 
             if (response.Succeeded) { return; }
 
