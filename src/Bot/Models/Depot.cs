@@ -91,9 +91,9 @@ namespace Dreamrosia.Koin.Bot.Models
 
         public static void SetThisWeekOrders(IEnumerable<OrderDto> orders)
         {
-            DateTime first = DateTime.Now.FirstDayOfWeek(DayOfWeek.Monday);
+            DateTime first = DateTime.UtcNow.FirstDayOfWeek(DayOfWeek.Monday);
 
-            ThisWeekOrders = orders.Where(f => f.created_at >= first).ToArray();
+            ThisWeekOrders = orders.Where(f => f.created_at.ToUniversalTime() >= first).ToArray();
         }
 
         public static void SetWaitingOrders(IEnumerable<OrderDto> orders)
