@@ -34,8 +34,8 @@ namespace Dreamrosia.Koin.Server.Controllers
         public async Task<IActionResult> GetCandles(string market, DateTime head, DateTime rear)
         {
             var response = await _candleService.GetCandlesAsync(market,
-                                                                head.ToUniversalDate(),
-                                                                rear.ToUniversalDate());
+                                                                head.Date,
+                                                                rear.Date);
 
             return Ok(response);
         }
