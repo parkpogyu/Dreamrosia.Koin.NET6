@@ -352,19 +352,22 @@ namespace Dreamrosia.Koin.Bot.Services
 
                     if (response.Succeeded)
                     {
-                        builder.AppendLine($"\t예치금액: {result.locked:N4}");
+                        if (result.side == OrderSide.bid)
+                        {
+                            builder.AppendLine($"\t예치금액: {result.locked:N4}");
+                        }
 
                         if (result.avg_price > 0)
                         {
                             builder.AppendLine($"\t평균단가: {GetPriceText(result.avg_price)}");
                         }
 
-                        if (result.executed_volume is not null)
+                        if (Convert.ToDouble(result.executed_volume) > 0)
                         {
                             builder.AppendLine($"\t체결수량: {result.executed_volume:N8}");
                         }
 
-                        if (result.remaining_volume is not null)
+                        if (Convert.ToDouble(result.remaining_volume) > 0)
                         {
                             builder.AppendLine($"\t잔여수량: {result.remaining_volume:N8}");
                         }
