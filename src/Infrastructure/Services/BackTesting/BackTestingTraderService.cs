@@ -45,16 +45,24 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
         private SeasonSignals WeeklySignal { get; set; } = SeasonSignals.Indeterminate;
 
-        public DateTime FirstSignalDate
+        public DateTime GetFirstSignalDate(TimeFrames frame)
         {
-            get
+            MacdContainer container = null;
+
+            if (frame == TimeFrames.Day)
+            {
+                if (DailyContainers is null) { return DateTime.UtcNow.Date; }
+
+                container = DailyContainers.FirstOrDefault(f => f.SeasonSignals == SeasonSignals.GoldenCross);
+            }
+            else if (frame == TimeFrames.Week)
             {
                 if (WeeklyContainers is null) { return DateTime.UtcNow.Date; }
 
-                var goldenCross = WeeklyContainers.FirstOrDefault(f => f.SeasonSignals == SeasonSignals.GoldenCross);
-
-                return goldenCross is null ? DateTime.UtcNow.Date : goldenCross.Source.candle_date_time_utc;
+                container = WeeklyContainers.FirstOrDefault(f => f.SeasonSignals == SeasonSignals.GoldenCross);
             }
+
+            return container is null ? DateTime.UtcNow.Date : container.Source.candle_date_time_utc;
         }
 
         private IEnumerable<CandleDto> candles { get; set; }

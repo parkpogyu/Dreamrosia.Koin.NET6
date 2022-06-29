@@ -9,7 +9,7 @@ namespace Dreamrosia.Koin.Application.Interfaces.Services
     public interface IBackTestingTraderService
     {
 
-        DateTime FirstSignalDate { get; }
+        DateTime GetFirstSignalDate(TimeFrames frame);
         PaperPositionDto Position { get; }
         List<PaperPositionDto> Positions { get; }
         List<PaperOrderDto> Orders { get; }
