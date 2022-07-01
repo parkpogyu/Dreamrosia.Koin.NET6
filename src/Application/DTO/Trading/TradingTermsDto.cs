@@ -28,7 +28,6 @@ namespace Dreamrosia.Koin.Application.DTO
         public long Minimum { get; set; } = 10000;
         public long Maximum { get; set; } = 0;
         public bool Pyramiding { get; set; } = false;
-
         public bool ApplyMarketPrice { get; set; } = true;
         #endregion
 

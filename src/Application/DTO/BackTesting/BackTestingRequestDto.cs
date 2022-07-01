@@ -10,5 +10,30 @@ namespace Dreamrosia.Koin.Application.DTO
         public DateTime? RearDate { get; set; } = DateTime.Now.Date;
         public bool IncludeOrders { get; set; }
         public bool IncludePositons { get; set; }
+
+        #region Wrapper for MudNumericField
+        public float _SeedMoney
+        {
+            get => SeedMoney;
+            set => SeedMoney = (long)value;
+        }
+
+        public float _Amount
+        {
+            get => Amount;
+            set => Amount = (long)value;
+        }
+
+        public float _Minimum
+        {
+            get => Minimum;
+            set => Minimum = (long)value;
+        }
+        public float _Maximum
+        {
+            get => Maximum;
+            set => Maximum = (long)value;
+        }
+        #endregion
     }
 }
