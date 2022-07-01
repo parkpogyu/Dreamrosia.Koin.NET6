@@ -31,9 +31,10 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 
         public class ExParameter : IWebApiParameter
         {
-            [Display(Name = "화폐코드")]
-            public string currency { get; set; } = Coin.KRW;
+            /// <summary>
+            /// 화폐코드
+            /// </summary>
+            public string currency { get; set; } = Currency.KRW;
         }
-
     }
 }

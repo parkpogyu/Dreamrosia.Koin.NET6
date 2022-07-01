@@ -12,33 +12,21 @@ namespace Dreamrosia.Koin.Application.DTO
 
         #region Ask Terms
         public bool UseTakeProfit { get; set; } = true;
-
         public float TakeProfit { get; set; } = 500F;
-
         public bool UseStopLoss { get; set; } = true;
-
         public float StopLoss { get; set; } = -50F;
-
         public bool UseTrailingStop { get; set; } = false;
-
         public float TrailingStopStart { get; set; } = 1000F;
-
         public float TrailingStop { get; set; } = 15F;
-
         public bool LiquidatePositions { get; set; } = false;
         #endregion
 
         #region Bid Terms
         public BidAmountOption AmountOption { get; set; } = BidAmountOption.Auto;
-
         public float AmountRate { get; set; } = 1F;
-
-        public float Amount { get; set; } = 10000;
-
-        public float Minimum { get; set; } = 10000;
-
-        public float Maximum { get; set; } = 0;
-
+        public long Amount { get; set; } = 10000;
+        public long Minimum { get; set; } = 10000;
+        public long Maximum { get; set; } = 0;
         public bool Pyramiding { get; set; } = false;
 
         public bool ApplyMarketPrice { get; set; } = true;
@@ -46,9 +34,7 @@ namespace Dreamrosia.Koin.Application.DTO
 
         #region General Terms
         public bool AutoTrading { get; set; } = false;
-
         public TimeFrames TimeFrame { get; set; } = TimeFrames.Day;
-
         public long MaximumAsset { get; set; } = DefaultValue.TradingTerms.MaximumAsset4Free;
         #endregion
 

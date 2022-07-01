@@ -15,7 +15,6 @@ namespace Dreamrosia.Koin.Application.DTO
         public double high_price { get; set; }
         public double low_price { get; set; }
         public double trade_price { get; set; }
-        public long? timestamp { get; set; }
         public double candle_acc_trade_price { get; set; }
         public double candle_acc_trade_volume { get; set; }
         [JsonIgnore]

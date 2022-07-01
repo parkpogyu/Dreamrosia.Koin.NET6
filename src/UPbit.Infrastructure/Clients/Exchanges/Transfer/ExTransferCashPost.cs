@@ -35,10 +35,14 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 
         public class ExParameter : IWebApiParameter
         {
+            /// <summary>
+            /// 거래종류
+            /// </summary>
             public TransferType type { get; set; }
 
-            [Display(Name = "금액")]
-            [DisplayFormat(DataFormatString = "{0:N0}")]
+            /// <summary>
+            /// 거래금액/수량
+            /// </summary>
             public int amount { get; set; } = 5000;
         }
 

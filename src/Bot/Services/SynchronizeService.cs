@@ -111,7 +111,7 @@ namespace Dreamrosia.Koin.Bot.Services
 
                 TradingTermsDto result = null;
 #if DEBUG
-                var userId = "c6dd64ee-5a96-4b89-87e6-7a64a182b8a7";
+                var userId = "94b91906-75a3-47fc-9e77-38f27fdc5c24";
 
                 result = await connection.InvokeAsync<TradingTermsDto>(HubMethod.GetTestTradingTerms, bot, userId);
 #else

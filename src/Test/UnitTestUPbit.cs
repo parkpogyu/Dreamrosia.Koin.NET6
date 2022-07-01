@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UPbitModels = Dreamrosia.Koin.UPbit.Infrastructure.Models;
 
@@ -19,8 +20,8 @@ namespace Test
         {
             ExchangeClientKeys.SetAuthenticationKey(new UPbitModels.UPbitKey()
             {
-                access_key = "lNTMHCHx60Fldox9Y3mQYSoKWL8X9k1yxcJDrvXy",
-                secret_key = "CmZnkrz2Uh8GoBiQwcNQk1xpJPQpxuZofx46ivKD",
+                access_key = "kKPvYYh7xAHCX9S19yCSbzRNbjZqTE3PmzxDB89t",
+                secret_key = "fn2CE6f3XstvuMqNTxrty5GhrkAkcoHqp5Czirii",
             });
 
             IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json")
@@ -32,93 +33,7 @@ namespace Test
             Dreamrosia.Koin.UPbit.Infrastructure.Logger.SetLogger(_logger);
         }
 
-        [TestMethod]
-        public async Task TestQtCandle()
-        {
-            QtCandle QtCandle = new QtCandle();
-
-            QtCandle.QtParameter parameter = new QtCandle.QtParameter()
-            {
-                market = "KRW-SAND",
-                to = null,
-            };
-
-            var result = await QtCandle.GetCandlesAsync(parameter);
-
-            if (result.Succeeded)
-            {
-                foreach (var item in result.Data ?? new List<UPbitModels.Candle>())
-                {
-                    _logger.Debug($"{item.candle_date_time_utc:d} : {item.trade_price:N4}");
-                }
-            }
-            else
-            {
-                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.Console));
-            }
-        }
-
-        [TestMethod]
-        public async Task TestQtCrix()
-        {
-            QtCrix QtCrix = new QtCrix();
-
-            var result = await QtCrix.GetCrixesAsync();
-
-            if (result.Succeeded)
-            {
-                foreach (var item in result.Data ?? new List<UPbitModels.Crix>())
-                {
-                    _logger.Debug($"{item.crix_code} : {item.price:N4}");
-                }
-            }
-            else
-            {
-                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.Console));
-            }
-        }
-
-
-        [TestMethod]
-        public async Task TestQtSymbol()
-        {
-            QtSymbol QtSymbol = new QtSymbol();
-
-            var result = await QtSymbol.GetSymbolsAsync();
-
-            if (result.Succeeded)
-            {
-                foreach (var item in result.Data ?? new List<UPbitModels.Symbol>())
-                {
-                    _logger.Debug($"{item.market} : {item.korean_name}");
-                }
-            }
-            else
-            {
-                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.Console));
-            }
-        }
-
-        [TestMethod]
-        public async Task TestExAcessKeys()
-        {
-            ExAccessKeys ExAccessKeys = new ExAccessKeys();
-
-            var result = await ExAccessKeys.GetAccessKeysAsync();
-
-            if (result.Succeeded)
-            {
-                foreach (var item in result.Data ?? new List<UPbitModels.UPbitKey>())
-                {
-                    _logger.Debug($"{item.access_key} : {Convert.ToDateTime(item.expire_at):s}");
-                }
-            }
-            else
-            {
-                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.Console));
-            }
-        }
-
+        #region EXCHANGE API
         [TestMethod]
         public async Task TestExPositinos()
         {
@@ -128,14 +43,39 @@ namespace Test
 
             if (result.Succeeded)
             {
-                foreach (var item in result.Data ?? new List<UPbitModels.Position>())
-                {
-                    _logger.Debug($"{item.unit_currency}-{item.code} : {item.balance + item.locked}");
-                }
+                _logger.Debug($"\n{ObjectDumper.Dump(result.Data, DumpStyle.CSharp)}");
             }
             else
             {
-                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.Console));
+                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
+            }
+        }
+
+        [TestMethod]
+        public async Task TestOrderAvailable()
+        {
+            ExOrderAvailable ExOrderAvailable = new ExOrderAvailable();
+
+            ExOrderAvailable.ExParameter parameter = new ExOrderAvailable.ExParameter();
+
+            QtSymbol QtSymbol = new QtSymbol();
+
+            var symbols = (await QtSymbol.GetSymbolsAsync()).Data ?? new List<UPbitModels.Symbol>();
+
+            foreach (var symbol in symbols)
+            {
+                parameter.market = symbol.market;
+
+                var result = await ExOrderAvailable.GetOrderAvailableAsync(parameter);
+
+                if (result.Succeeded)
+                {
+                    _logger.Debug($"\n{ObjectDumper.Dump(result.Data, DumpStyle.CSharp)}");
+                }
+                else
+                {
+                    _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
+                }
             }
         }
 
@@ -148,14 +88,34 @@ namespace Test
 
             if (result.Succeeded)
             {
-                foreach (var item in result.Data ?? new List<UPbitModels.Order>())
+                _logger.Debug($"\n{ObjectDumper.Dump(result.Data, DumpStyle.CSharp)}");
+
+                if (result.Data.Any())
                 {
-                    _logger.Debug($"{item.created_at:s}: {item.market}, {item.side}, {item.executed_volume}, {item.trades_count}");
+                    var order = result.Data.Last();
+
+                    ExOrder ExOrder = new ExOrder();
+
+                    ExOrder.ExParameter parameter = new ExOrder.ExParameter()
+                    {
+                        uuid = order.uuid,
+                    };
+
+                    var detail = await ExOrder.GetOrderAsync(parameter);
+
+                    if (detail.Succeeded)
+                    {
+                        _logger.Debug($"\n{ObjectDumper.Dump(detail.Data, DumpStyle.CSharp)}");
+                    }
+                    else
+                    {
+                        _logger.Debug(ObjectDumper.Dump(detail, DumpStyle.CSharp));
+                    }
                 }
             }
             else
             {
-                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.Console));
+                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
             }
         }
 
@@ -168,14 +128,105 @@ namespace Test
 
             if (result.Succeeded)
             {
-                foreach (var item in result.Data ?? new List<UPbitModels.Order>())
+                _logger.Debug($"\n{ObjectDumper.Dump(result.Data, DumpStyle.CSharp)}");
+
+                if (result.Data.Any())
                 {
-                    _logger.Debug($"{item.created_at:s}: {item.market}, {item.side}, {item.executed_volume}, {item.trades_count}");
+                    var order = result.Data.Last();
+
+                    ExOrder ExOrder = new ExOrder();
+
+                    ExOrder.ExParameter parameter = new ExOrder.ExParameter()
+                    {
+                        uuid = order.uuid,
+                    };
+
+                    var detail = await ExOrder.GetOrderAsync(parameter);
+
+                    if (detail.Succeeded)
+                    {
+                        _logger.Debug($"\n{ObjectDumper.Dump(detail.Data, DumpStyle.CSharp)}");
+                    }
+                    else
+                    {
+                        _logger.Debug(ObjectDumper.Dump(detail, DumpStyle.CSharp));
+                    }
                 }
             }
             else
             {
-                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.Console));
+                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
+            }
+        }
+
+        [TestMethod]
+        public async Task TestOrder()
+        {
+            ExOrder ExOrder = new ExOrder();
+
+            ExOrder.ExParameter parameter = new ExOrder.ExParameter()
+            {
+                uuid = "92db920c-aea3-417d-bc94-15dd9deaf20b"
+            };
+
+            var result = await ExOrder.GetOrderAsync(parameter);
+
+            if (result.Succeeded)
+            {
+                _logger.Debug($"\n{ObjectDumper.Dump(result.Data, DumpStyle.CSharp)}");
+            }
+            else
+            {
+                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
+            }
+        }
+
+        [TestMethod]
+        public async Task TestOrderDelete()
+        {
+            ExOrderDelete ExOrderDelete = new ExOrderDelete();
+
+            ExOrderDelete.ExParameter parameter = new ExOrderDelete.ExParameter()
+            {
+                uuid = "KRW-BTC",
+                indendifier = "KRW-BTC",
+            };
+
+            var result = await ExOrderDelete.OrderDeleteAsync(parameter);
+
+            if (result.Succeeded)
+            {
+                _logger.Debug($"\n{ObjectDumper.Dump(result.Data, DumpStyle.CSharp)}");
+            }
+            else
+            {
+                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
+            }
+        }
+
+        [TestMethod]
+        public async Task TestOrderPost()
+        {
+            ExOrderPost ExOrderPost = new ExOrderPost();
+
+            ExOrderPost.ExParameter parameter = new ExOrderPost.ExParameter()
+            {
+                market = "KRW-BTC",
+                side = OrderSide.bid,
+                volume = (decimal)1.1,
+                price = (decimal)1000.2,
+                ord_type = OrderType.limit,
+            };
+
+            var result = await ExOrderPost.OrderPostAsync(parameter);
+
+            if (result.Succeeded)
+            {
+                _logger.Debug($"\n{ObjectDumper.Dump(result.Data, DumpStyle.CSharp)}");
+            }
+            else
+            {
+                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
             }
         }
 
@@ -188,14 +239,35 @@ namespace Test
 
             if (result.Succeeded)
             {
-                foreach (var item in result.Data ?? new List<UPbitModels.Transfer>())
+                _logger.Debug($"\n{ObjectDumper.Dump(result.Data, DumpStyle.CSharp)}");
+
+                if (result.Data.Any())
                 {
-                    _logger.Debug($"{item.done_at:s}: {item.code}, {item.amount}");
+                    var transfer = result.Data.Last();
+
+                    ExTransfer ExTransfer = new ExTransfer();
+
+                    ExTransfer.ExParameter parameter = new ExTransfer.ExParameter()
+                    {
+                        uuid = transfer.uuid,
+                        type = TransferType.deposit,
+                    };
+
+                    var detail = await ExTransfer.GetTransferAsync(parameter);
+
+                    if (detail.Succeeded)
+                    {
+                        _logger.Debug($"\n{ObjectDumper.Dump(detail.Data, DumpStyle.CSharp)}");
+                    }
+                    else
+                    {
+                        _logger.Debug(ObjectDumper.Dump(detail, DumpStyle.CSharp));
+                    }
                 }
             }
             else
             {
-                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.Console));
+                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
             }
         }
 
@@ -208,14 +280,35 @@ namespace Test
 
             if (result.Succeeded)
             {
-                foreach (var item in result.Data ?? new List<UPbitModels.Transfer>())
+                _logger.Debug($"\n{ObjectDumper.Dump(result.Data, DumpStyle.CSharp)}");
+
+                if (result.Data.Any())
                 {
-                    _logger.Debug($"{item.done_at:s}: {item.code}, {item.amount}");
+                    var transfer = result.Data.Last();
+
+                    ExTransfer ExTransfer = new ExTransfer();
+
+                    ExTransfer.ExParameter parameter = new ExTransfer.ExParameter()
+                    {
+                        uuid = transfer.uuid,
+                        type = TransferType.withdraw,
+                    };
+
+                    var detail = await ExTransfer.GetTransferAsync(parameter);
+
+                    if (detail.Succeeded)
+                    {
+                        _logger.Debug($"\n{ObjectDumper.Dump(detail.Data, DumpStyle.CSharp)}");
+                    }
+                    else
+                    {
+                        _logger.Debug(ObjectDumper.Dump(detail, DumpStyle.CSharp));
+                    }
                 }
             }
             else
             {
-                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.Console));
+                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
             }
         }
 
@@ -232,79 +325,42 @@ namespace Test
 
             var result = await ExTransfer.GetTransferAsync(parameter);
 
-            _logger.Debug(ObjectDumper.Dump(result, DumpStyle.Console));
+            _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
 
             parameter.uuid = "5ea41dd6-1b51-4b24-a21c-5176222df130";
             parameter.type = TransferType.withdraw;
 
             result = await ExTransfer.GetTransferAsync(parameter);
 
-            _logger.Debug(ObjectDumper.Dump(result, DumpStyle.Console));
+            _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
         }
 
         [TestMethod]
-        public async Task TestOrderPost()
+        public async Task TestWithdrawAvailable()
         {
-            ExOrderPost ExOrderPost = new ExOrderPost();
+            QtSymbol QtSymbol = new QtSymbol();
 
-            ExOrderPost.ExParameter parameter = new ExOrderPost.ExParameter()
+            var symbols = (await QtSymbol.GetSymbolsAsync()).Data ?? new List<UPbitModels.Symbol>();
+
+            ExWithdrawAvailable ExWithdrawAvailable = new ExWithdrawAvailable();
+
+            ExWithdrawAvailable.ExParameter parameter = new ExWithdrawAvailable.ExParameter();
+
+            foreach (var symbol in symbols)
             {
-                market = "KRW-BTC",
-                side = OrderSide.bid,
-                volume = 1.1,
-                price = 1000.2,
-                ord_type = OrderType.limit,
-            };
+                parameter.currency = symbol.code;
 
-            var result = await ExOrderPost.OrderPostAsync(parameter);
+                var available = await ExWithdrawAvailable.GetWithdrawAvailableAsync(parameter);
 
-            _logger.Debug(ObjectDumper.Dump(result, DumpStyle.Console));
-        }
-
-        [TestMethod]
-        public async Task TestOrder()
-        {
-            ExOrder ExOrder = new ExOrder();
-
-            ExOrder.ExParameter parameter = new ExOrder.ExParameter()
-            {
-                uuid = "92db920c-aea3-417d-bc94-15dd9deaf20b"
-            };
-
-            var result = await ExOrder.GetOrderAsync(parameter);
-
-            _logger.Debug(ObjectDumper.Dump(result, DumpStyle.Console));
-        }
-
-        [TestMethod]
-        public async Task TestOrderAvailable()
-        {
-            ExOrderAvailable ExOrderAvailable = new ExOrderAvailable();
-
-            ExOrderAvailable.ExParameter parameter = new ExOrderAvailable.ExParameter()
-            {
-                market = "KRW-BTC",
-            };
-
-            var result = await ExOrderAvailable.GetOrderAvailableAsync(parameter);
-
-            _logger.Debug(ObjectDumper.Dump(result, DumpStyle.Console));
-        }
-
-        [TestMethod]
-        public async Task TestOrderDelete()
-        {
-            ExOrderDelete ExOrderDelete = new ExOrderDelete();
-
-            ExOrderDelete.ExParameter parameter = new ExOrderDelete.ExParameter()
-            {
-                uuid = "KRW-BTC",
-                indendifier = "KRW-BTC",
-            };
-
-            var result = await ExOrderDelete.OrderDeleteAsync(parameter);
-
-            _logger.Debug(ObjectDumper.Dump(result, DumpStyle.Console));
+                if (available.Succeeded)
+                {
+                    _logger.Debug($"\n{ObjectDumper.Dump(available.Data, DumpStyle.CSharp)}");
+                }
+                else
+                {
+                    _logger.Debug(ObjectDumper.Dump(available, DumpStyle.CSharp));
+                }
+            }
         }
 
         [TestMethod]
@@ -316,16 +372,187 @@ namespace Test
 
             if (result.Succeeded)
             {
-                foreach (var item in result.Data ?? new List<UPbitModels.CoinStatus>())
-                {
-                    _logger.Debug($"{item.code}: {item.wallet_state}, {item.block_state}");
-                }
+                _logger.Debug($"\n{ObjectDumper.Dump(result.Data, DumpStyle.CSharp)}");
             }
             else
             {
-                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.Console));
+                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
             }
         }
+
+        [TestMethod]
+        public async Task TestExAcessKeys()
+        {
+            ExAccessKeys ExAccessKeys = new ExAccessKeys();
+
+            var result = await ExAccessKeys.GetAccessKeysAsync();
+
+            if (result.Succeeded)
+            {
+                _logger.Debug($"\n{ObjectDumper.Dump(result.Data, DumpStyle.CSharp)}");
+            }
+            else
+            {
+                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
+            }
+        }
+        #endregion
+
+        #region QUOTATION API
+        [TestMethod]
+        public async Task TestQtSymbol()
+        {
+            QtSymbol QtSymbol = new QtSymbol();
+
+            var result = await QtSymbol.GetSymbolsAsync();
+
+            if (result.Succeeded)
+            {
+                _logger.Debug($"\n{ObjectDumper.Dump(result.Data, DumpStyle.CSharp)}");
+            }
+            else
+            {
+                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
+            }
+        }
+
+        [TestMethod]
+        public async Task TestQtCandle()
+        {
+            QtCandle QtCandle = new QtCandle();
+
+            QtCandle.QtParameter parameter = new QtCandle.QtParameter()
+            {
+                market = "KRW-ARDR",
+                to = null,
+            };
+
+            var result = await QtCandle.GetCandlesAsync(parameter);
+
+            if (result.Succeeded)
+            {
+                _logger.Debug($"\n{ObjectDumper.Dump(result.Data, DumpStyle.CSharp)}");
+            }
+            else
+            {
+                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
+            }
+        }
+
+        [TestMethod]
+        public async Task TestQtCandles()
+        {
+            QtSymbol QtSymbol = new QtSymbol();
+
+            var symbols = await QtSymbol.GetSymbolsAsync();
+
+            if (symbols.Succeeded)
+            {
+                QtCandle QtCandle = new QtCandle();
+
+                foreach (var symbol in symbols.Data)
+                {
+                    QtCandle.QtParameter parameter = new QtCandle.QtParameter()
+                    {
+                        market = symbol.market,
+                        to = null,
+                    };
+
+                    var candles = await QtCandle.GetCandlesAsync(parameter);
+
+                    if (candles.Succeeded)
+                    {
+                        _logger.Debug($"\n{ObjectDumper.Dump(candles.Data, DumpStyle.CSharp)}");
+                    }
+                    else
+                    {
+                        _logger.Debug(ObjectDumper.Dump(candles, DumpStyle.CSharp));
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
+        public async Task TestQtMarketTrade()
+        {
+            QtMarketTrade QtMarketTrade = new QtMarketTrade();
+
+            QtMarketTrade.QtParameter parameter = new QtMarketTrade.QtParameter()
+            {
+                market = "KRW-BTC"
+            };
+
+            var result = await QtMarketTrade.GetMarketTradesAsync(parameter);
+
+            if (result.Succeeded)
+            {
+                _logger.Debug($"\n{ObjectDumper.Dump(result.Data, DumpStyle.CSharp)}");
+            }
+            else
+            {
+                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
+            }
+        }
+
+        [TestMethod]
+        public async Task TestQtTicker()
+        {
+            QtTicker QtTicker = new QtTicker();
+
+            QtTicker.QtParameter parameter = new QtTicker.QtParameter();
+
+            parameter.markets.Add("KRW-BTC");
+
+            var result = await QtTicker.GetTickersAsync(parameter);
+
+            if (result.Succeeded)
+            {
+                _logger.Debug($"\n{ObjectDumper.Dump(result.Data, DumpStyle.CSharp)}");
+            }
+            else
+            {
+                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
+            }
+        }
+
+        [TestMethod]
+        public async Task TestQtOrderBook()
+        {
+            QtOrderBook QtOrderBook = new QtOrderBook();
+
+            QtOrderBook.QtParameter parameter = new QtOrderBook.QtParameter();
+
+            parameter.markets.Add("KRW-BTC");
+
+            var result = await QtOrderBook.GetOrderBooksAsync(parameter);
+
+            if (result.Succeeded)
+            {
+                _logger.Debug($"\n{ObjectDumper.Dump(result.Data, DumpStyle.CSharp)}");
+            }
+            else
+            {
+                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
+            }
+        }
+
+        [TestMethod]
+        public async Task TestQtCrix()
+        {
+            QtCrix QtCrix = new QtCrix();
+
+            var result = await QtCrix.GetCrixesAsync();
+
+            if (result.Succeeded)
+            {
+                _logger.Debug($"\n{ObjectDumper.Dump(result.Data, DumpStyle.CSharp)}");
+            }
+            else
+            {
+                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
+            }
+        }
+        #endregion
 
         [TestMethod]
         public async Task TestBundle()
@@ -365,18 +592,31 @@ namespace Test
             await Task.WhenAll(tasks).ConfigureAwait(false);
         }
 
-
         [TestMethod]
         public async Task TestTruncate()
         {
-
             DateTime touched = new DateTime();
             TimeSpan? elapsed = null;
 
-            System.Diagnostics.Debug.WriteLine($"touched: {touched:t}");
-            System.Diagnostics.Debug.WriteLine($"elapsed: {elapsed:c}");
+            //var pos = "136602727.27272727";
+            var pos = "136602727.2727";
 
+            var convert_dec = Convert.ToDecimal(pos);
+            var convert_dob = convert_dec;
 
+            System.Diagnostics.Debug.WriteLine($"pos: {pos}");
+            System.Diagnostics.Debug.WriteLine($"convert dec: {convert_dec:N8}");
+            System.Diagnostics.Debug.WriteLine($"convert dob: {convert_dob:N8}");
+
+            convert_dob = convert_dob + .0001m;
+
+            System.Diagnostics.Debug.WriteLine($"convert dob: {convert_dob:N8}");
+
+            convert_dob = convert_dob - .0005m;
+
+            System.Diagnostics.Debug.WriteLine($"convert dob: {convert_dob:N8}");
+
+            var a = Convert.ToDecimal(null);
         }
     }
 }

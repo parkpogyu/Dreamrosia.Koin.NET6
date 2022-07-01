@@ -7,7 +7,6 @@ namespace Dreamrosia.Koin.Domain.Entities
         // Id <-> UserId
 
         public bool GoBoast { get; set; }
-
         public string RecommenderId { get; set; }
 
         public IDomainUser User { get; set; }

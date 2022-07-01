@@ -96,7 +96,7 @@
                 <MudHighlighter Text="@context.korean_name" HighlightedText="@_searchString" />
             </MudTd>
             <MudTd DataLabel=@_localizer["Symbol.trade_price"] Style="text-align:right">
-                @(TickerDto.GetPriceText(Convert.ToDouble(context.trade_price)))
+                @(TickerDto.GetPriceText(context.trade_price))
             </MudTd>
             <MudTd DataLabel=@_localizer["Symbol.signed_change_rate"] Style="text-align:right">
                 @{

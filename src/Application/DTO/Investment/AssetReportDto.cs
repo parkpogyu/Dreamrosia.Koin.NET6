@@ -2,7 +2,6 @@
 using Dreamrosia.Koin.Shared.Enums;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.Json.Serialization;
 
@@ -10,141 +9,42 @@ namespace Dreamrosia.Koin.Application.DTO
 {
     public class AssetReportDto : AssetDto
     {
-        [Display(Name = "보유자산 최소 하락폭)")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
         public double MinMDDDssAmt { get; set; }
-
-        [Display(Name = "보유자산 최대 하락폭")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
         public double MaxMDDDssAmt { get; set; }
-
-        [Display(Name = "보유자산 평균 하락폭)")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
         public double AvgMDDDssAmt { get; set; }
-
-        [Display(Name = "보유자산 최소 하략률(%)")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public double MinMDDDssAmtRat { get; set; }
-
-        [Display(Name = "보유자산 최대 하략률(%)")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public double MaxMDDDssAmtRat { get; set; }
-
-        [Display(Name = "보유자산 평균 하략률(%)")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public double AvgMDDDssAmtRat { get; set; }
-
-        [Display(Name = "투자손익 최소 하락폭)")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
+        public float MinMDDDssAmtRat { get; set; }
+        public float MaxMDDDssAmtRat { get; set; }
+        public float AvgMDDDssAmtRat { get; set; }
         public double MinMDDInvsPnL { get; set; }
-
-        [Display(Name = "투자손익 최대 하락폭")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
         public double MaxMDDInvsPnL { get; set; }
-
-        [Display(Name = "투자손익 평균 하락폭)")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
         public double AvgMDDInvsPnL { get; set; }
-
-        [Display(Name = "투자손익 최소 하략률(%)")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public double MinMDDInvsPnLRat { get; set; }
-
-        [Display(Name = "투자손익 최대 하략률(%)")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public double MaxMDDInvsPnLRat { get; set; }
-
-        [Display(Name = "투자손익 평균 하략률(%)")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public double AvgMDDInvsPnLRat { get; set; }
-
-        [Display(Name = "최소 투자손익")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
+        public float MinMDDInvsPnLRat { get; set; }
+        public float MaxMDDInvsPnLRat { get; set; }
+        public float AvgMDDInvsPnLRat { get; set; }
         public double MinInvsPnL { get; set; }
-
-        [Display(Name = "평균 투자손익)")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
         public double AvgInvsPnL { get; set; }
-
-        [Display(Name = "최소 투자손익률 (%)")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public double MinInvsPnLRat { get; set; }
-
-        [Display(Name = "최대 투자손익률 (%)")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public double MaxInvsPnLRat { get; set; }
-
-        [Display(Name = "평균 투자손익률 (%)")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public double AvgInvsPnLRat { get; set; }
-
-        [Display(Name = "매도 총 수익")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
+        public float MinInvsPnLRat { get; set; }
+        public float MaxInvsPnLRat { get; set; }
+        public float AvgInvsPnLRat { get; set; }
         public double Profit { get; set; }
-
-        [Display(Name = "매도 총 손실")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
         public double Loss { get; set; }
-
         [JsonIgnore]
         public override double PnL => Profit + Loss;
-
-        [Display(Name = "매도 최소 수익")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
         public double MinProfit { get; set; }
-
-        [Display(Name = "매도 최대 수익")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
         public double MaxProfit { get; set; }
-
-        [Display(Name = "매도 평균 수익")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
         public double AvgProfit { get; set; }
-
-        [Display(Name = "매도 최소 손실")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
         public double MinLoss { get; set; }
-
-        [Display(Name = "매도 최대 손실")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
         public double MaxLoss { get; set; }
-
-        [Display(Name = "매도 평균 손실")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
         public double AvgLoss { get; set; }
-
-        [Display(Name = "매수 건수")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public double BidCount { get; set; }
-
-        [Display(Name = "매도 건수")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public double AskCount { get; set; }
-
-        [Display(Name = "수익 건수")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public double ProfitCount { get; set; }
-
-        [Display(Name = "손실 건수")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public double LossCount { get; set; }
-
+        public int BidCount { get; set; }
+        public int AskCount { get; set; }
+        public int ProfitCount { get; set; }
+        public int LossCount { get; set; }
         [JsonIgnore]
-        [Display(Name = "손익비")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
-        public double PnLRatio => AvgLoss == 0 ? 0 : Math.Abs(AvgProfit / AvgLoss);
-
+        public float PnLRatio => AvgLoss == 0 ? 0 : (float)Math.Abs(AvgProfit / AvgLoss);
         [JsonIgnore]
-        [Display(Name = "승률(%)")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public double WinningRate => AskCount == 0 ? 0 : Ratio.ToPercentage(ProfitCount, AskCount);
-
-        [Display(Name = "시작일자")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm:ss}")]
+        public float WinningRate => AskCount == 0 ? 0 : (float)Ratio.ToPercentage(ProfitCount, AskCount);
         public DateTime? HeadDate { get; set; }
-
-        [Display(Name = "종료일자")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm:ss}")]
         public DateTime RearDate { get; set; }
 
         [JsonIgnore]
@@ -232,7 +132,7 @@ namespace Dreamrosia.Koin.Application.DTO
             AvgLoss = loss.Any() ? loss.Average(f => f.PnL) : 0;
             LossCount = loss.Count();
 
-            Fee = orders.Any() ? orders.Sum(f => Convert.ToDouble(f.paid_fee)) : 0;
+            Fee = orders.Any() ? (double)orders.Sum(f => f.paid_fee) : 0;
             MaxDssAmt = Assets.Any() ? Assets.Max(f => f.MaxDssAmt) : 0;
 
             var mdds = Assets.Where(f => f.MDDDssAmt < 0).ToArray();

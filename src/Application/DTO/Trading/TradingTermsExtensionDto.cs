@@ -7,13 +7,9 @@ namespace Dreamrosia.Koin.Application.DTO
     public class TradingTermsExtensionDto : TradingTermsDto
     {
         public string Ticket { get; set; }
-
         public IEnumerable<SeasonSignalDto> Signals { get; set; }
-
         public OrderDto LastOrder { get; set; }
-
         public TransferDto LastDeposit { get; set; }
-
         public TransferDto LastWithdraw { get; set; }
     }
 }

@@ -135,7 +135,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             {
                 bool applyMarket = model.ApplyMarketPrice;
 
-                double amount = 0;
+                long amount = 0;
 
                 if (model.AmountOption == BidAmountOption.Fixed)
                 {
@@ -143,13 +143,14 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                 }
                 else
                 {
-                    double cutOffUnit = 1000D; // 절사 단위
-                    double MaxBidAmount = 1000000000D; // KRW 최대 주문 금액: 1,000,000,000
+                    long roundDown = 1000;
+                    long maxBidAmount = 1000000000;
 
-                    model.AmountRate = model.AmountOption == BidAmountOption.Auto ? 100F / count : model.AmountRate;
+                    float rate = (model.AmountOption == BidAmountOption.Auto ?
+                                 100F / count : model.AmountRate) / 100F;
 
-                    amount = (long)(total * (model.AmountRate / 100F));
-                    amount = (amount / cutOffUnit) * cutOffUnit;  // 천원 단위로 거래
+                    amount = (long)(total * rate);
+                    amount = (long)(((float)amount / (float)roundDown) * roundDown);  // 절사 단위로 거래
 
                     if (amount < model.Minimum)
                     {
@@ -158,7 +159,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                     else if (model.Maximum < amount)
                     {
                         amount = model.Maximum == 0 ? amount : model.Maximum;
-                        amount = amount > MaxBidAmount ? MaxBidAmount : amount;
+                        amount = amount > maxBidAmount ? maxBidAmount : amount;
                     }
                 }
 
@@ -184,7 +185,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 asset.AskAmt = asks.Sum(f => f.exec_amount);
                 asset.BidAmt = bids.Sum(f => f.exec_amount);
-                asset.Fee = asks.Sum(f => Convert.ToDouble(f.paid_fee)) + bids.Sum(f => Convert.ToDouble(f.paid_fee));
+                asset.Fee = (double)(asks.Sum(f => f.paid_fee) + bids.Sum(f => f.paid_fee));
                 asset.PnL = asks.Sum(f => f.PnL);
                 asset.BalEvalAmt = positions.Sum(f => f.BalEvalAmt);
                 asset.Deposit = prev.Deposit - (asset.BidAmt + asset.Fee) + asset.AskAmt;

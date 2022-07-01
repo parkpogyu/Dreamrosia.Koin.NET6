@@ -37,7 +37,7 @@ namespace Dreamrosia.Koin.Bot.Services
         /// </summary>
         private readonly int DelayPositionCheckTime = 3;
 
-        private double BidAmount { get; set; }
+        private long BidAmount { get; set; }
 
         public TradeOrderService(IMapper mapper,
                                  ILogger<TradeOrderService> logger)
@@ -45,7 +45,6 @@ namespace Dreamrosia.Koin.Bot.Services
             _mapper = mapper;
             _logger = logger;
         }
-
 
         private IEnumerable<string> GetBidSideSymbols()
         {
@@ -91,7 +90,7 @@ namespace Dreamrosia.Koin.Bot.Services
 
         private IEnumerable<OrderPostParameterDto> GetAskOrders()
         {
-            var sellables = (from coin in Coins.Where(f => OrderPostParameterDto.MinimumOrderableAmount < f.BalEvalAmt && 0 < f.balance)
+            var sellables = (from coin in Coins.Where(f => TradingConstants.MinOrderableAmount < f.BalEvalAmt && 0 < f.balance)
                              from order in OriginalBidOrders.Where(f => f.market.Equals(coin.market)).DefaultIfEmpty()
                              where order is null
                              select coin).ToArray();
@@ -160,11 +159,11 @@ namespace Dreamrosia.Koin.Bot.Services
             {
                 OrderReason reason = OrderReason.None;
 
-                if (TradingTerms.UseStopLoss && -100D < item.PnLRat && item.PnLRat < TradingTerms.StopLoss)
+                if (TradingTerms.UseStopLoss && -100F < item.PnLRat && item.PnLRat < TradingTerms.StopLoss)
                 {
                     reason = OrderReason.StopLoss;
                 }
-                else if (TradingTerms.UseTakeProfit && TradingTerms.TakeProfit < item.PnLRat && double.IsFinite(item.PnLRat))
+                else if (TradingTerms.UseTakeProfit && TradingTerms.TakeProfit < item.PnLRat && float.IsFinite(item.PnLRat))
                 {
                     reason = OrderReason.TakeProfit;
                 }
@@ -203,7 +202,7 @@ namespace Dreamrosia.Koin.Bot.Services
             var items = (from bid in bids
                          from coin in Coins.Where(f => f.market.Equals(bid)).DefaultIfEmpty()
                          where coin is null || (coin.BalEvalAmt > 0 &&
-                                                coin.BalEvalAmt < OrderPostParameterDto.MinimumBidAmount)
+                                                coin.BalEvalAmt < TradingConstants.MinBidAmount)
                          select new { symbol = bid, coin = coin }).ToArray();
 
             List<OrderPostParameterDto> orders = new List<OrderPostParameterDto>();
@@ -224,14 +223,14 @@ namespace Dreamrosia.Koin.Bot.Services
                     amount = BidAmount;
                 }
 
-                if (Cash?.balance < amount || amount < OrderPostParameterDto.MinimumOrderableAmount) { continue; }
+                if (Convert.ToDouble(Cash?.balance) < amount || amount < TradingConstants.MinOrderableAmount) { continue; }
 
                 orders.Add(new OrderPostParameterDto()
                 {
                     side = OrderSide.bid,
                     market = item.symbol,
                     ord_type = OrderType.price,
-                    price = amount,
+                    price = Convert.ToDecimal(amount),
                     Remark = OrderReason.Signal.ToDescriptionString()
                 }); ;
             }
@@ -264,22 +263,21 @@ namespace Dreamrosia.Koin.Bot.Services
             }
             else
             {
-                var total = Coins.Sum(f => f.BalEvalAmt) + Cash?.balance;
+                var total = Coins.Sum(f => f.BalEvalAmt) + Convert.ToDouble(Cash?.balance);
 
-                if (total is null) { return false; }
-
+                if (total == 0) { return false; }
 #if DEBUG
                 // 회원등급별 최대 운용자산 맞춤
-                total = Math.Min(Convert.ToDouble(total), TradingTerms.MaximumAsset);
+                total = Math.Min(total, TradingTerms.MaximumAsset);
 #endif
+                long roundDown = TradingConstants.RoundDownUnit; // 절사 단위
+                long maxBidAmount = TradingConstants.MaxBidAmount; // 업비트 최대 주문 금액: 1,000,000,000
 
-                double roundDown = TradingConstants.RoundDownUnit; // 절사 단위
-                double maxBidAmount = TradingConstants.MaxBidAmount; // KRW 최대 주문 금액: 1,000,000,000
+                float rate = (TradingTerms.AmountOption == BidAmountOption.Auto ?
+                             100F / Signals.Count() : TradingTerms.AmountRate) / 100F;
 
-                TradingTerms.AmountRate = TradingTerms.AmountOption == BidAmountOption.Auto ? 100F / Signals.Count() : TradingTerms.AmountRate;
-
-                BidAmount = (long)(total * (TradingTerms.AmountRate / 100F));
-                BidAmount = (BidAmount / roundDown) * roundDown;  // 천원 단위로 거래
+                BidAmount = (long)(total * rate);
+                BidAmount = (long)(((float)BidAmount / (float)roundDown) * roundDown);  // 절사 단위로 거래
 
                 if (BidAmount < TradingTerms.Minimum)
                 {
@@ -362,12 +360,12 @@ namespace Dreamrosia.Koin.Bot.Services
                             builder.AppendLine($"\t평균단가: {GetPriceText(result.avg_price)}");
                         }
 
-                        if (Convert.ToDouble(result.executed_volume) > 0)
+                        if (result.executed_volume > 0)
                         {
                             builder.AppendLine($"\t체결수량: {result.executed_volume:N8}");
                         }
 
-                        if (Convert.ToDouble(result.remaining_volume) > 0)
+                        if (result.remaining_volume > 0)
                         {
                             builder.AppendLine($"\t잔여수량: {result.remaining_volume:N8}");
                         }
@@ -379,7 +377,11 @@ namespace Dreamrosia.Koin.Bot.Services
                     }
 
                     builder.AppendLine(string.Format("\t주문결과: {0}", response.Succeeded ? OrderState.done.ToDescriptionString() : response.FullMessage));
+#if DEBUG
+                    builder.AppendLine($"\t비    고: {order.Remark} {response.FullMessage}");
+#else
                     builder.AppendLine($"\t비    고: {order.Remark}");
+#endif
 
                     _logger.LogInformation(builder.ToString());
                 }

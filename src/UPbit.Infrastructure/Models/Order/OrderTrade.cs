@@ -7,37 +7,23 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Models
     [Display(Name = "체결정보")]
     public class OrderTrade
     {
-        [Display(Name = "마켓코드")]
+        // 타입          필드               설명
+        //-------------------------------------------------------------------------------------
+        // String        trades.market     마켓의 유일 키 
+        // String        trades.uuid       체결의 고유 아이디  
+        // NumberString  trades.price      체결 가격 
+        // NumberString  trades.volume     체결 양 
+        // NumberString  trades.funds      체결된 총 가격    
+        // String        trades.side       체결 종류 
+        // DateString    trades.created_at 체결 시각 
+        //-------------------------------------------------------------------------------------
+
         public string market { get; set; }
-
-        [Display(Name = "체결번호")]
         public string uuid { get; set; }
-
-        [Display(Name = "체결가격")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
-        public double price { get; set; }
-
-        [Display(Name = "체결수량")]
-        [DisplayFormat(DataFormatString = "{0:N8}")]
-        public double volume { get; set; }
-
-        [Display(Name = "체결총액")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
-        public double funds { get; set; }
-
-        [Display(Name = "주문종류")]
+        public decimal price { get; set; }
+        public decimal volume { get; set; }
+        public decimal funds { get; set; }
         public OrderSide Side { get; set; }
-
-        [Display(Name = "체결시간")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm:ss}")]
         public DateTime? created_at { get; set; }
-
-        #region Appended
-        [Display(Name = "기준화폐")]
-        public string unit_currency => Symbol.GetUnitCurrency(market);
-
-        [Display(Name = "화폐코드")]
-        public string code => Symbol.GetCode(market);
-        #endregion
     }
 }

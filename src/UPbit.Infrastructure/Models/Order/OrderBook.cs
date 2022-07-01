@@ -7,53 +7,44 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Models
     [Display(Name = "호가정보")]
     public class OrderBook
     {
-        [Display(Name = "마켓코드")]
+
+        // 타입          필드            설명
+        //-------------------------------------------------------------------------------------
+        // String       market          마켓 코드 
+        // Long         timestamp       호가 생성 시각    
+        // Double       total_ask_size  호가 매도 총 잔량
+        // Double       total_bid_size  호가 매수 총 잔량  
+        // List[Object] orderbook_units 호가 List of Objects
+        //-------------------------------------------------------------------------------------
+
         public string market { get; set; }
-
-        [Display(Name = "호가생성시간")]
         public long timestamp { get; set; }
-
-        [Display(Name = "매도총잔량")]
         public double total_ask_size { get; set; }
-
-        [Display(Name = "매수총잔량")]
         public double total_bid_size { get; set; }
-
-        [Display(Name = "호가목록")]
         public List<OrderBookUnit> orderbook_units { get; set; }
 
         public class OrderBookUnit
         {
-            [Display(Name = "매도호가")]
+            // 타입   필드       설명
+            //-------------------------------------------------------------------------------------
+            // Double ask_price 매도호가    
+            // Double bid_price 매수호가 
+            // Double ask_size  매도 잔량 
+            // Double bid_size  매수 잔량
+            //-------------------------------------------------------------------------------------
             public double ask_price { get; set; }
-
-            [Display(Name = "매수호가")]
             public double bid_price { get; set; }
-
-            [Display(Name = "매도잔량")]
             public double ask_size { get; set; }
-
-            [Display(Name = "매수잔량")]
             public double bid_size { get; set; }
         }
 
         public class Unit
         {
-            [Display(Name = "매수잔량")]
             public double? bid_size { get; set; }
-
-            [Display(Name = "호가")]
             public double price { get; set; }
-
-            [Display(Name = "매도잔량")]
             public double? ask_size { get; set; }
 
             public OrderSide Side => bid_size != null ? OrderSide.bid : OrderSide.ask;
-
-            public static string SizeFormatString(double size)
-            {
-                return 10000 < size ? "{0:N0}" : "{0:N4}";
-            }
         }
     }
 }

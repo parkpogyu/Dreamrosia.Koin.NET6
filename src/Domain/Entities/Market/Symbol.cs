@@ -13,24 +13,8 @@ namespace Dreamrosia.Koin.Domain.Entities
         /// 마켓코드
         /// Id <-> market
 
-        /// <summary>
-        /// 한글명
-        /// </summary>
-        //[Required]
-        //[StringLength(50)]
         public string korean_name { get; set; }
-
-        /// <summary>
-        /// 영문명
-        /// </summary>
-        //[Required]
-        //[StringLength(100)]
         public string english_name { get; set; }
-
-        /// <summary>
-        /// 투자주의
-        /// </summary>
-        //[Required]
         public MarketAlert market_warning { get; set; }
 
         public ICollection<SeasonSignal> Signals { get; set; }

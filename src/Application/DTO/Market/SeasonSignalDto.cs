@@ -10,11 +10,8 @@ namespace Dreamrosia.Koin.Application.DTO
         public string UserId { get; set; }
 
         public string market { get; set; }
-
         public SeasonSignals DailySignal { get; set; } = SeasonSignals.Indeterminate;
-
         public SeasonSignals WeeklySignal { get; set; } = SeasonSignals.Indeterminate;
-
         public DateTime UpdatedAt { get; set; }
     }
 }

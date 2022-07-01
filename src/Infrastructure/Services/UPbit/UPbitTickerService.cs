@@ -61,7 +61,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                                  return new SymbolDto()
                                  {
                                      market = lt,
-                                     trade_price = rt?.Candle?.trade_price
+                                     trade_price = rt is null ? 0 : rt.Candle.trade_price
                                  };
 
                              }))()).ToArray();
@@ -71,7 +71,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                     Tickers[item.market] = new UPbitModels.Ticker()
                     {
                         market = item.market,
-                        trade_price = Convert.ToDouble(item.trade_price)
+                        trade_price = item.trade_price
                     };
                 }
 

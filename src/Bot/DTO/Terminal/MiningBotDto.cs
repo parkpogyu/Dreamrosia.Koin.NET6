@@ -7,15 +7,10 @@ namespace Dreamrosia.Koin.Bot.DTO
     public class MiningBotDto
     {
         public string Id { get; set; }
-
         public string Ticket { get; set; }
-
         public string MachineName { get; set; }
-
         public string Version { get; set; }
-
         public string CurrentDirectory { get; set; }
-
         public DateTime? Touched { get; set; }
     }
 }

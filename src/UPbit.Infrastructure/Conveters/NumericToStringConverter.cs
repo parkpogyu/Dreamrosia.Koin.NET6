@@ -18,7 +18,7 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Conveters
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             //writer.WriteValue(value.ToString());
-            writer.WriteValue(NumericConverter.ToString((double)value));
+            writer.WriteValue(NumericConverter.ToString((decimal)value));
         }
     }
 }

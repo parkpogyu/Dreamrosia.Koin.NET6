@@ -8,6 +8,7 @@ using Dreamrosia.Koin.Shared.Constants.Application;
 using Dreamrosia.Koin.Shared.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -100,10 +101,16 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
         protected override void OnModelCreating(ModelBuilder builder)
         {
             foreach (var property in builder.Model.GetEntityTypes()
-                                                  .SelectMany(t => t.GetProperties())
-                                                  .Where(p => p.ClrType == typeof(decimal) || p.ClrType == typeof(decimal?)))
+                                                  .SelectMany(t => t.GetProperties()))
             {
-                property.SetColumnType("decimal(18,2)");
+                if (property.ClrType == typeof(DateTime) || property.ClrType == typeof(DateTime?))
+                {
+                    property.SetColumnType("datetime");
+                }
+                else if (property.ClrType == typeof(float) || property.ClrType == typeof(float?))
+                {
+                    property.SetColumnType("float(10,2)");
+                }
             }
 
             base.OnModelCreating(builder);
@@ -241,7 +248,6 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .HasComment("최대 운용자산");
 
                 entity.Property(p => p.CommissionRate)
-                      .HasColumnType("float(10,2)")
                       .IsRequired(true)
                       .HasDefaultValue(DefaultValue.Fees.CommissionRate)
                       .HasComment("수수료율");
@@ -299,11 +305,6 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .IsRequired(true)
                       .HasComment("사용자 아이디");
 
-                entity.Property(p => p.market)
-                      .HasMaxLength(20)
-                      .IsRequired(true)
-                      .HasComment("마켓코드");
-
                 entity.Property(p => p.side)
                       .IsRequired(true)
                       .HasComment("주문종류");
@@ -313,34 +314,48 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .HasComment("주문방식");
 
                 entity.Property(p => p.price)
+                      .HasColumnType("decimal(30,8)")
                       .HasComment("주문가격");
-
-                entity.Property(p => p.volume)
-                      .HasComment("주문수량");
-
-                entity.Property(p => p.amount)
-                      .HasComment("주문금액");
 
                 entity.Property(p => p.state)
                       .HasComment("주문상태");
 
-                entity.Property(p => p.executed_volume)
-                      .HasComment("체결수량");
+                entity.Property(p => p.market)
+                      .HasMaxLength(20)
+                      .IsRequired(true)
+                      .HasComment("마켓코드");
+
+                entity.Property(p => p.created_at)
+                      .IsRequired(true)
+                      .HasComment("주문일시");
+
+                entity.Property(p => p.volume)
+                      .HasColumnType("decimal(30,10)")
+                      .HasComment("주문수량");
 
                 entity.Property(p => p.remaining_volume)
+                      .HasColumnType("decimal(30,10)")
                       .HasComment("잔여수량");
 
                 entity.Property(p => p.reserved_fee)
+                      .HasColumnType("decimal(30,20)")
                       .HasComment("예약 수수료");
 
-                entity.Property(p => p.paid_fee)
-                      .HasComment("지불 수수료");
-
                 entity.Property(p => p.remaining_fee)
+                      .HasColumnType("decimal(30,20)")
                       .HasComment("잔여 수수료");
 
+                entity.Property(p => p.paid_fee)
+                      .HasColumnType("decimal(30,20)")
+                      .HasComment("지불 수수료");
+
                 entity.Property(p => p.locked)
+                      .HasColumnType("decimal(30,20)")
                       .HasComment("묶여있는 비용");
+
+                entity.Property(p => p.executed_volume)
+                      .HasColumnType("decimal(30,10)")
+                      .HasComment("체결수량");
 
                 entity.Property(p => p.trades_count)
                       .HasComment("체결건수");
@@ -350,10 +365,6 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
 
                 entity.Property(p => p.exec_amount)
                       .HasComment("체결금액");
-
-                entity.Property(p => p.created_at)
-                      .IsRequired(true)
-                      .HasComment("주문일시");
 
                 entity.HasOne(p => p.User as BlazorHeroUser)
                       .WithMany(p => p.Orders)
@@ -377,9 +388,11 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
 
                 entity.Property(p => p.balance)
                       .IsRequired(true)
+                      .HasColumnType("decimal(30,10)")
                       .HasComment("금액/수량");
 
                 entity.Property(p => p.locked)
+                      .HasColumnType("decimal(30,20)")
                       .HasComment("묶여있는 금액/수량");
 
                 entity.Property(p => p.avg_buy_price)
@@ -443,9 +456,11 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
 
                 entity.Property(p => p.amount)
                       .IsRequired(true)
+                      .HasColumnType("decimal(30,10)")
                       .HasComment("금액/수량");
 
                 entity.Property(p => p.fee)
+                      .HasColumnType("decimal(30,20)")
                       .HasComment("수수료");
 
                 entity.Property(p => p.transaction_type)
@@ -493,9 +508,6 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .IsRequired(true)
                       .HasComment("현재가");
 
-                entity.Property(p => p.timestamp)
-                      .HasComment("갱신일시");
-
                 entity.Property(p => p.candle_acc_trade_price)
                       .HasComment("누적 거래대금");
 
@@ -536,21 +548,19 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
 
                 entity.Property(p => p.price)
                       .IsRequired(true)
+                      .HasColumnType("decimal(30,8)")
                       .HasComment("현재가");
 
                 entity.Property(p => p.marketCap)
+                      .HasColumnType("decimal(30,8)")
                       .HasComment("시가총액");
 
                 entity.Property(p => p.accTradePrice24h)
+                      .HasColumnType("decimal(30,8)")
                       .HasComment("거래대금(24H)");
 
-                entity.Property(p => p.signedChangeRate1h)
-                      .HasComment("등락률(%) 1H");
-
-                entity.Property(p => p.signedChangeRate24h)
-                      .HasComment("등락률(%) 24H");
-
                 entity.Property(p => p.availableVolume)
+                      .HasColumnType("decimal(30,8)")
                       .HasComment("발행량");
 
                 entity.Property(p => p.provider)
@@ -832,7 +842,6 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .HasComment("수익실현");
 
                 entity.Property(p => p.TakeProfit)
-                      .HasColumnType("float(10,2)")
                       .IsRequired(true)
                       .HasDefaultValue(500F)
                       .HasComment("목표 수익률(%)");
@@ -843,7 +852,6 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .HasComment("손실확정");
 
                 entity.Property(p => p.StopLoss)
-                      .HasColumnType("float(10,2)")
                       .IsRequired(true)
                       .HasDefaultValue(-50F)
                       .HasComment("한계 손실륧(%)");
@@ -854,13 +862,11 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .HasComment("추적매도");
 
                 entity.Property(p => p.TrailingStopStart)
-                      .HasColumnType("float(10,2)")
                       .IsRequired(true)
                       .HasDefaultValue(1000F)
                       .HasComment("추적매도 시작 적용률(%)");
 
                 entity.Property(p => p.TrailingStop)
-                      .HasColumnType("float(10,2)")
                       .IsRequired(true)
                       .HasDefaultValue(15F)
                       .HasComment("추적매도 하락 적용률(%)");
@@ -878,7 +884,6 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .HasComment("매수금액 옵션");
 
                 entity.Property(p => p.AmountRate)
-                      .HasColumnType("float(10,2)")
                       .IsRequired(true)
                       .HasDefaultValue(1F)
                       .HasComment("자산대비 매수금액 비율(%)");
@@ -899,9 +904,11 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .HasComment("최대 매수금액");
 
                 entity.Property(p => p.Pyramiding)
+                      .IsRequired(true)
                       .HasDefaultValue(false);
 
                 entity.Property(p => p.ApplyMarketPrice)
+                      .IsRequired(true)
                       .HasDefaultValue(true);
                 #endregion
 
@@ -962,7 +969,6 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .OnDelete(DeleteBehavior.Cascade);
             });
             #endregion
-
         }
     }
 }

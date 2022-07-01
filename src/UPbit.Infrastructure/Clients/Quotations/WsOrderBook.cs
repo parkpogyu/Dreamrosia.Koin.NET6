@@ -75,7 +75,6 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
             }
         }
 
-
         public class WsResponse : OrderBook
         {
             public string type { get; set; }

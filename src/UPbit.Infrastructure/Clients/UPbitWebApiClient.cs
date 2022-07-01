@@ -23,6 +23,11 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 
         public TParameter Parameter { get; protected set; }
 
+        private JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings()
+        {
+            NullValueHandling = NullValueHandling.Ignore,
+        };
+
         protected void SetAuthenticationHeader(string token)
         {
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -76,7 +81,7 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 
             try
             {
-                return JsonConvert.DeserializeObject<T>(body);
+                return JsonConvert.DeserializeObject<T>(body, jsonSerializerSettings);
             }
             catch (Exception ex)
             {

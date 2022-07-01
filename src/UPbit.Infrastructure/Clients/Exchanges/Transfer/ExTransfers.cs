@@ -89,28 +89,45 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 
         public class ExParameter : IWebApiParameter
         {
+            /// <summary>
+            /// 거래종류
+            /// </summary>
             [JsonIgnore]
             public TransferType type { get; set; }
 
-            [Display(Name = "화폐코드")]
+            /// <summary>
+            /// 화폐코드
+            /// </summary>
             public string currency { get; set; }
 
-            [Display(Name = "상태")]
+            /// <summary>
+            /// 거래상태
+            /// </summary>
             public TransferState? state { get; set; }
 
-            [Display(Name = "고유번호목록")]
+            /// <summary>
+            /// 고유번호 목록
+            /// </summary>
             public List<string> uuids { get; set; }
 
-            [Display(Name = "거래번호목록")]
+            /// <summary>
+            /// 거래번호 목록
+            /// </summary>
             public List<string> txids { get; set; }
 
-            [Display(Name = "요청개수")]
+            /// <summary>
+            /// 요청개수
+            /// </summary>
             public int? limit { get; set; } = 100;
 
-            [Display(Name = "페이지")]
+            /// <summary>
+            /// 페이지
+            /// </summary>
             public int? page { get; set; } = 1;
 
-            [Display(Name = "정령방식")]
+            /// <summary>
+            /// 정렬방식
+            /// </summary>
             public OrderBy? order_by { get; set; } = OrderBy.desc;
         }
     }

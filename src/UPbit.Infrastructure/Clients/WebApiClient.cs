@@ -1,5 +1,4 @@
 ﻿using Dreamrosia.Koin.Shared.Wrapper;
-using Dreamrosia.Koin.UPbit.Infrastructure.Conveters;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -69,17 +68,7 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
                 }
                 else
                 {
-                    string value = string.Empty;
-
-                    if (f.PropertyType == typeof(double) || f.PropertyType == typeof(double?))
-                    //if (f.Name.Equals("volume") || f.Name.Equals("price"))
-                    {
-                        value = NumericConverter.ToString((double)f.GetValue(parameter));
-                    }
-                    else
-                    {
-                        value = Convert.ToString(f.GetValue(parameter));
-                    }
+                    string value = Convert.ToString(f.GetValue(parameter));
 
                     if (!string.IsNullOrEmpty(value))
                     {

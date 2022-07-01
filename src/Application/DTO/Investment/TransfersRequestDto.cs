@@ -9,10 +9,7 @@ namespace Dreamrosia.Koin.Application.DTO
         public string UserId { get; set; }
 
         public DateTime HeadDate { get; set; }
-
         public DateTime RearDate { get; set; }
-
         public IEnumerable<TransferType> TransferTypes { get; set; }
-
     }
 }

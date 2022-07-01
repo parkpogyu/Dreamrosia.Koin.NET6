@@ -8,51 +8,32 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Models
     [Display(Name = "입/출금정보")]
     public class Transfer
     {
-        [Display(Name = "거래종류")]
+        // 타입          필드             설명
+        //-------------------------------------------------------------------------------------
+        // String       type             입출금 종류 
+        // String       uuid             입출금의 고유 아이디  
+        // String       currency         화폐를 의미하는 영문 대문자 코드 
+        // String       txid             입출금의 트랜잭션 아이디    
+        // String       state            입출금 상태   
+        // DateString   created_at       입출금 생성 시간 
+        // DateString   done_at          입출금 완료 시간    
+        // NumberString amount           입출금 금액/수량 
+        // NumberString fee              입출금 수수료 
+        // String       transaction_type 입출금 유형
+        //                               default : 일반입출금
+        //                               internal : 바로입출금 
+        //-------------------------------------------------------------------------------------
+
         public TransferType type { get; set; }
-
-        [Display(Name = "고유번호")]
         public string uuid { get; set; }
-
         [JsonProperty("currency")]
-        [Display(Name = "화폐코드")]
         public string code { get; set; }
-
-        [Display(Name = "거래번호")]
         public string txid { get; set; }
-
-        [Display(Name = "거래상태")]
         public TransferState state { get; set; }
-
-        [Display(Name = "요청시간")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm:ss}")]
         public DateTime created_at { get; set; }
-
-        [Display(Name = "완료시간")]
-        [DisplayFormat(DataFormatString = "{0:HH:mm:ss}")]
         public DateTime? done_at { get; set; }
-
-        [Display(Name = "금액/수량")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public double amount { get; set; }
-
-        [Display(Name = "금액")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public double? AmountKRW => code.Equals(Coin.KRW) ? amount : null;
-
-        [Display(Name = "수량")]
-        [DisplayFormat(DataFormatString = "{0:N8}")]
-        public double? AmountCoin => code.Equals(Coin.KRW) ? null : amount;
-
-        [Display(Name = "수수료")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
-        public double fee { get; set; }
-
-        [Display(Name = "원화환산가격")]
-        public double krw_amount { get; set; }
-
-        [Display(Name = "거래유형")]
+        public decimal amount { get; set; }
+        public decimal fee { get; set; }
         public TransferTransaction transaction_type { get; set; }
-
     }
 }

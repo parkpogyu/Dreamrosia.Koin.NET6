@@ -9,12 +9,10 @@ namespace Dreamrosia.Koin.Application.DTO
     public class MiningBotDto
     {
         public string Id { get; set; }
-
         public string MachineName { get; set; }
-
         public string Version { get; set; }
-
         public string CurrentDirectory { get; set; }
+        public DateTime? Touched { get; set; }
 
         [JsonIgnore]
         public string LastDirectory
@@ -33,8 +31,6 @@ namespace Dreamrosia.Koin.Application.DTO
                 }
             }
         }
-
-        public DateTime? Touched { get; set; }
 
         [JsonIgnore]
         public TimeSpan? Elapsed => Touched is null ? null : DateTime.Now.Subtract(Convert.ToDateTime(Touched));

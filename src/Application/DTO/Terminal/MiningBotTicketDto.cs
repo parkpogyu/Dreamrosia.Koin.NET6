@@ -8,7 +8,6 @@ namespace Dreamrosia.Koin.Application.DTO
         public string Id { get; set; }
 
         public MiningBotDto MiningBot { get; set; }
-
         public UserCardDto User { get; set; }
     }
 }

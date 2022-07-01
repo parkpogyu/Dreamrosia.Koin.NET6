@@ -6,26 +6,22 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Models
     [Display(Name = "보유코인")]
     public class Position
     {
+        // 타입          필드                     설명
+        //-----------------------------------------------------------------------
+        // String        currency                화폐를 의미하는 영문 대문자 코드 
+        // NumberString  balance                 주문가능 금액/수량               
+        // NumberString  locked                  주문 중 묶여있는 금액/수량       
+        // NumberString  avg_buy_price           매수평균가                       
+        // Boolean       avg_buy_price_modified  매수평균가 수정 여부             
+        // String        unit_currency           평단가 기준 화폐                 
+        //-----------------------------------------------------------------------
+
         [JsonProperty("currency")]
-        [Display(Name = "화폐코드", GroupName = "계좌정보")]
         public string code { get; set; }
-
-        [Display(Name = "잔고", GroupName = "계좌정보")]
-        [DisplayFormat(DataFormatString = "{0:N8}")]
-        public double balance { get; set; }
-
-        [Display(Name = "주문대기", GroupName = "계좌정보")]
-        [DisplayFormat(DataFormatString = "{0:N8}")]
-        public double locked { get; set; }
-
-        [Display(Name = "평균단가", GroupName = "계좌정보")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
+        public decimal balance { get; set; }
+        public decimal locked { get; set; }
         public double avg_buy_price { get; set; }
-
-        [Display(Name = "평균단가 수정여부", GroupName = "계좌정보")]
         public bool avg_buy_price_modified { get; set; }
-
-        [Display(Name = "기준화폐", GroupName = "계좌정보")]
         public string unit_currency { get; set; }
     }
 }

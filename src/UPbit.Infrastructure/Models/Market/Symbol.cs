@@ -1,41 +1,44 @@
 ﻿using Dreamrosia.Koin.Shared.Enums;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace Dreamrosia.Koin.UPbit.Infrastructure.Models
 {
     [Display(Name = "심볼정보")]
     public class Symbol
     {
-        public string market { get; set; }
 
+        // 타입  필드            설명
+        //-------------------------------------------------------------------------------------
+        //String market         업비트에서 제공중인 시장 정보 
+        //String korean_name    거래 대상 암호화폐 한글명 
+        //String english_name   거래 대상 암호화폐 영문명
+        //String market_warning 유의 종목 여부
+        //                      NONE(해당 사항 없음), CAUTION(투자유의)  
+        //-------------------------------------------------------------------------------------
+
+        private string _market { get; set; }
+        public string market
+        {
+            get => _market;
+            set
+            {
+                _market = value;
+
+                var splits = _market.Split("-", StringSplitOptions.RemoveEmptyEntries);
+
+                unit_currency = splits[0];
+                code = splits[1];
+            }
+        }
         public string korean_name { get; set; }
-
         public string english_name { get; set; }
-
         public MarketAlert market_warning { get; set; } = MarketAlert.None;
 
-        public string unit_currency => GetUnitCurrency(market);
+        #region Append
+        public string unit_currency { get; private set; }
 
-        public string code => GetCode(market);
-
-        public static string GetUnitCurrency(string market)
-        {
-            if (string.IsNullOrEmpty(market)) { return string.Empty; }
-
-            var splits = market.Split("-", StringSplitOptions.RemoveEmptyEntries);
-
-            return splits.Count() == 2 ? splits[0] : string.Empty;
-        }
-
-        public static string GetCode(string market)
-        {
-            if (string.IsNullOrEmpty(market)) { return string.Empty; }
-
-            var splits = market.Split("-", StringSplitOptions.RemoveEmptyEntries);
-
-            return splits.Count() == 2 ? splits[1] : string.Empty;
-        }
+        public string code { get; private set; }
+        #endregion
     }
 }

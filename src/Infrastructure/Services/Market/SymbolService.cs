@@ -103,7 +103,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                         if (ynp.Count() == 2)
                         {
                             unchanged.trade_price = ynp[0].trade_price;
-                            unchanged.signed_change_rate = Ratio.ToSignedPercentage(ynp[0].trade_price, ynp[1].trade_price);
+                            unchanged.signed_change_rate = (double)Ratio.ToSignedPercentage(ynp[0].trade_price, ynp[1].trade_price);
                         }
                     }
                 }

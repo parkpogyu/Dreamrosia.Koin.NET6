@@ -8,13 +8,9 @@ namespace Dreamrosia.Koin.Application.DTO
         public string UserId { get; set; }
 
         public MembershipLevel Level { get; set; }
-
         public float MaximumAsset { get; set; }
-
         public float CommissionRate { get; set; }
-
         public int DailyDeductionPoint { get; set; }
-
         public DateTime CreatedOn { get; set; }
     }
 }

@@ -131,7 +131,8 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 CandleDto candle = null;
 
-                double balance = 0, volume = 0, deposit = 0, investment = 0;
+                double deposit = 0, investment = 0;
+                decimal volume = 0, balance = 0;
 
                 DateTime head = trackings.Min(f => f.done_at).ToUniversalDate();
 
@@ -163,7 +164,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                                 if (tracking.side == OrderSide.ask)
                                 {
-                                    position.balance = Math.Round(position.balance - volume, 8);
+                                    position.balance = position.balance - volume;
 
                                     tracking.SetPnL(position.avg_buy_price);
 
@@ -177,7 +178,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                                 {
                                     balance = position.balance + volume;
 
-                                    position.avg_buy_price = (position.PchsAmt + tracking.exec_amount) / balance;
+                                    position.avg_buy_price = (position.PchsAmt + tracking.exec_amount) / (double)balance;
                                     position.balance = balance;
                                     position.created_at = tracking.done_at;
 
@@ -192,20 +193,19 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                             {
                                 if (tracking.code.Equals(Currency.Unit.KRW))
                                 {
+                                    var trackingAmount = (double)tracking.amount;
+
                                     if (tracking.type == TransferType.deposit)
                                     {
-                                        deposit = deposit + tracking.amount;
-                                        investment = investment + tracking.amount;
-
-                                        asset.InAmt = asset.InAmt + tracking.amount;
+                                        deposit = deposit + trackingAmount;
+                                        investment = investment + trackingAmount;
+                                        asset.InAmt = asset.InAmt + trackingAmount; ;
                                     }
                                     else
                                     {
-                                        deposit = deposit - tracking.amount - tracking.fee;
-                                        investment = investment - tracking.amount - tracking.fee;
-                                        //investment = investment < 0 ? 0 : investment;
-
-                                        asset.OutAmt = asset.OutAmt + tracking.amount + tracking.fee;
+                                        deposit = deposit - trackingAmount - tracking.fee;
+                                        investment = investment - trackingAmount - tracking.fee;
+                                        asset.OutAmt = asset.OutAmt + trackingAmount + tracking.fee;
                                     }
                                 }
                                 else
@@ -216,7 +216,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                                     position = DicPositions[market];
 
-                                    volume = Convert.ToDouble(tracking.amount);
+                                    volume = tracking.amount;
 
                                     if (tracking.TransferState == TransferState.done)
                                     {
@@ -226,7 +226,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                                     {
                                         balance = position.balance + volume;
 
-                                        position.avg_buy_price = position.PchsAmt / balance;
+                                        position.avg_buy_price = position.PchsAmt / (double)balance;
                                         position.balance = balance;
                                         position.created_at = tracking.done_at;
                                     }
@@ -240,7 +240,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                             {
                                 if (item.balance > 0)
                                 {
-                                    if (item.balance < 0.00000001)
+                                    if (item.balance < 0.00000001m)
                                     {
                                         item.balance = 0;
                                         continue;
@@ -250,7 +250,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                                     if (candle is null)
                                     {
-                                        item.trade_price = item.avg_buy_price;
+                                        item.trade_price = (double)item.avg_buy_price;
                                     }
                                     else
                                     {

@@ -29,7 +29,9 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 
         public class ExParameter : IWebApiParameter
         {
-            [Display(Name = "마켓코드")]
+            /// <summary>
+            /// 마켓코드
+            /// </summary>
             public string market { get; set; }
         }
 

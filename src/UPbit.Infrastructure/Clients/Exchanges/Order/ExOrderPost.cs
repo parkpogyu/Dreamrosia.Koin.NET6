@@ -1,6 +1,5 @@
 ﻿using Dreamrosia.Koin.Shared.Enums;
 using Dreamrosia.Koin.Shared.Wrapper;
-using Dreamrosia.Koin.UPbit.Infrastructure.Conveters;
 using Dreamrosia.Koin.UPbit.Infrastructure.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -44,8 +43,8 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 
             try
             {
-                var volume = Convert.ToDouble(Parameter.volume);
-                var price = Convert.ToDouble(Parameter.price);
+                var volume = Convert.ToDecimal(Parameter.volume);
+                var price = Convert.ToDecimal(Parameter.price);
 
                 if (string.IsNullOrEmpty(Parameter.market))
                 {
@@ -123,59 +122,45 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
         {
             public event PropertyChangedEventHandler PropertyChanged;
 
-            [Display(Name = "마켓코드")]
+            /// <summary>
+            /// 마켓코드 (필수)
+            /// </summary>
             public string market { get; set; }
 
+            /// <summary>
+            /// 주문종류 (필수)
+            /// </summary>
             [JsonConverter(typeof(StringEnumConverter))]
-            [Display(Name = "주문종류")]
             public OrderSide side { get; set; }
 
+            /// <summary>
+            /// 주문수량 (지정가, 시장가 매도 시 필수)
+            /// </summary>
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [JsonConverter(typeof(NumericToStringConverter))]
-            [DisplayFormat(DataFormatString = "{0:N8}")]
-            [Display(Name = "주문수량")]
-            public double? volume { get; set; }
+            public decimal? volume { get; set; }
 
-            // 원화 마켓 주문 가격 단위
-            // =====================================================
-            // 최소 호가        | 최대 호가     | 주문 가격 단위(원)
-            // =====================================================
-            // 2,000,000        |               | 1,000
-            // -----------------------------------------------------
-            // 1,000,000        | 2,000,000     | 500
-            // -----------------------------------------------------
-            // 500,000          | 1,000,000     | 100
-            // -----------------------------------------------------
-            // 100,00           | 500,000       | 50
-            // -----------------------------------------------------
-            // 10,000           | 100,000       | 10
-            // -----------------------------------------------------
-            // 1,000            | 10,000        | 5
-            // -----------------------------------------------------
-            // 100              | 1,000         | 1
-            // -----------------------------------------------------
-            // 10               | 100           | 0.1
-            // -----------------------------------------------------
-            // 0                | 10            | 0.01
-            // =====================================================
+            /// <summary>
+            /// 주문가격(필수)
+            /// </summary>
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [JsonConverter(typeof(NumericToStringConverter))]
-            [DisplayFormat(DataFormatString = "{0:N2}")]
-            [Display(Name = "주문가격")]
-            public double? price { get; set; }
+            public decimal? price { get; set; }
 
+            /// <summary>
+            /// 주문타입(필수)
+            /// </summary>
             // 시장가 주문은 ord_type 필드를 price or market 으로 설정해야됩니다.
             // 매수 주문의 경우 ord_type을 price로 설정하고 volume을 null 혹은 제외해야됩니다.
             // 매도 주문의 경우 ord_type을 market로 설정하고 price을 null 혹은 제외해야됩니다.
             [JsonConverter(typeof(StringEnumConverter))]
-            [Display(Name = "주문방식")]
             public OrderType ord_type { get; set; }
 
+            /// <summary>
+            /// 조회용 사용자 지정값 (선택)
+            /// </summary>
             // identifier는 서비스에서 발급하는 uuid가 아닌 이용자가 직접 발급하는 키값으로, 주문을 조회하기 위해 할당하는 값입니다.
             // 해당 값은 사용자의 전체 주문 내 유일한 값을 전달해야하며, 비록 주문 요청시 오류가 발생하더라도 같은 값으로 다시 요청을 보낼 수 없습니다.
             // 주문의 성공 / 실패 여부와 관계없이 중복해서 들어온 identifier 값에서는 중복 오류가 발생하니, 매 요청시 새로운 값을 생성해주세요.
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [Display(Name = "조회키")]
             public string indendifier { get; set; }
         }
     }

@@ -6,16 +6,24 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Models
     [Display(Name = "코인정보")]
     public class Coin : Symbol
     {
-        [Display(Name = "시가총액")]
+        /// <summary>
+        /// 시가총액 정보
+        /// </summary>
         public Crix Crix { get; set; }
 
-        [Display(Name = "코인상태")]
+        /// <summary>
+        /// 코인상태 
+        /// </summary>
         public CoinStatus CoinStatus { get; set; }
 
-        [Display(Name = "현재가")]
+        /// <summary>
+        /// 현재가
+        /// </summary>
         public Ticker Ticker { get; set; }
 
-        [Display(Name = "호가")]
+        /// <summary>
+        /// 호가
+        /// </summary>
         public OrderBook OrderBook { get; set; }
 
         public Coin()
@@ -25,9 +33,5 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Models
             Ticker = new Ticker();
             OrderBook = new OrderBook();
         }
-
-        public static string KRW => "KRW";
-        public static string BTC => "BTC";
-        public static string USDT => "USDT";
     }
 }

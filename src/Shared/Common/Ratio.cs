@@ -17,7 +17,7 @@
             return ToRatio(numerator, denominator) * Hundreadth;
         }
 
-        public static double Hundreadth => 100D;
+        public static double Hundreadth => 100;
     }
 
 }

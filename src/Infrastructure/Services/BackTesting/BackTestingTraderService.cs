@@ -148,8 +148,8 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                                 if (order is null) { return; }
 
-                                Position.balance = Convert.ToDouble(order.executed_volume);
-                                Position.avg_buy_price = Convert.ToDouble(order.avg_price);
+                                Position.balance = order.executed_volume;
+                                Position.avg_buy_price = order.avg_price;
                                 Position.high_price = candle.high_price;
                                 Position.IsCleared = false;
                             }
@@ -211,10 +211,8 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                     if (order is null) { return order; }
 
-                    double balance = Position.balance + Convert.ToDouble(order.executed_volume);
-
-                    Position.avg_buy_price = (Position.PchsAmt + order.exec_amount) / balance;
-
+                    decimal balance = Position.balance + order.executed_volume;
+                    Position.avg_buy_price = (Position.PchsAmt + order.exec_amount) / (double)balance;
                     Position.balance = balance;
                 }
             }
@@ -236,8 +234,8 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 if (order is null) { return order; }
 
-                Position.balance = Convert.ToDouble(order.executed_volume);
-                Position.avg_buy_price = Convert.ToDouble(order.avg_price);
+                Position.balance = order.executed_volume;
+                Position.avg_buy_price = order.avg_price;
                 Position.high_price = candle.high_price;
                 Position.IsCleared = false;
             }
@@ -288,10 +286,10 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             };
 
             order.avg_price = next.opening_price;
-            order.executed_volume = next is null ? null : terms.Amount / (double?)next.opening_price;
-            order.exec_amount = order.avg_price * Convert.ToDouble(order.executed_volume);
-            order.paid_fee = order.exec_amount * DefaultValue.Fees.Rate4KRW;
-            order.VolumeRate = Convert.ToDouble(order.executed_volume) / next.candle_acc_trade_volume * Ratio.Hundreadth;
+            order.executed_volume = (decimal)(terms.Amount / next.opening_price);
+            order.exec_amount = order.avg_price * (double)order.executed_volume;
+            order.paid_fee = (decimal)(order.exec_amount * DefaultValue.Fees.Rate4KRW);
+            order.VolumeRate = (float)Ratio.ToPercentage((double)next.candle_acc_trade_volume, (double)order.executed_volume);
 
             return order;
         }
@@ -313,12 +311,11 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             };
 
             order.avg_price = next.opening_price;
-            order.exec_amount = order.avg_price * Convert.ToDouble(order.executed_volume);
-            order.paid_fee = order.exec_amount * DefaultValue.Fees.Rate4KRW;
-            order.PnL = Position.balance * (order.avg_price - Position.avg_buy_price);
-            order.PnLRat = (order.avg_price - Position.avg_buy_price) / Position.avg_buy_price * Ratio.Hundreadth;
-
-            order.VolumeRate = Convert.ToDouble(order.executed_volume) / next.candle_acc_trade_volume * Ratio.Hundreadth;
+            order.exec_amount = order.avg_price * (double)order.executed_volume;
+            order.paid_fee = (decimal)(order.exec_amount * DefaultValue.Fees.Rate4KRW);
+            order.PnL = (double)Position.balance * (order.avg_price - Position.avg_buy_price);
+            order.PnLRat = (float)Ratio.ToSignedPercentage(order.avg_price, Position.avg_buy_price);
+            order.VolumeRate = (float)Ratio.ToPercentage(next.candle_acc_trade_volume, (double)order.executed_volume);
 
             return order;
         }
@@ -345,7 +342,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             {
                 if (Position.high_price != 0)
                 {
-                    var downRate = ((Position.trade_price / Position.high_price) - 1) * 100F;
+                    var downRate = (float)Ratio.ToSignedPercentage(Position.trade_price, Position.high_price);
 
                     if (downRate <= terms.TrailingStop)
                     {

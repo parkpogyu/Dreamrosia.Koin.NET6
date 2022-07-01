@@ -46,11 +46,16 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 
         public class QtParameter : IWebApiParameter
         {
+            /// <summary>
+            /// 기준화폐코드
+            /// </summary>
             [JsonIgnore]
             public string unit_currency { get; set; } = Currency.KRW;
 
+            /// <summary>
+            /// 상세조회
+            /// </summary>
             public bool isDetails { get; set; } = true;
-
         }
     }
 }

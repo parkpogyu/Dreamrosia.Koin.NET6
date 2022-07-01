@@ -12,31 +12,22 @@ namespace Dreamrosia.Koin.Application.DTO
         public string UserId { get; set; }
 
         public TransferType type { get; set; }
-
         public string uuid { get; set; }
-
         public string code { get; set; }
-
         public string txid { get; set; }
-
         public TransferState state { get; set; }
-
         public DateTime created_at { get; set; }
-
         public DateTime? done_at { get; set; }
-
-        public double amount { get; set; }
+        public decimal amount { get; set; }
+        public decimal fee { get; set; }
+        public TransferTransaction transaction_type { get; set; }
 
         [JsonIgnore]
         public double? Cash => string.IsNullOrEmpty(code) ? null :
-                               code.Equals(Currency.Unit.KRW) ? amount : null;
+                               code.Equals(Currency.Unit.KRW) ? (double)amount : null;
 
         [JsonIgnore]
         public double? Volume => string.IsNullOrEmpty(code) ? null :
-                                 code.Equals(Currency.Unit.KRW) ? null : amount;
-
-        public double fee { get; set; }
-
-        public TransferTransaction transaction_type { get; set; }
+                                 code.Equals(Currency.Unit.KRW) ? null : (double)amount;
     }
 }

@@ -9,9 +9,7 @@ namespace Dreamrosia.Koin.Application.DTO
         public string UserId { get; set; }
 
         public PositionDto KRW { get; set; }
-
         public IEnumerable<PositionDto> Coins { get; set; }
-
         public IEnumerable<SymbolDto> Unpositions { get; set; }
     }
 }

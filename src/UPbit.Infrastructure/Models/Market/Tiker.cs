@@ -7,102 +7,62 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Models
     [Display(Name = "현재가 정보")]
     public class Ticker
     {
-        [Display(Name = "마켓코드", GroupName = "시세")]
+        // 타입   필드                   설명
+        //-------------------------------------------------------------------------------------
+        // String market                종목 구분 코드    
+        // String trade_date            최근 거래 일자(UTC)   
+        // String trade_time            최근 거래 시각(UTC)  
+        // String trade_date_kst        최근 거래 일자(KST) 
+        // String trade_time_kst        최근 거래 시각(KST)   
+        // Double opening_price         시가 
+        // Double high_price            고가
+        // Double low_price             저가 
+        // Double trade_price           종가(현재가) 
+        // Double prev_closing_price    전일 종가(UTC 0시 기준)    
+        // String change                EVEN : 보합
+        //                              RISE : 상승
+        //                              FALL : 하락 
+        // Double change_price          변화액의 절대값 
+        // Double change_rate           변화율의 절대값 
+        // Double signed_change_price   부호가 있는 변화액  
+        // Double signed_change_rate    부호가 있는 변화율 
+        // Double trade_volume          가장 최근 거래량   
+        // Double acc_trade_price       누적 거래대금(UTC 0시 기준)  
+        // Double acc_trade_price_24h	24시간 누적 거래대금 
+        // Double acc_trade_volume      누적 거래량(UTC 0시 기준)   
+        // Double acc_trade_volume_24h	24시간 누적 거래량 
+        // Double highest_52_week_price	52주 신고가 
+        // String highest_52_week_date	52주 신고가 달성일 
+        // Double lowest_52_week_price	52주 신저가 
+        // String lowest_52_week_date	52주 신저가 달성일 
+        // Long timestamp               타임스탬프   Long
+        //-------------------------------------------------------------------------------------
+
         public string market { get; set; }
-
-        [Display(Name = "거래일자(UTC)", GroupName = "시세")]
         public string trade_date { get; set; }
-
-        [Display(Name = "거래시간(UTC)", GroupName = "시세")]
         public string trade_time { get; set; }
-
-        [Display(Name = "거래일자(KST)", GroupName = "시세")]
         public string trade_date_kst { get; set; }
-
-        [Display(Name = "거래시간(KST)", GroupName = "시세")]
         public string trade_time_kst { get; set; }
-
-        [Display(Name = "거래시간", GroupName = "시세")]
         public long trade_timestamp { get; set; }
-
-        [Display(Name = "시가", GroupName = "시세")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
         public double opening_price { get; set; }
-
-        [Display(Name = "고가", GroupName = "시세")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
         public double high_price { get; set; }
-
-        [Display(Name = "저가", GroupName = "시세")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
         public double low_price { get; set; }
-
-        [Display(Name = "현재가", GroupName = "시세")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
         public double trade_price { get; set; }
-
-        [Display(Name = "전일종가", GroupName = "시세")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
         public double prev_closing_price { get; set; }
-
-        [Display(Name = "방향", GroupName = "시세")]
         public TickerDirection change { get; set; }
-
-        [Display(Name = "이전대비", GroupName = "시세")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
         public double change_price { get; set; }
-
-        [Display(Name = "전일대비", GroupName = "시세")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
-        public double diff_prev_closing_price => trade_price - prev_closing_price;
-
-        [Display(Name = "등락률(%)", GroupName = "시세")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
         public double change_rate { get; set; }
-
-        [Display(Name = "이전대비", GroupName = "시세")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
         public double signed_change_price { get; set; }
-
-        [Display(Name = "등락률(%)", GroupName = "시세")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
         public double signed_change_rate { get; set; }
-
-        [Display(Name = "최근거래량", GroupName = "시세")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
         public double trade_volume { get; set; }
-
-        [Display(Name = "누적거래대금(UTC 0시 기준)", GroupName = "시세")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
         public double acc_trade_price { get; set; }
-
-        [Display(Name = "누적거래대금(24H))", GroupName = "시세")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
         public double acc_trade_price_24h { get; set; }
-
-        [Display(Name = "누적거래량(UTC 0시 기준)", GroupName = "시세")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
         public double acc_trade_volume { get; set; }
-
-        [Display(Name = "누적거래량(24H))", GroupName = "시세")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
         public double acc_trade_volume_24h { get; set; }
-
-        [Display(Name = "52주 신고가", GroupName = "시세")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
         public double highest_52_week_price { get; set; }
-
-        [Display(Name = "52주 신고가일", GroupName = "시세")]
         public DateTime highest_52_week_date { get; set; }
-
-        [Display(Name = "52주 신저가", GroupName = "시세")]
-        [DisplayFormat(DataFormatString = "{0:N2}")]
         public double lowest_52_week_price { get; set; }
-
-        [Display(Name = "52주 신저가일", GroupName = "시세")]
         public DateTime lowest_52_week_date { get; set; }
-
-        [Display(Name = "")]
         public long timestamp { get; set; }
 
         public static double PriceUnit(double price)

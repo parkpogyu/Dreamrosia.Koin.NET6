@@ -95,7 +95,6 @@ namespace Dreamrosia.Koin.Application.Extensions
                                           high_price = f.Max(m => m.high_price),
                                           low_price = f.Min(m => m.low_price),
                                           trade_price = rear.trade_price,
-                                          timestamp = rear.timestamp,
                                           candle_acc_trade_price = f.Sum(f => f.candle_acc_trade_price),
                                           candle_acc_trade_volume = f.Sum(f => f.candle_acc_trade_volume),
                                       };

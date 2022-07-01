@@ -3,6 +3,7 @@ using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Mappings;
 using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Infrastructure.Managers;
+using Dreamrosia.Koin.Shared.Common;
 using Dreamrosia.Koin.Shared.Constants.Application;
 using Dreamrosia.Koin.Shared.Constants.Coin;
 using Dreamrosia.Koin.Shared.Constants.Role;
@@ -153,7 +154,7 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
             TotalPchsAmt = valids.Sum(f => f.PchsAmt);
             TotalBalEvalAmt = valids.Sum(f => f.BalEvalAmt);
             TotalEvalPnL = valids.Sum(f => f.EvalPnL);
-            TotalPnLRat = (TotalEvalPnL / (float)TotalPchsAmt) * 100F;
+            TotalPnLRat = (double)Ratio.ToSignedPercentage(TotalEvalPnL, TotalPchsAmt);
             TotalAsset = TotalKRW + TotalBalEvalAmt;
 
             StateHasChanged();

@@ -66,24 +66,37 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 
         public class QtParameter : IWebApiParameter
         {
+            /// <summary>
+            /// 캔들주기
+            /// </summary>
             public TimeFrames TimeFrame { get; set; } = TimeFrames.Day;
 
-            [Display(Name = "마켓코드")]
+            /// <summary>
+            /// 마켓코드
+            /// </summary>
             public string market { get; set; }
 
-            [Display(Name = "최종시간")]
+            /// <summary>
+            /// 최종시간
+            /// </summary>
             public DateTime? to { get; set; }
 
-            [Display(Name = "캔들개수")]
+            /// <summary>
+            /// 캔들개수
+            /// </summary>
             public int count { get; set; } = ClientConstants.MaxCount;
 
             #region Minutes
-            [Display(Name = "최종 시간")]
+            /// <summary>
+            /// 분단위
+            /// </summary>
             public MinutesUnit unit { get; set; } = MinutesUnit._1;
             #endregion
 
             #region Day
-            [Display(Name = "화폐단위")]
+            /// <summary>
+            /// 종가 환산 화폐 단위
+            /// </summary>
             public string convertingPriceUnit { get; set; } = "KRW";
             #endregion
         }

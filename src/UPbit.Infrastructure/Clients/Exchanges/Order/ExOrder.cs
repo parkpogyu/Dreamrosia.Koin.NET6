@@ -31,10 +31,14 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
         // uuid 혹은 identifier 둘 중 하나의 값이 반드시 포함되어야 합니다.
         public class ExParameter : IWebApiParameter
         {
-            [Display(Name = "주문번호")]
+            /// <summary>
+            /// 주문번호
+            /// </summary>
             public string uuid { get; set; }
 
-            [Display(Name = "조회번호")]
+            /// <summary>
+            /// 조회번호
+            /// </summary>
             public string identifier { get; set; }
         }
     }

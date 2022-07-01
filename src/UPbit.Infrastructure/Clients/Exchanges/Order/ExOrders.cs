@@ -117,8 +117,15 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 
                     if (trades.Any())
                     {
-                        order.exec_amount = trades.Sum(f => f.funds);
-                        order.avg_price = order.exec_amount / trades.Sum(f => f.volume);
+                        var funds = trades.Sum(f => f.funds);
+                        var volumes = trades.Sum(f => f.volume);
+
+                        if (volumes > 0)
+                        {
+                            order.avg_price = Math.Round((double)(funds / volumes), 4);
+                        }
+
+                        order.exec_amount = Math.Round((double)funds, 4);
                     }
                 }
                 else
@@ -135,28 +142,44 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 
         public class ExParameter : IWebApiParameter
         {
-            [Display(Name = "마켓코드")]
+            /// <summary>
+            /// 마켓코드
+            /// </summary>
             public string market { get; set; }
 
-            [Display(Name = "주문상태")]
+            /// <summary>
+            /// 주문상태
+            /// </summary>
             public OrderState? state { get; set; }
 
-            [Display(Name = "주문상태")]
+            /// <summary>
+            /// 주문상태목록
+            /// </summary>
             public List<OrderState> states { get; private set; } = new List<OrderState>();
 
-            [Display(Name = "주문번호")]
+            /// <summary>
+            /// 주문번호
+            /// </summary>
             public List<string> uuids { get; private set; } = new List<string>();
 
-            [Display(Name = "조회번호")]
+            /// <summary>
+            /// 조회번호
+            /// </summary>
             public List<string> identifiers { get; private set; } = new List<string>();
 
-            [Display(Name = "페이지")]
+            /// <summary>
+            /// 페이지
+            /// </summary>
             public int? page { get; set; } = 1;
 
-            [Display(Name = "요청개수")]
+            /// <summary>
+            /// 요청개수
+            /// </summary>
             public int? limit { get; set; } = MaxResponse;
 
-            [Display(Name = "정령방식")]
+            /// <summary>
+            /// 정렬방식
+            /// </summary>
             public OrderBy? order_by { get; set; } = OrderBy.desc;
         }
     }

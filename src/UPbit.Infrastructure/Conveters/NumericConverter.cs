@@ -2,7 +2,7 @@
 {
     public static class NumericConverter
     {
-        public static string ToString(double volume)
+        public static string ToString(decimal volume)
         {
             var convert = $"{volume:F9}".TrimEnd('0');
 

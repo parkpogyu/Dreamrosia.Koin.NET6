@@ -34,18 +34,23 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 
         public class ExParameter : IWebApiParameter
         {
-            [Display(Name = "화폐코드")]
+            /// <summary>
+            /// 화폐코드
+            /// </summary>
             public string currency { get; set; }
         }
 
         public class ResponseAsync : Wallet
         {
-            [Display(Name = "성공여부")]
+            /// <summary>
+            /// 성공여부
+            /// </summary>
             public bool success { get; set; }
 
-            [Display(Name = "내용")]
+            /// <summary>
+            /// 내용
+            /// </summary>
             public string message { get; set; }
         }
-
     }
 }

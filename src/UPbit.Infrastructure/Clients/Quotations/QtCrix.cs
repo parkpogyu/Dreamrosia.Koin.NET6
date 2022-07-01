@@ -31,7 +31,7 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 
         public class QtParameter : IWebApiParameter
         {
-            public string currency { get; set; } = Coin.KRW;
+            public string currency { get; set; } = Currency.KRW;
         }
     }
 }

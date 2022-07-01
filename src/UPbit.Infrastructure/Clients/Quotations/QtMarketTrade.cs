@@ -1,8 +1,11 @@
-﻿using Dreamrosia.Koin.UPbit.Infrastructure.Clients;
+﻿using Dreamrosia.Koin.Shared.Wrapper;
+using Dreamrosia.Koin.UPbit.Infrastructure.Models;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 
-namespace Dreamrosia.Koin.UPbit.Infrastructure
+namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 {
     [Display(Name = "체결 목록 조회")]
     public class QtMarketTrade : QuotaionClient<QtMarketTrade.QtParameter>
@@ -17,25 +20,39 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure
             URI = string.Format("{0}?{1}", URL, QueryString(Parameter));
         }
 
-        public class QtParameter : IWebApiParameter
+        public async Task<IResult<IEnumerable<MarketTrade>>> GetMarketTradesAsync(object parameter)
         {
-            [Display(Name = "마켓코드")]
-            public string market { get; set; }
+            Parameter = (QtParameter)parameter;
 
-            // 비워서 요청시 가장 최근 데이터
-            [Display(Name = "최종시간")]
-            public DateTime? to { get; set; }
-
-            [Display(Name = "체결개수")]
-            public int count { get; set; } = ClientConstants.MaxCount;
-
-            [Display(Name = "커서")]
-            public string cursor { get; set; }
-
-            // 비워서 요청 시 가장 최근 체결 날짜 반환. (범위: 1 ~ 7))
-            [Display(Name = "이전일")]
-            public int? daysAgo { get; set; }
+            return await base.GetAsync<IEnumerable<MarketTrade>>(parameter);
         }
 
+        public class QtParameter : IWebApiParameter
+        {
+            /// <summary>
+            /// 마켓코드
+            /// </summary>
+            public string market { get; set; }
+
+            /// <summary>
+            /// 최종시간, 비워서 요청시 가장 최근 데이터
+            /// </summary>
+            public DateTime? to { get; set; }
+
+            /// <summary>
+            /// 체결개수
+            /// </summary>
+            public int count { get; set; } = ClientConstants.MaxCount;
+
+            /// <summary>
+            /// 커서
+            /// </summary>
+            public string cursor { get; set; }
+
+            /// <summary>
+            /// 이전일, 비워서 요청 시 가장 최근 체결 날짜 반환. (범위: 1 ~ 7))
+            /// </summary>
+            public int? daysAgo { get; set; }
+        }
     }
 }

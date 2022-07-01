@@ -8,11 +8,8 @@ namespace Dreamrosia.Koin.Domain.Entities
         public string UserId { get; set; }
 
         public MembershipLevel Level { get; set; }
-
         public long MaximumAsset { get; set; }
-
         public float CommissionRate { get; set; }
-
         public int DailyDeductionPoint { get; set; }
 
         public IDomainUser User { get; set; }

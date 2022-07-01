@@ -1,6 +1,5 @@
 ﻿using Dreamrosia.Koin.Application.Interfaces.Services;
 using Dreamrosia.Koin.Shared.Constants.Permission;
-using Dreamrosia.Koin.Shared.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
