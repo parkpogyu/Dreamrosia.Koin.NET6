@@ -81,7 +81,7 @@ namespace Dreamrosia.Koin.Client.Pages.UPbit
 
             if (rect is null) { return; }
 
-            if (BoundingClientRect.IsMatchMimimumHeight(window.Height))
+            if (BoundingClientRect.IsMatchMediumBreakPoints(window.Height))
             {
                 var divHeight = (window.Height - rect.Top - 62 - 52 - 8);
 

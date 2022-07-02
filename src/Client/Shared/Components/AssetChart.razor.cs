@@ -92,7 +92,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
             if (rect is null) { return; }
 
-            if (BoundingClientRect.IsMatchMimimumHeight(window.Height))
+            if (BoundingClientRect.IsMatchMediumBreakPoints(window.Height))
             {
                 var divHeight = (window.Height - rect.Top - 8);
 

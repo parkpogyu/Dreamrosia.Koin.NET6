@@ -1,3 +1,4 @@
+using Dreamrosia.Koin.Shared.Common;
 using Dreamrosia.Koin.Shared.Enums;
 using Dreamrosia.Koin.UPbit.Infrastructure.Clients;
 using Microsoft.Extensions.Configuration;
@@ -20,8 +21,8 @@ namespace Test
         {
             ExchangeClientKeys.SetAuthenticationKey(new UPbitModels.UPbitKey()
             {
-                access_key = "kKPvYYh7xAHCX9S19yCSbzRNbjZqTE3PmzxDB89t",
-                secret_key = "fn2CE6f3XstvuMqNTxrty5GhrkAkcoHqp5Czirii",
+                access_key = "HWQRJZkh6N8G5zg87fT0TkyTxjxPXiVlXNcPuO1s",
+                secret_key = "ix4bPRV9xt6rerDzBwpW6hsSzVXMRMurxdKrT8Pc",
             });
 
             IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json")
@@ -213,9 +214,8 @@ namespace Test
             {
                 market = "KRW-BTC",
                 side = OrderSide.bid,
-                volume = (decimal)1.1,
                 price = (decimal)1000.2,
-                ord_type = OrderType.limit,
+                ord_type = OrderType.price,
             };
 
             var result = await ExOrderPost.OrderPostAsync(parameter);
@@ -616,7 +616,13 @@ namespace Test
 
             System.Diagnostics.Debug.WriteLine($"convert dob: {convert_dob:N8}");
 
-            var a = Convert.ToDecimal(null);
+            var rate = (float)Ratio.ToPercentage(-259238, 13645555);
+
+            var a = 22087623;
+
+            var b = a * (1F / 113F);
+
+            var c = (long)(b / 1000) * 1000;
         }
     }
 }

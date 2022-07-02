@@ -30,11 +30,11 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
         private IEnumerable<PaperPositionDto> _items { get; set; }
         private IEnumerable<SymbolDto> _unpositions { get; set; }
         private long TotalKRW { get; set; }
-        private double TotalAsset { get; set; }
-        private double TotalPchsAmt { get; set; }
-        private double TotalBalEvalAmt { get; set; }
-        private double TotalEvalPnL { get; set; }
-        private double TotalPnLRat { get; set; }
+        private long TotalAsset { get; set; }
+        private long TotalPchsAmt { get; set; }
+        private long TotalBalEvalAmt { get; set; }
+        private long TotalEvalPnL { get; set; }
+        private float TotalPnLRat { get; set; }
 
         private int _activePanelIndex { get; set; } = 0;
 
@@ -151,10 +151,10 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
             var valids = _items.Where(f => f.unit_currency.Equals(Currency.Unit.KRW) &&
                                            f.trade_price > 0);
 
-            TotalPchsAmt = valids.Sum(f => f.PchsAmt);
-            TotalBalEvalAmt = valids.Sum(f => f.BalEvalAmt);
-            TotalEvalPnL = valids.Sum(f => f.EvalPnL);
-            TotalPnLRat = (double)Ratio.ToSignedPercentage(TotalEvalPnL, TotalPchsAmt);
+            TotalPchsAmt = (long)valids.Sum(f => f.PchsAmt);
+            TotalBalEvalAmt = (long)valids.Sum(f => f.BalEvalAmt);
+            TotalEvalPnL = (long)valids.Sum(f => f.EvalPnL);
+            TotalPnLRat = (float)Ratio.ToPercentage(TotalEvalPnL, TotalPchsAmt);
             TotalAsset = TotalKRW + TotalBalEvalAmt;
 
             StateHasChanged();
