@@ -14,6 +14,6 @@ namespace Dreamrosia.Koin.Bot.DTO
         public double PchsAmt => avg_buy_price * (double)total_balance;
         public double BalEvalAmt => trade_price * (double)total_balance;
         public double EvalPnL => BalEvalAmt - PchsAmt;
-        public float PnLRat => PchsAmt == 0 ? 0F : (float)(EvalPnL / PchsAmt) * 100F;
+        public float PnLRat => (PchsAmt == 0 || BalEvalAmt == 0) ? 0F : (float)(EvalPnL / PchsAmt) * 100F;
     }
 }

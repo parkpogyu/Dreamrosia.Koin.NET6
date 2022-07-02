@@ -266,6 +266,7 @@ namespace Dreamrosia.Koin.Bot.Services
                 var total = Coins.Sum(f => f.BalEvalAmt) + Convert.ToDouble(Cash?.balance);
 
                 if (total == 0) { return false; }
+                if (TradingTerms.AmountOption == BidAmountOption.Auto && Signals.Count() == 0) { return false; }
 #if DEBUG
                 // 회원등급별 최대 운용자산 맞춤
                 total = Math.Min(total, TradingTerms.MaximumAsset);
@@ -273,11 +274,10 @@ namespace Dreamrosia.Koin.Bot.Services
                 long roundDown = TradingConstants.RoundDownUnit; // 절사 단위
                 long maxBidAmount = TradingConstants.MaxBidAmount; // 업비트 최대 주문 금액: 1,000,000,000
 
-                float rate = (TradingTerms.AmountOption == BidAmountOption.Auto ?
-                             100F / Signals.Count() : TradingTerms.AmountRate) / 100F;
+                float rate = TradingTerms.AmountOption == BidAmountOption.Auto ?
+                             1F / Signals.Count() : TradingTerms.AmountRate / 100F;
 
-                BidAmount = (long)(total * rate);
-                BidAmount = (long)(((float)BidAmount / (float)roundDown) * roundDown);  // 절사 단위로 거래
+                BidAmount = (long)(Math.Truncate((total * rate) / roundDown)) * roundDown;  // 절사 단위로 거래
 
                 if (BidAmount < TradingTerms.Minimum)
                 {
