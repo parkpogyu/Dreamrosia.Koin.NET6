@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Mappings;
+using Dreamrosia.Koin.Client.Enums;
 using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Infrastructure.Managers;
 using Dreamrosia.Koin.Shared.Common;
@@ -20,6 +21,7 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
     public partial class Positions : IDisposable
     {
         [Inject] private IInvestmentManager PositionManager { get; set; }
+        [Parameter] public PageModes PageMode { get; set; }
         [Parameter] public string UserId { get; set; }
 
         private bool _loaded;

@@ -3,6 +3,7 @@ using Blazored.FluentValidation;
 using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Extensions;
 using Dreamrosia.Koin.Application.Mappings;
+using Dreamrosia.Koin.Client.Enums;
 using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Shared.Dialogs;
 using Dreamrosia.Koin.Domain.Enums;
@@ -16,6 +17,7 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
 {
     public partial class Subscription
     {
+        [Parameter] public PageModes PageMode { get; set; }
         [Parameter] public string UserId { get; set; }
 
         private FluentValidationValidator _membershipValidator;

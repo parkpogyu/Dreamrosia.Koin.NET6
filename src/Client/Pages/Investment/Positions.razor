@@ -1,13 +1,15 @@
 ﻿@page "/investment/positions"
 @page "/investment/positions/{userId}"
 @attribute [Authorize(Policy = Permissions.Positions.View)]
-@using Dreamrosia.Koin.Client.Shared.Components
 
-<PageMenuTitle Menus="@(new []
+@if (PageMode == PageModes.None)
+{
+    <PageMenuTitle Menus="@(new []
 {
     $"{_localizer["Investments"]}",
     $"{_localizer["Positions"]}",
 })" UserId="@UserId" />
+}
 
 @if (!_loaded)
 {

@@ -1,6 +1,7 @@
 ﻿using BlazorPro.BlazorSize;
 using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Extensions;
+using Dreamrosia.Koin.Client.Models;
 using Dreamrosia.Koin.Shared.Constants.Permission;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
@@ -27,6 +28,9 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                 SetItems();
             }
         }
+
+        [Parameter] public bool NavigatonToTab { get; set; }
+        [Parameter] public EventCallback<NavigationItem> NavigationItemSelected { get; set; }
 
         private MudTable<UserFullInfoDto> _table;
 
@@ -180,58 +184,64 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             user.ShowDetails = !user.ShowDetails;
         }
 
-        private void NavigateToSubscription(string userId)
+        private async Task NavigateTo(string userId, string url)
         {
-            _navigationManager.NavigateTo($"/personal/subscription/{userId}");
+            if (NavigatonToTab)
+            {
+                var user = _items.Single(f => f.Id.Equals(userId));
+
+                await NavigationItemSelected.InvokeAsync(new NavigationItem()
+                {
+                    UserId = user.Id,
+                    NickName = user.NickName,
+                    ProfileImage = user.ProfileImage,
+                    URL = url,
+                });
+            }
+            else
+            {
+                _navigationManager.NavigateTo($"{url}/{userId}");
+            }
         }
 
-        private Task NavigateToPositions(string userId)
+        private async Task NavigateToSubscription(string userId)
         {
-            _navigationManager.NavigateTo($"/investment/positions/{userId}");
-
-            return Task.CompletedTask;
+            await NavigateTo(userId, "/personal/subscription");
         }
 
-        private Task NavigateToOrders(string userId)
+        private async Task NavigateToUPbitKey(string userId)
         {
-            _navigationManager.NavigateTo($"/investment/orders/{userId}");
-
-            return Task.CompletedTask;
+            await NavigateTo(userId, "/personal/upbitkey");
         }
 
-        private Task NavigateToTransfers(string userId)
+        private async Task NavigateToFollowers(string userId)
         {
-            _navigationManager.NavigateTo($"/investment/transfers/{userId}");
-
-            return Task.CompletedTask;
+            await NavigateTo(userId, "/personal/followers");
         }
 
-        private Task NavigateToAssets(string userId)
+        private async Task NavigateToPositions(string userId)
         {
-            _navigationManager.NavigateTo($"/investment/assets/{userId}");
-
-            return Task.CompletedTask;
+            await NavigateTo(userId, "/investment/positions");
         }
 
-        private Task NavigateToTradingTerms(string userId)
+        private async Task NavigateToOrders(string userId)
         {
-            _navigationManager.NavigateTo($"/order/tradingterms/{userId}");
-
-            return Task.CompletedTask;
+            await NavigateTo(userId, "/investment/orders");
         }
 
-        private Task NavigateToUPbitKey(string userId)
+        private async Task NavigateToTransfers(string userId)
         {
-            _navigationManager.NavigateTo($"/personal/upbitkey/{userId}");
-
-            return Task.CompletedTask;
+            await NavigateTo(userId, "/investment/transfers");
         }
 
-        private Task NavigateToFollowers(string userId)
+        private async Task NavigateToAssets(string userId)
         {
-            _navigationManager.NavigateTo($"/personal/followers/{userId}");
+            await NavigateTo(userId, "/investment/assets");
+        }
 
-            return Task.CompletedTask;
+        private async Task NavigateToTradingTerms(string userId)
+        {
+            await NavigateTo(userId, "/order/tradingterms");
         }
 
         private void NavigateToMangeRoles(string userId, string email)

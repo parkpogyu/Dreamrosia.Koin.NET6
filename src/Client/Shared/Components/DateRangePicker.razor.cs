@@ -9,8 +9,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 {
     public partial class DateRangePicker
     {
-        [Parameter]
-        public EventCallback<DateRangeTerms> SelectedTermChanged { get; set; }
+        [Parameter] public EventCallback<DateRangeTerms> SelectedTermChanged { get; set; }
 
         [Parameter]
         public DateRangeTerms SelectedTerm

@@ -2,11 +2,14 @@
 @page "/personal/followers/{userId}"
 @attribute [Authorize(Policy = Permissions.Users.View)]
 
-<PageMenuTitle Menus="@(new []
+@if (PageMode == PageModes.None)
+{
+    <PageMenuTitle Menus="@(new []
 {
     $"{_localizer["Personal"]}",
     $"{_localizer["Follower"]}",
 })" UserId="@UserId" />
+}
 
 @if (!_loaded)
 {

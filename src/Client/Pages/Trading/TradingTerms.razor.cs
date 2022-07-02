@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Mappings;
+using Dreamrosia.Koin.Client.Enums;
 using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Infrastructure.Managers;
 using Dreamrosia.Koin.Shared.Constants.Role;
@@ -15,6 +16,7 @@ namespace Dreamrosia.Koin.Client.Pages.Trading
     {
         [Inject] private ITradingTermsManager TradingTermsManager { get; set; }
         [Inject] private IMarketManager MarketManager { get; set; }
+        [Parameter] public PageModes PageMode { get; set; }
         [Parameter] public string UserId { get; set; }
 
         private bool _loaded;

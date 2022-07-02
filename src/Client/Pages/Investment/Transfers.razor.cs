@@ -1,6 +1,7 @@
 ﻿using BlazorPro.BlazorSize;
 using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Extensions;
+using Dreamrosia.Koin.Client.Enums;
 using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Infrastructure.Managers;
 using Dreamrosia.Koin.Client.Shared.Components;
@@ -20,6 +21,7 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
     public partial class Transfers : IDisposable
     {
         [Inject] private IInvestmentManager InvestmentManager { get; set; }
+        [Parameter] public PageModes PageMode { get; set; }
         [Parameter] public string UserId { get; set; }
 
         private bool _loaded { get; set; } = false;

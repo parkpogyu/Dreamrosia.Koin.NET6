@@ -1,5 +1,6 @@
 ﻿using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Extensions;
+using Dreamrosia.Koin.Client.Enums;
 using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Domain.Enums;
 using Dreamrosia.Koin.Shared.Constants.Role;
@@ -13,6 +14,7 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
 {
     public partial class Followers
     {
+        [Parameter] public PageModes PageMode { get; set; }
         [Parameter] public string UserId { get; set; }
 
         private bool _loaded;

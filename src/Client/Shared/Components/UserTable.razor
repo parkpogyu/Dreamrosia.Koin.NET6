@@ -1,7 +1,5 @@
 ﻿@using Dreamrosia.Koin.Application.DTO
 @using Dreamrosia.Koin.Application.Extensions
-@using Dreamrosia.Koin.Domain.Enums;
-@using Dreamrosia.Koin.Shared.Enums;
 
 <style>
     .mud-toolbar {
@@ -150,13 +148,13 @@
                     <td colspan="12">
                         <div class="flex-x-scroll-container pa-2 justify-center" style="width:100%">
                             <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToSubscription(context.Id))">@_localizer["Subscriptions"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToUPbitKey(context.Id))">@_localizer["UPbit.AuthKey"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToFollowers(context.Id))">@_localizer["Follower"]</MudButton>
                             <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToPositions(context.Id))">@_localizer["Positions"]</MudButton>
                             <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToOrders(context.Id))">@_localizer["Orders"]</MudButton>
                             <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToTransfers(context.Id))">@_localizer["Transfers"]</MudButton>
                             <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToAssets(context.Id))">@_localizer["Assets"]</MudButton>
                             <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToTradingTerms(context.Id))">@_localizer["TradingTerms"]</MudButton>
-                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToUPbitKey(context.Id))">@_localizer["UPbit.AuthKey"]</MudButton>
-                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToFollowers(context.Id))">@_localizer["Follower"]</MudButton>
                             <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1 mr-1" OnClick="@(() => NavigateToMangeRoles(context.Id, context.Email))">@_localizer["Manage Roles"]</MudButton>
                         </div>
                     </td>
@@ -356,5 +354,4 @@
             <TablePager />
         </PagerContent>
     </MudTable>
-
 </div>

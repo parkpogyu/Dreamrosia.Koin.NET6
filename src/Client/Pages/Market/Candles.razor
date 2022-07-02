@@ -1,10 +1,6 @@
 ﻿@page "/market/candles"
 @page "/market/candles/{market}"
 @attribute [Authorize(Policy = Permissions.Candles.View)]
-@using Dreamrosia.Koin.Application.DTO
-@using Dreamrosia.Koin.Application.Extensions
-@using Dreamrosia.Koin.Client.Shared.Components
-@using Dreamrosia.Koin.Shared.Enums
 
 <PageMenuTitle Menus="@(new []
 {

@@ -13,24 +13,94 @@
 }
 else
 {
-<MudPaper Elevation="25" Class="flex-x-scroll-container pa-2 mb-1 ">
-    <FullSpacer/>
-    <DateRangePicker DateRange="_dateRange"
-                     SelectedTerm="_dateRangeTerm"
-                     SelectedTermChanged="SelectedTermChanged"/>
+    <div class="d-flex justify-start align-start" style="width:inherit">
+        <div style="width:inherit">
+            <MudPaper Elevation="25" Class="flex-x-scroll-container pa-2 mb-1 ">
+                <FullSpacer />
+                <DateRangePicker DateRange="_dateRange"
+                             SelectedTerm="_dateRangeTerm"
+                             SelectedTermChanged="SelectedTermChanged" />
 
-    <MudButton DisableElevation
-               OnClick="GetUsersAsync"
-               Variant="Variant.Filled"
-               StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface"
-               Color="MudBlazor.Color.Primary"
-               Size="Size.Small"
-               Class="align-self-end-button ml-4">
-        @_localizer["Reload"]
-    </MudButton>
-</MudPaper>
+                <MudButton DisableElevation
+                       OnClick="GetUsersAsync"
+                       Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface"
+                       Color="MudBlazor.Color.Primary"
+                       Size="Size.Small"
+                       Class="align-self-end-button ml-4">
+                    @_localizer["Reload"]
+                </MudButton>
+            </MudPaper>
 
-    <CascadingValue Value="@_items" Name="Users">
-        <UserTable />
-    </CascadingValue>
+            <CascadingValue Value="@_items" Name="Users">
+                <UserTable NavigatonToTab="@_isVisibleTabs"
+                       NavigationItemSelected="NavigationItemSelected" />
+            </CascadingValue>
+        </div>
+
+        @if (_isVisibleTabs)
+        {
+            <MudTabs @ref="_tabs"
+             @bind-ActivePanelIndex="@_activePanelIndex"
+             Rounded="true"
+             ApplyEffectsToContainer="true"
+             Class="ml-4" Style="width:inherit">
+                <ChildContent>
+                    @foreach (var item in _views)
+                    {
+                        <MudTabPanel Tag="@item.Id">
+                            <ChildContent>
+                                @if (item.URL.Equals("/personal/subscription"))
+                                {
+                                    <Dreamrosia.Koin.Client.Pages.Personal.Subscription UserId="@item.UserId" PageMode="@_pageMode" />
+                                }
+                                else if (item.URL.Equals("/personal/upbitkey"))
+                                {
+                                    <Dreamrosia.Koin.Client.Pages.Personal.UPbitKey UserId="@item.UserId" PageMode="@_pageMode" />
+                                }
+                                else if (item.URL.Equals("/personal/followers"))
+                                {
+                                    <Dreamrosia.Koin.Client.Pages.Personal.Followers UserId="@item.UserId" PageMode="@_pageMode" />
+                                }
+                                else if (item.URL.Equals("/investment/positions"))
+                                {
+                                    <Dreamrosia.Koin.Client.Pages.Investment.Positions UserId="@item.UserId" PageMode="@_pageMode" />
+                                }
+                                else if (item.URL.Equals("/investment/orders"))
+                                {
+                                    <Dreamrosia.Koin.Client.Pages.Investment.Orders UserId="@item.UserId" PageMode="@_pageMode" />
+                                }
+                                else if (item.URL.Equals("/investment/transfers"))
+                                {
+                                    <Dreamrosia.Koin.Client.Pages.Investment.Transfers UserId="@item.UserId" PageMode="@_pageMode" />
+                                }
+                                else if (item.URL.Equals("/investment/assets"))
+                                {
+                                    <Dreamrosia.Koin.Client.Pages.Investment.Assets UserId="@item.UserId" PageMode="@_pageMode" />
+                                }
+                                else if (item.URL.Equals("/order/tradingterms"))
+                                {
+                                    <Dreamrosia.Koin.Client.Pages.Trading.TradingTerms UserId="@item.UserId" PageMode="@_pageMode" />
+                                }
+                            </ChildContent>
+                            <TabContent>
+                                <div class="d-flex justify-start align-center">
+                                    <UserAvatar Image="@item.ProfileImage" />
+                                    <MudText>@item.NickName</MudText>
+                                    <MudText Class="ml-2">@($"-{@item.Title}")</MudText>
+                                </div>
+                            </TabContent>
+                        </MudTabPanel>
+                    }
+                </ChildContent>
+                <TabPanelHeader>
+                    <MudIconButton Class="ml-2 pa-1"
+                           Icon="@Icons.Material.Outlined.RemoveCircleOutline"
+                           Color = "MudBlazor.Color.Warning"
+                           Size="Size.Small"
+                           OnClick="(_) => RemoveTab(context)" />
+                </TabPanelHeader>
+            </MudTabs>
+        }
+    </div>
 }

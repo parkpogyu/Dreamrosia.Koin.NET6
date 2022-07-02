@@ -1,7 +1,6 @@
 ﻿@page "/personal/points"
 @page "/personal/points/{userId}"
 @attribute [Authorize(Policy = Permissions.Points.View)]
-@using Dreamrosia.Koin.Client.Shared.Components
 
 <PageMenuTitle Menus="@(new []
 {

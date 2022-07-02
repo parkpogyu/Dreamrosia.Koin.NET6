@@ -1,14 +1,16 @@
 @page "/personal/upbitkey"
 @page "/personal/upbitkey/{userId}"
 @attribute [Authorize(Policy = Permissions.UPbitKeys.View)]
-@using Dreamrosia.Koin.Client.Shared.Components
 @using System.Linq
 
-<PageMenuTitle Menus="@(new []
+@if (PageMode == PageModes.None)
+{
+    <PageMenuTitle Menus="@(new [] 
 {
     $"{_localizer["Personal"]}",
     $"{_localizer["UPbit.AuthKey"]}",
 })" UserId="@UserId" />
+}
 
 @if (!_loaded)
 {
@@ -28,33 +30,33 @@ else
                 <MudGrid>
                     <MudItem xs="12" sm="4" Class="d-flex align-content-center">
                         <MudCheckBox Label="@_localizer["UPbitKey.IsAuthenticated"]"
-                                     @bind-Checked="@_testModel.IsAuthenticated"
-                                     Dense="true" Disabled="true" />
+                                 @bind-Checked="@_testModel.IsAuthenticated"
+                                 Dense="true" Disabled="true" />
                     </MudItem>
                     <MudItem xs="12" sm="4" Class="d-flex align-content-center">
                         <MudCheckBox Label="@_localizer["UPbitKey.AllowedPositions"]"
-                                     @bind-Checked="@_testModel.IsAllowedPositions"
-                                     Dense="true" Disabled="true" />
+                                 @bind-Checked="@_testModel.IsAllowedPositions"
+                                 Dense="true" Disabled="true" />
                     </MudItem>
                     <MudItem xs="12" sm="4" Class="d-flex align-content-center">
                         <MudCheckBox Label="@_localizer["UPbitKey.AllowedOrders"]"
-                                     @bind-Checked="@_testModel.IsAllowedOrders"
-                                     Dense="true" Disabled="true" />
+                                 @bind-Checked="@_testModel.IsAllowedOrders"
+                                 Dense="true" Disabled="true" />
                     </MudItem>
                     <MudItem xs="12" sm="4" Class="d-flex align-content-center">
                         <MudCheckBox Label="@_localizer["UPbitKey.AllowedOrder"]"
-                                     @bind-Checked="@_testModel.IsAllowedOrder"
-                                     Dense="true" Disabled="true" />
+                                 @bind-Checked="@_testModel.IsAllowedOrder"
+                                 Dense="true" Disabled="true" />
                     </MudItem>
                     <MudItem xs="12" sm="4" Class="d-flex align-content-center">
                         <MudCheckBox Label="@_localizer["UPbitKey.AllowedWithdraws"]"
-                                     @bind-Checked="@_testModel.IsAllowedWithdraws"
-                                     Dense="true" Disabled="true" />
+                                 @bind-Checked="@_testModel.IsAllowedWithdraws"
+                                 Dense="true" Disabled="true" />
                     </MudItem>
                     <MudItem xs="12" sm="4" Class="d-flex align-content-center">
                         <MudCheckBox Label="@_localizer["UPbitKey.AllowedDeposits"]"
-                                     @bind-Checked="@_testModel.IsAllowedDeposits"
-                                     Dense="true" Disabled="true" />
+                                 @bind-Checked="@_testModel.IsAllowedDeposits"
+                                 Dense="true" Disabled="true" />
                     </MudItem>
 
                     @if (_testModel.Messages.Any())
@@ -76,29 +78,29 @@ else
 
                     <MudItem xs="12" sm="12" md="4">
                         <MudTextField T="string"
-                                      Label="@_localizer["UPbitKey.access_key"]"
-                                      @bind-Value="_model.access_key"
-                                      For="@(() => _model.access_key)"
-                                      Margin="Margin.Dense" Variant="Variant.Outlined"
-                                      InputType="_access_keyInput"
-                                      Adornment="Adornment.End" AdornmentIcon="@_access_keyInputIcon" OnAdornmentClick="@(() => ToggleAccessKeyVisibility())"
-                                      TextChanged="@(() => DisableUPbitKeySaveButton())"/>
+                                  Label="@_localizer["UPbitKey.access_key"]"
+                                  @bind-Value="_model.access_key"
+                                  For="@(() => _model.access_key)"
+                                  Margin="Margin.Dense" Variant="Variant.Outlined"
+                                  InputType="_access_keyInput"
+                                  Adornment="Adornment.End" AdornmentIcon="@_access_keyInputIcon" OnAdornmentClick="@(() => ToggleAccessKeyVisibility())"
+                                  TextChanged="@(() => DisableUPbitKeySaveButton())" />
                     </MudItem>
                     <MudItem xs="12" sm="12" md="4">
                         <MudTextField T="string"
-                                      @bind-Value="_model.secret_key" For="@(() => _model.secret_key)"
-                                      Label="@_localizer["UPbitKey.secret_key"]"
-                                      Margin="Margin.Dense" Variant="Variant.Outlined"
-                                      InputType="_secret_keyInput"
-                                      Adornment="Adornment.End" AdornmentIcon="@_secret_keyInputIcon" OnAdornmentClick="@(() => ToggleSecretKeyVisibility())"
-                                      TextChanged="@(() => DisableUPbitKeySaveButton())" />
+                                  @bind-Value="_model.secret_key" For="@(() => _model.secret_key)"
+                                  Label="@_localizer["UPbitKey.secret_key"]"
+                                  Margin="Margin.Dense" Variant="Variant.Outlined"
+                                  InputType="_secret_keyInput"
+                                  Adornment="Adornment.End" AdornmentIcon="@_secret_keyInputIcon" OnAdornmentClick="@(() => ToggleSecretKeyVisibility())"
+                                  TextChanged="@(() => DisableUPbitKeySaveButton())" />
                     </MudItem>
                     <MudItem xs="12" sm="12" md="4">
                         <MudTextField T="DateTime?"
-                                      @bind-Value="@_model.expire_at"
-                                      Format="g"
-                                      Label="@_localizer["UPbitKey.expire_at"]"
-                                      Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly="true" />
+                                  @bind-Value="@_model.expire_at"
+                                  Format="g"
+                                  Label="@_localizer["UPbitKey.expire_at"]"
+                                  Margin="Margin.Dense" Variant="Variant.Outlined" ReadOnly="true" />
                     </MudItem>
                 </MudGrid>
             </MudCardContent>
@@ -119,9 +121,9 @@ else
                     </MudItem>
                     <MudItem xs="12" sm="12" md="6">
                         <MudButton Variant="Variant.Filled"
-                                   Disabled="@(!Validated)" Color="MudBlazor.Color.Primary"
-                                   Class="ml-auto"
-                                   OnClick="TestUPbitKeyAsync">
+                               Disabled="@(!Validated)" Color="MudBlazor.Color.Primary"
+                               Class="ml-auto"
+                               OnClick="TestUPbitKeyAsync">
                             @($"{_localizer["UPbit.Open API Key"]} {@_localizer["Test"]}")
                         </MudButton>
                     </MudItem>
@@ -130,10 +132,10 @@ else
                     </MudItem>
                     <MudItem xs="12" sm="12" md="6">
                         <MudButton Variant="Variant.Filled"
-                                   Disabled="@(!Validated || !_testModel.IsPassed)"
-                                   Color="MudBlazor.Color.Primary"
-                                   Class="ml-auto"
-                                   OnClick="UpdateUPbitKeyAsync">
+                               Disabled="@(!Validated || !_testModel.IsPassed)"
+                               Color="MudBlazor.Color.Primary"
+                               Class="ml-auto"
+                               OnClick="UpdateUPbitKeyAsync">
                             @($"{_localizer["UPbit.Open API Key"]} {@_localizer["Save"]}")
                         </MudButton>
                     </MudItem>

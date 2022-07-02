@@ -2,6 +2,7 @@
 using Blazored.FluentValidation;
 using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Mappings;
+using Dreamrosia.Koin.Client.Enums;
 using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Infrastructure.Managers;
 using Dreamrosia.Koin.Shared.Constants.Role;
@@ -14,6 +15,7 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
     public partial class UPbitKey
     {
         [Inject] private IUPbitKeyManager UPbitKeyManager { get; set; }
+        [Parameter] public PageModes PageMode { get; set; }
         [Parameter] public string UserId { get; set; }
 
         private FluentValidationValidator _fluentValidationValidator;
