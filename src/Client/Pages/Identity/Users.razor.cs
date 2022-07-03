@@ -4,7 +4,6 @@ using Dreamrosia.Koin.Client.Enums;
 using Dreamrosia.Koin.Client.Models;
 using Dreamrosia.Koin.Client.Shared.Components;
 using Dreamrosia.Koin.Domain.Enums;
-using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using MudBlazor.Services;
 using System;
@@ -16,7 +15,6 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
 {
     public partial class Users
     {
-        [Inject] IResizeService ResizeService { get; set; }
         private bool _loaded;
         private IEnumerable<UserFullInfoDto> _items = new List<UserFullInfoDto>();
         private DateRange _dateRange { get; set; } = new DateRange();
@@ -25,10 +23,11 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
         private bool _isVisibleTabs { get; set; }
         private MudTabs _tabs { get; set; }
         private List<TabView> _views { get; set; } = new List<TabView>();
-        private Guid _subscriptionId;
         private int _activePanelIndex { get; set; } = 0;
         private bool _updatePanelIndex = false;
         private PageModes _pageMode => PageModes.Admin;
+
+        private Guid _resizeSubscribedId { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -41,18 +40,17 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
         {
             if (firstRender)
             {
-                _subscriptionId = await ResizeService.Subscribe((size) =>
+                _resizeSubscribedId = await _resizeService.Subscribe((size) =>
                 {
                     _isVisibleTabs = BoundingClientRect.IsMatchMediumBreakPoints(size.Width / 2);
 
                     InvokeAsync(StateHasChanged);
                 }, new ResizeOptions
                 {
-                    ReportRate = 50,
                     NotifyOnBreakpointOnly = false,
                 });
 
-                var size = await ResizeService.GetBrowserWindowSize();
+                var size = await _resizeService.GetBrowserWindowSize();
 
                 _isVisibleTabs = BoundingClientRect.IsMatchMediumBreakPoints(size.Width / 2);
 
@@ -163,7 +161,7 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
             }
         }
 
-        public async ValueTask DisposeAsync() => await ResizeService.Unsubscribe(_subscriptionId);
+        public async ValueTask DisposeAsync() => await _resizeService.Unsubscribe(_resizeSubscribedId);
 
         private class TabView : NavigationItem
         {

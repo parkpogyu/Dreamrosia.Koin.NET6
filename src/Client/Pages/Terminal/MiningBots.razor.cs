@@ -1,11 +1,11 @@
-﻿using BlazorPro.BlazorSize;
-using Dreamrosia.Koin.Application.DTO;
+﻿using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Client.Infrastructure.Managers;
 using Dreamrosia.Koin.Client.Shared.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.JSInterop;
 using MudBlazor;
+using MudBlazor.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,16 +13,17 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Pages.Terminal
 {
-    public partial class MiningBots : IDisposable
+    public partial class MiningBots 
     {
         [Inject] private IMiningBotManager MiningBotManager { get; set; }
 
+        private bool _loaded;
         private IEnumerable<MiningBotTicketDto> _items { get; set; } = new List<MiningBotTicketDto>();
         private IEnumerable<MiningBotTicketDto> _sources { get; set; } = new List<MiningBotTicketDto>();
-
-        private bool _loaded;
         private bool? _chkIsAssignedBotTicket { get; set; } = true;
         private string _searchString = "";
+
+        private Guid _resizeSubscribedId { get; set; }
         private bool _isDivTableRendered { get; set; } = false;
         private string _divTableHeight { get; set; } = "100%";
         private readonly string _divTableId = Guid.NewGuid().ToString();
@@ -49,21 +50,36 @@ namespace Dreamrosia.Koin.Client.Pages.Terminal
             {
                 if (firstRender)
                 {
-                    _resizeListener.OnResized += OnWindowResized;
+                    _resizeSubscribedId = await _resizeService.Subscribe((size) =>
+                    {
+                        if (!_isDivTableRendered) { return; }
+
+                        InvokeAsync(SetDivHeightAsync);
+
+                    }, new ResizeOptions
+                    {
+                        NotifyOnBreakpointOnly = false,
+                    });
                 }
+                else
+                {
+                    if (_isDivTableRendered) { return; }
 
-                if (_isDivTableRendered) { return; }
+                    var isRendered = await _jsRuntime.InvokeAsync<bool>("func_isRendered", _divTableId);
 
-                var isRendered = await _jsRuntime.InvokeAsync<bool>("func_isRendered", _divTableId);
+                    if (!isRendered) { return; }
 
-                if (!isRendered) { return; }
+                    _isDivTableRendered = isRendered;
 
-                _isDivTableRendered = isRendered;
-
-                await SetDivHeightAsync();
+                    await SetDivHeightAsync();
+                }
             }
             catch (Exception)
             {
+            }
+            finally
+            {
+                await base.OnAfterRenderAsync(firstRender);
             }
         }
 
@@ -129,21 +145,10 @@ namespace Dreamrosia.Koin.Client.Pages.Terminal
                     item.User?.NickName?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true) ? true : false;
         }
 
-        private void OnWindowResized(object sender, BrowserWindowSize e)
+        public async ValueTask DisposeAsync()
         {
-            Task.Run(async () =>
-            {
-                if (!_isDivTableRendered) { return; }
-
-                await SetDivHeightAsync();
-            });
-        }
-
-
-        public void Dispose()
-        {
-            _resizeListener.OnResized -= OnWindowResized;
             _timer?.Dispose();
+            await _resizeService.Unsubscribe(_resizeSubscribedId);
         }
     }
 }

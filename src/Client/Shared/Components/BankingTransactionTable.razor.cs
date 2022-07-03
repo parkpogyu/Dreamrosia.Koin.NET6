@@ -1,5 +1,4 @@
-﻿using BlazorPro.BlazorSize;
-using Dreamrosia.Koin.Application.DTO;
+﻿using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Extensions;
 using Dreamrosia.Koin.Shared.Constants.Application;
 using Dreamrosia.Koin.Shared.Constants.Permission;
@@ -7,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.JSInterop;
+using MudBlazor.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
 {
-    public partial class BankingTransactionTable : IDisposable
+    public partial class BankingTransactionTable 
     {
         [CascadingParameter(Name = "BankingTransactions")]
         private IEnumerable<BankingTransactionDto> BankingTransactions
@@ -32,13 +32,15 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private IEnumerable<BankingTransactionDto> _sources { get; set; }
         private IEnumerable<BankingTransactionDto> _items { get; set; }
         private BankingTransactionDto _selectedItem { get; set; }
-        private bool _isDivTableRendered { get; set; } = false;
-        private string _divTableHeight { get; set; } = "100%";
-        private readonly string _divTableId = Guid.NewGuid().ToString();
         private string _selectedTransferType { get; set; }
         private IEnumerable<string> _selectedTransferTypes { get; set; }
         private string _searchString { get; set; } = string.Empty;
         private bool _canEditBankingTransaction { get; set; } = false;
+
+        private Guid _resizeSubscribedId { get; set; }
+        private bool _isDivTableRendered { get; set; } = false;
+        private string _divTableHeight { get; set; } = "100%";
+        private readonly string _divTableId = Guid.NewGuid().ToString();
 
         protected override async Task OnInitializedAsync()
         {
@@ -53,23 +55,36 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             {
                 if (firstRender)
                 {
-                    _resizeListener.OnResized += OnWindowResized;
+                    _resizeSubscribedId = await _resizeService.Subscribe((size) =>
+                    {
+                        if (!_isDivTableRendered) { return; }
 
-                    SetItems();
+                        InvokeAsync(SetDivHeightAsync);
+
+                    }, new ResizeOptions
+                    {
+                        NotifyOnBreakpointOnly = false,
+                    });
                 }
+                else
+                {
+                    if (_isDivTableRendered) { return; }
 
-                if (_isDivTableRendered) { return; }
+                    var isRendered = await _jsRuntime.InvokeAsync<bool>("func_isRendered", _divTableId);
 
-                var isRendered = await _jsRuntime.InvokeAsync<bool>("func_isRendered", _divTableId);
+                    if (!isRendered) { return; }
 
-                if (!isRendered) { return; }
+                    _isDivTableRendered = isRendered;
 
-                _isDivTableRendered = isRendered;
-
-                await SetDivHeightAsync();
+                    await SetDivHeightAsync();
+                }
             }
             catch (Exception)
             {
+            }
+            finally
+            {
+                await base.OnAfterRenderAsync(firstRender);
             }
         }
 
@@ -170,20 +185,6 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             }
         }
 
-        private void OnWindowResized(object sender, BrowserWindowSize e)
-        {
-            Task.Run(async () =>
-            {
-                if (_isDivTableRendered)
-                {
-                    await SetDivHeightAsync();
-                }
-            });
-        }
-
-        public void Dispose()
-        {
-            _resizeListener.OnResized -= OnWindowResized;
-        }
+        public async ValueTask DisposeAsync() => await _resizeService.Unsubscribe(_resizeSubscribedId);
     }
 }

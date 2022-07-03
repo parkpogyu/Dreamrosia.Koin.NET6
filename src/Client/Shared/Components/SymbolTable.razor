@@ -12,7 +12,7 @@
               Elevation="25"
               Hover="true" Dense="true" Bordered="true" Striped="true"
               FixedHeader="true" FixedFooter="true"
-              @bind-RowsPerPage="@_rowsPerPage"
+              RowsPerPage="@TablePager.DefaultPageSize"
               Filter="new Func<SymbolDto, bool>(Search)"
               Class="mt-1"
               Height="@_divTableHeight">

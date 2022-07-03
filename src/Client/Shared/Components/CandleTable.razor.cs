@@ -1,15 +1,15 @@
-﻿using BlazorPro.BlazorSize;
-using Dreamrosia.Koin.Application.DTO;
+﻿using Dreamrosia.Koin.Application.DTO;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.JSInterop;
+using MudBlazor.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
 {
-    public partial class CandleTable : IDisposable
+    public partial class CandleTable 
     {
         [CascadingParameter(Name = "Candles")]
         private IEnumerable<CandleDto> Candles
@@ -22,6 +22,8 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         }
 
         private IEnumerable<CandleDto> _items { get; set; }
+
+        private Guid _resizeSubscribedId { get; set; }
         private bool _isDivTableRendered { get; set; } = false;
         private string _divTableHeight { get; set; } = "100%";
         private readonly string _divTableId = Guid.NewGuid().ToString();
@@ -32,21 +34,36 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             {
                 if (firstRender)
                 {
-                    _resizeListener.OnResized += OnWindowResized;
+                    _resizeSubscribedId = await _resizeService.Subscribe((size) =>
+                    {
+                        if (!_isDivTableRendered) { return; }
+
+                        InvokeAsync(SetDivHeightAsync);
+
+                    }, new ResizeOptions
+                    {
+                        NotifyOnBreakpointOnly = false,
+                    });
                 }
+                else
+                {
+                    if (_isDivTableRendered) { return; }
 
-                if (_isDivTableRendered) { return; }
+                    var isRendered = await _jsRuntime.InvokeAsync<bool>("func_isRendered", _divTableId);
 
-                var isRendered = await _jsRuntime.InvokeAsync<bool>("func_isRendered", _divTableId);
+                    if (!isRendered) { return; }
 
-                if (!isRendered) { return; }
+                    _isDivTableRendered = isRendered;
 
-                _isDivTableRendered = isRendered;
-
-                await SetDivHeightAsync();
+                    await SetDivHeightAsync();
+                }
             }
             catch (Exception)
             {
+            }
+            finally
+            {
+                await base.OnAfterRenderAsync(firstRender);
             }
         }
 
@@ -71,20 +88,6 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             StateHasChanged();
         }
 
-        private void OnWindowResized(object sender, BrowserWindowSize e)
-        {
-            Task.Run(async () =>
-            {
-                if (_isDivTableRendered)
-                {
-                    await SetDivHeightAsync();
-                }
-            });
-        }
-
-        public void Dispose()
-        {
-            _resizeListener.OnResized -= OnWindowResized;
-        }
+        public async ValueTask DisposeAsync() => await _resizeService.Unsubscribe(_resizeSubscribedId);
     }
 }

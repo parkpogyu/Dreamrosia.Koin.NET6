@@ -1,9 +1,9 @@
 ﻿using ApexCharts;
-using BlazorPro.BlazorSize;
 using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Shared.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MudBlazor.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
 {
-    public partial class AssetChart : IDisposable
+    public partial class AssetChart 
     {
         [CascadingParameter(Name = "Assets")]
         private IEnumerable<AssetDto> Assets
@@ -31,6 +31,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private IEnumerable<AssetDto> _items { get; set; } = new List<AssetDto>();
         private TimeFrames _selectedTimeFrame { get; set; } = TimeFrames.Week;
         private readonly string _divChartId = Guid.NewGuid().ToString();
+        private Guid _resizeSubscribedId { get; set; }
         private bool _isDivChartRendered { get; set; } = false;
         private string _divChartHeight { get; set; } = "100%";
         private string _assetChartHeight { get; set; } = "100%";
@@ -65,23 +66,38 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             {
                 if (firstRender)
                 {
-                    _resizeListener.OnResized += OnWindowResized;
+                    _resizeSubscribedId = await _resizeService.Subscribe((size) =>
+                    {
+                        if (!_isDivChartRendered) { return; }
+
+                        InvokeAsync(SetDivHeightAsync);
+
+                    }, new ResizeOptions
+                    {
+                        NotifyOnBreakpointOnly = false,
+                    });
                 }
+                else
+                {
+                    if (_isDivChartRendered) { return; }
 
-                if (_isDivChartRendered) { return; }
+                    var isRendered = await _jsRuntime.InvokeAsync<bool>("func_isRendered", _divChartId);
 
-                var isRendered = await _jsRuntime.InvokeAsync<bool>("func_isRendered", _divChartId);
+                    if (!isRendered) { return; }
 
-                if (!isRendered) { return; }
+                    _isDivChartRendered = isRendered;
 
-                _isDivChartRendered = isRendered;
+                    await SetDivHeightAsync();
 
-                await SetDivHeightAsync();
-
-                DrawChart(setData: true);
+                    DrawChart(setData: true);
+                }
             }
             catch (Exception)
             {
+            }
+            finally
+            {
+                await base.OnAfterRenderAsync(firstRender);
             }
         }
 
@@ -512,22 +528,6 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             }
         }
 
-        private void OnWindowResized(object sender, BrowserWindowSize e)
-        {
-            Task.Run(async () =>
-            {
-                if (_isDivChartRendered)
-                {
-                    await SetDivHeightAsync();
-
-                    DrawChart(setData: false);
-                }
-            });
-        }
-
-        public void Dispose()
-        {
-            _resizeListener.OnResized -= OnWindowResized;
-        }
+        public async ValueTask DisposeAsync() => await _resizeService.Unsubscribe(_resizeSubscribedId);
     }
 }

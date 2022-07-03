@@ -14,9 +14,9 @@
 @using AutoMapper
 @using ApexCharts
 @using MudBlazor
+@using MudBlazor.Services
 @using Blazored.LocalStorage
 @using Blazored.FluentValidation
-@using BlazorPro.BlazorSize
 
 @*Client Services*@
 @using Dreamrosia.Koin.Client.Infrastructure.Managers
@@ -65,7 +65,7 @@
 @inject ClientPreferenceManager _clientPreferenceManager
 @inject ILocalStorageService _localStorage
 @inject IJSRuntime _jsRuntime
-@inject ResizeListener _resizeListener
+@inject IResizeService _resizeService
 @inject IStringLocalizer<SharedLocalizerResources> _localizer
 @inject IMapper _mapper 
 @inject IExcelService _excelService 

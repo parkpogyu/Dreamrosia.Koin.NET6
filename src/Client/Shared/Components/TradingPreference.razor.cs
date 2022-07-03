@@ -1,5 +1,4 @@
 ﻿using Blazored.FluentValidation;
-using BlazorPro.BlazorSize;
 using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Client.Infrastructure.Managers;
 using Dreamrosia.Koin.Client.Shared.Dialogs;
@@ -8,6 +7,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.JSInterop;
 using MudBlazor;
+using MudBlazor.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
 {
-    public partial class TradingPreference : IDisposable
+    public partial class TradingPreference 
     {
         [Inject] private ITradingTermsManager TradingTermsManager { get; set; }
         [Inject] private IMarketManager MarketManager { get; set; }
@@ -65,6 +65,8 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private HashSet<SymbolDto> _selectedSymbols { get; set; } = new HashSet<SymbolDto>();
         private float _autoAmountRate { get; set; }
         private string _searchString { get; set; } = string.Empty;
+
+        private Guid _resizeSubscribedId { get; set; }
         private bool _isDivTableRendered { get; set; } = false;
         private string _divTableHeight { get; set; } = "100%";
         private readonly string _divTableId = Guid.NewGuid().ToString();
@@ -98,29 +100,43 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             {
                 if (firstRender)
                 {
-                    _resizeListener.OnResized += OnWindowResized;
+                    _resizeSubscribedId = await _resizeService.Subscribe((size) =>
+                    {
+                        if (!_isDivTableRendered) { return; }
+
+                        InvokeAsync(SetDivHeightAsync);
+
+                    }, new ResizeOptions
+                    {
+                        NotifyOnBreakpointOnly = false,
+                    });
                 }
-
-                if (_isDivTableRendered) { return; }
-
-                var isRendered = await _jsRuntime.InvokeAsync<bool>("func_isRendered", _divTableId);
-
-                if (isRendered)
+                else
                 {
+                    if (_isDivTableRendered) { return; }
+
+                    var isRendered = await _jsRuntime.InvokeAsync<bool>("func_isRendered", _divTableId);
+
+                    if (!isRendered) { return; }
+
                     _isDivTableRendered = isRendered;
 
-                    await SetDivHeightAsync(_divTableId);
+                    await SetDivHeightAsync();
                 }
             }
             catch (Exception)
             {
             }
+            finally
+            {
+                await base.OnAfterRenderAsync(firstRender);
+            }
         }
 
-        private async Task SetDivHeightAsync(string div)
+        private async Task SetDivHeightAsync()
         {
             var window = await _jsRuntime.InvokeAsync<BoundingClientRect>("func_getWindowSize");
-            var rect = await _jsRuntime.InvokeAsync<BoundingClientRect>("func_BoundingClientRect.get", div);
+            var rect = await _jsRuntime.InvokeAsync<BoundingClientRect>("func_BoundingClientRect.get", _divTableId);
 
             if (rect is null) { return; }
 
@@ -210,18 +226,6 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             return await _jsRuntime.InvokeAsync<string>("Screenshot", new object[] { "TradingPreference", name });
         }
 
-
-        public void Dispose()
-        {
-            _resizeListener.OnResized -= OnWindowResized;
-        }
-
-        private void OnWindowResized(object sender, BrowserWindowSize e)
-        {
-            Task.Run(async () =>
-            {
-                await SetDivHeightAsync(_divTableId);
-            });
-        }
+        public async ValueTask DisposeAsync() => await _resizeService.Unsubscribe(_resizeSubscribedId);
     }
 }

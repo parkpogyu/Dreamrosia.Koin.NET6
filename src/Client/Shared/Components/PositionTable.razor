@@ -13,7 +13,7 @@
               Virtualize="true"
               Hover="true" Dense="true" Bordered="true" Striped="true"
               FixedHeader="true" FixedFooter="true"
-              @bind-RowsPerPage="@_rowsPerPage"
+              RowsPerPage="@TablePager.DefaultPageSize"
               Filter="new Func<PaperPositionDto, bool>(Search)"
               Height="@_divTableHeight">
         <ToolBarContent>

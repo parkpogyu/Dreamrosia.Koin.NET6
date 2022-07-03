@@ -1,5 +1,4 @@
 ﻿using Blazored.LocalStorage;
-using BlazorPro.BlazorSize;
 using Dreamrosia.Koin.Application.Interfaces.Services;
 using Dreamrosia.Koin.Client.Infrastructure.Authentication;
 using Dreamrosia.Koin.Client.Infrastructure.Managers;
@@ -42,7 +41,6 @@ namespace Dreamrosia.Koin.Client.Extensions
                 {
                     options.ResourcesPath = "Resources";
                 })
-                .AddScoped<ResizeListener>() // Used by BlazorSize
                 .AddOptions()
                 .AddAuthorizationCore(options =>
                 {

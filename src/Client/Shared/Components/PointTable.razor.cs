@@ -1,9 +1,9 @@
-﻿using BlazorPro.BlazorSize;
-using Dreamrosia.Koin.Application.DTO;
+﻿using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.JSInterop;
+using MudBlazor.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
 {
-    public partial class PointTable : IDisposable
+    public partial class PointTable 
     {
         [CascadingParameter(Name = "Points")]
         private IEnumerable<PointDto> Points
@@ -28,12 +28,14 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private IEnumerable<PointDto> _sources { get; set; }
         private IEnumerable<PointDto> _items { get; set; }
         private PointDto _selectedItem { get; set; }
-        private bool _isDivTableRendered { get; set; } = false;
-        private string _divTableHeight { get; set; } = "100%";
-        private readonly string _divTableId = Guid.NewGuid().ToString();
         private string _selectedPointType { get; set; }
         private IEnumerable<string> _selectedPointTypes { get; set; }
         private string _searchString { get; set; } = string.Empty;
+
+        private Guid _resizeSubscribedId { get; set; }
+        private bool _isDivTableRendered { get; set; } = false;
+        private string _divTableHeight { get; set; } = "100%";
+        private readonly string _divTableId = Guid.NewGuid().ToString();
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -41,21 +43,36 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             {
                 if (firstRender)
                 {
-                    _resizeListener.OnResized += OnWindowResized;
+                    _resizeSubscribedId = await _resizeService.Subscribe((size) =>
+                    {
+                        if (!_isDivTableRendered) { return; }
+
+                        InvokeAsync(SetDivHeightAsync);
+
+                    }, new ResizeOptions
+                    {
+                        NotifyOnBreakpointOnly = false,
+                    });
                 }
+                else
+                {
+                    if (_isDivTableRendered) { return; }
 
-                if (_isDivTableRendered) { return; }
+                    var isRendered = await _jsRuntime.InvokeAsync<bool>("func_isRendered", _divTableId);
 
-                var isRendered = await _jsRuntime.InvokeAsync<bool>("func_isRendered", _divTableId);
+                    if (!isRendered) { return; }
 
-                if (!isRendered) { return; }
+                    _isDivTableRendered = isRendered;
 
-                _isDivTableRendered = isRendered;
-
-                await SetDivHeightAsync();
+                    await SetDivHeightAsync();
+                }
             }
             catch (Exception)
             {
+            }
+            finally
+            {
+                await base.OnAfterRenderAsync(firstRender);
             }
         }
 
@@ -153,20 +170,6 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         //    }
         //}
 
-        private void OnWindowResized(object sender, BrowserWindowSize e)
-        {
-            Task.Run(async () =>
-            {
-                if (_isDivTableRendered)
-                {
-                    await SetDivHeightAsync();
-                }
-            });
-        }
-
-        public void Dispose()
-        {
-            _resizeListener.OnResized -= OnWindowResized;
-        }
+        public async ValueTask DisposeAsync() => await _resizeService.Unsubscribe(_resizeSubscribedId);
     }
 }
