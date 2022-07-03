@@ -1,5 +1,6 @@
 ﻿using Dreamrosia.Koin.Shared.Enums;
 using Dreamrosia.Koin.Shared.Wrapper;
+using Dreamrosia.Koin.UPbit.Infrastructure.Conveters;
 using Dreamrosia.Koin.UPbit.Infrastructure.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -137,12 +138,14 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
             /// 주문수량 (지정가, 시장가 매도 시 필수)
             /// </summary>
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonConverter(typeof(NumericToStringConverter))]
             public decimal? volume { get; set; }
 
             /// <summary>
             /// 주문가격(필수)
             /// </summary>
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonConverter(typeof(NumericToStringConverter))]
             public decimal? price { get; set; }
 
             /// <summary>
