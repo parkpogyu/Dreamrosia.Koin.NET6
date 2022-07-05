@@ -1,0 +1,21 @@
+﻿.resizer[data-direction='horizontal'] {
+    background-color: #cbd5e0;
+    cursor: ew-resize;
+    width: 4px;
+}
+
+.resizer[data-direction='vertical'] {
+    background-color: #cbd5e0;
+    cursor: ns-resize;
+    height: 4px;
+}
+
+.container_bottom {
+    /* Take the remaining height */
+    flex: 1;
+}
+
+.container_right {
+    /* Take the remaining width */
+    flex: 1;
+}

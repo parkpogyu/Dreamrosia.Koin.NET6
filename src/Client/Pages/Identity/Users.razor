@@ -13,8 +13,8 @@
 }
 else
 {
-    <div class="d-flex justify-start align-start" style="width:inherit">
-        <div style="width:inherit">
+    <div class="@_splitClass">
+        <div id="@_leftId" >
             <MudPaper Elevation="25" Class="flex-x-scroll-container pa-2 mb-1 ">
                 <FullSpacer />
                 <DateRangePicker DateRange="_dateRange"
@@ -33,18 +33,15 @@ else
             </MudPaper>
 
             <CascadingValue Value="@_items" Name="Users">
-                <UserTable NavigatonToTab="@_isVisibleTabs"
-                       NavigationItemSelected="NavigationItemSelected" />
+                <UserTable NavigationItemSelected="NavigationItemSelected" />
             </CascadingValue>
         </div>
-
-        @if (_isVisibleTabs)
-        {
+        <div class="resizer ma-2" data-direction="@_dataDirection" id="@_splitterId"></div>
+        <div class="container_right">
             <MudTabs @ref="_tabs"
-             @bind-ActivePanelIndex="@_activePanelIndex"
-             Rounded="true"
-             ApplyEffectsToContainer="true"
-             Class="ml-4" Style="width:inherit">
+                 @bind-ActivePanelIndex="@_activePanelIndex"
+                 Rounded="true"
+                 ApplyEffectsToContainer="true">
                 <ChildContent>
                     @foreach (var item in _views)
                     {
@@ -95,12 +92,12 @@ else
                 </ChildContent>
                 <TabPanelHeader>
                     <MudIconButton Class="ml-2 pa-1"
-                           Icon="@Icons.Material.Outlined.RemoveCircleOutline"
-                           Color = "MudBlazor.Color.Warning"
-                           Size="Size.Small"
-                           OnClick="(_) => RemoveTab(context)" />
+                               Icon="@Icons.Material.Outlined.RemoveCircleOutline"
+                               Color="MudBlazor.Color.Warning"
+                               Size="Size.Small"
+                               OnClick="(_) => RemoveTab(context)" />
                 </TabPanelHeader>
             </MudTabs>
-        }
+        </div>
     </div>
 }

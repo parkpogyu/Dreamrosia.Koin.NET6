@@ -9,6 +9,7 @@ function func_getWindowSize() {
 function func_isRendered(name) {
 
     var element = document.getElementById(name);
+
     if (typeof element !== "undefined" && element != null) {
         return true;
     }
@@ -93,7 +94,7 @@ var func_BoundingClientRect = {
 }
 
 // loadScript: returns a promise that completes when the script loads
-window.loadScript = function (scriptPath) {
+window.LoadScript = function (scriptPath) {
     // check list - if already loaded we can ignore
     if (loaded[scriptPath]) {
         console.log(scriptPath + " already loaded");

@@ -4,6 +4,7 @@ using Dreamrosia.Koin.Client.Enums;
 using Dreamrosia.Koin.Client.Models;
 using Dreamrosia.Koin.Client.Shared.Components;
 using Dreamrosia.Koin.Domain.Enums;
+using Microsoft.JSInterop;
 using MudBlazor;
 using MudBlazor.Services;
 using System;
@@ -13,14 +14,22 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Pages.Identity
 {
-    public partial class Users
+    public partial class Users : IAsyncDisposable
     {
         private bool _loaded;
         private IEnumerable<UserFullInfoDto> _items = new List<UserFullInfoDto>();
         private DateRange _dateRange { get; set; } = new DateRange();
         private DateRangeTerms _dateRangeTerm { get; set; } = DateRangeTerms._1W;
 
-        private bool _isVisibleTabs { get; set; }
+        private static string split_horizontal => "d-flex flex-row";
+        private static string split_vertical => "d-flex flex-column";
+        private readonly string _splitterId = Guid.NewGuid().ToString();
+        private readonly string _leftId = Guid.NewGuid().ToString();
+        private bool _isSplitterRendered { get; set; }
+        private bool _isSplitHorizontal { get; set; }
+        private string _splitClass { get; set; } = split_horizontal;
+        private string _dataDirection { get; set; } = "horizontal";
+
         private MudTabs _tabs { get; set; }
         private List<TabView> _views { get; set; } = new List<TabView>();
         private int _activePanelIndex { get; set; } = 0;
@@ -31,6 +40,8 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
 
         protected override async Task OnInitializedAsync()
         {
+            await _jsRuntime.InvokeVoidAsync("LoadScript", "js/splitter.js");
+
             await GetUsersAsync();
 
             _loaded = true;
@@ -40,11 +51,26 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
         {
             if (firstRender)
             {
-                _resizeSubscribedId = await _resizeService.Subscribe((size) =>
+                _resizeSubscribedId = await _resizeService.Subscribe(async (size) =>
                 {
-                    _isVisibleTabs = BoundingClientRect.IsMatchMediumBreakPoints(size.Width / 2);
+                    var breakPoints = BoundingClientRect.IsMatchMediumBreakPoints(size.Width / 2);
 
-                    InvokeAsync(StateHasChanged);
+                    if (_isSplitHorizontal == breakPoints) { return; }
+
+                    _isSplitHorizontal = breakPoints;
+
+                    _splitClass = _isSplitHorizontal ? split_horizontal : split_vertical;
+                    _dataDirection = _isSplitHorizontal ? "horizontal" : "vertical";
+
+                    await InvokeAsync(StateHasChanged);
+
+                    if (!_isSplitHorizontal)
+                    {
+                        await _jsRuntime.InvokeVoidAsync("func_setWidth", new object[] { _leftId, "inherit" });
+                    }
+
+                    await _jsRuntime.InvokeVoidAsync("func_makeResizer", _splitterId);
+
                 }, new ResizeOptions
                 {
                     NotifyOnBreakpointOnly = false,
@@ -52,19 +78,34 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
 
                 var size = await _resizeService.GetBrowserWindowSize();
 
-                _isVisibleTabs = BoundingClientRect.IsMatchMediumBreakPoints(size.Width / 2);
+                _isSplitHorizontal = BoundingClientRect.IsMatchMediumBreakPoints(size.Width / 2);
+
+                _splitClass = _isSplitHorizontal ? split_horizontal : split_vertical;
+                _dataDirection = _isSplitHorizontal ? "horizontal" : "vertical";
 
                 StateHasChanged();
             }
-
-            if (_updatePanelIndex == true)
+            else
             {
-                _activePanelIndex = _views.Count - 1;
-                StateHasChanged();
-                _updatePanelIndex = false;
+                if (_updatePanelIndex == true)
+                {
+                    _activePanelIndex = _views.Count - 1;
+                    StateHasChanged();
+                    _updatePanelIndex = false;
+                }
+
+                if (_isSplitterRendered) { return; }
+
+                var isRendered = await _jsRuntime.InvokeAsync<bool>("func_isRendered", _splitterId);
+
+                if(!isRendered) { return; }
+
+                _isSplitterRendered = isRendered;
+
+                await _jsRuntime.InvokeVoidAsync("func_makeResizer", _splitterId);
             }
 
-            await base.OnAfterRenderAsync(firstRender);
+            //await base.OnAfterRenderAsync(firstRender);
         }
 
         private async Task GetUsersAsync()
