@@ -1,63 +1,60 @@
-﻿
-@using Dreamrosia.Koin.Application.DTO
+﻿@using Dreamrosia.Koin.Application.DTO
 
 <MudPaper Elevation="25" Class="pa-2">
     <MudGrid Class="mt-1">
-        @{
-            if (IsReal)
-            {
-                <MudItem xs="12" sm="4">
-                    <MudField Label="@_localizer["Asset.InAmt"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
-                        @($"{_report.InAmt:N0}")
-                    </MudField>
-                </MudItem>
-                <MudItem xs="12" sm="4">
-                    <MudField Label="@_localizer["Asset.OutAmt"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
-                        @($"{_report.OutAmt:N0}")
-                    </MudField>
-                </MudItem>
-                <MudItem xs="12" sm="4">
-                    <MudField Label="@_localizer["Asset.InvsAmt"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
-                        @($"{_report.InvsAmt:N0}")
-                    </MudField>
-                </MudItem>
-            }
-            else
-            {
-                <MudItem xs="12" sm="4">
-                    <MudField Label="@_localizer["Asset.InvsAmt"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
-                        @($"{_report.InvsAmt:N0}")
-                    </MudField>
-                </MudItem>
-                <MudItem xs="12" sm="4">
-                    <MudField Label="@_localizer["Asset.BorrowedAmt"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right"
-                              HelperText="@(_viewHelp ?  $"매수시 최대 현금 부족분" : string.Empty )" >
-                        @($"{_report.BorrowedAmt:N0}")
-                    </MudField>
-                </MudItem>
-                <MudItem xs="12" sm="4">
-                    <MudField Label="@_localizer["Asset.NecessaryAmt"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right"
-                              HelperText="@(_viewHelp ?  $"{_localizer["Asset.InvsAmt"]} + {_localizer["Asset.BorrowedAmt"]}" : string.Empty )" >
-                        @($"{_report.NecessaryAmt:N0}")
-                    </MudField>
-                </MudItem>
-            }
+        @if (IsReal)
+        {
+            <MudItem xs="12" sm="4">
+                <MudField Label="@_localizer["Asset.InAmt"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
+                    @($"{_report.InAmt:N0}")
+                </MudField>
+            </MudItem>
+            <MudItem xs="12" sm="4">
+                <MudField Label="@_localizer["Asset.OutAmt"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
+                    @($"{_report.OutAmt:N0}")
+                </MudField>
+            </MudItem>
+            <MudItem xs="12" sm="4">
+                <MudField Label="@_localizer["Asset.InvsAmt"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
+                    @($"{_report.InvsAmt:N0}")
+                </MudField>
+            </MudItem>
+        }
+        else
+        {
+            <MudItem xs="12" sm="4">
+                <MudField Label="@_localizer["Asset.InvsAmt"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
+                    @($"{_report.InvsAmt:N0}")
+                </MudField>
+            </MudItem>
+            <MudItem xs="12" sm="4">
+                <MudField Label="@_localizer["Asset.BorrowedAmt"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right"
+                      HelperText="@(_viewHelp ?  $"매수시 최대 현금 부족분" : string.Empty )">
+                    @($"{_report.BorrowedAmt:N0}")
+                </MudField>
+            </MudItem>
+            <MudItem xs="12" sm="4">
+                <MudField Label="@_localizer["Asset.NecessaryAmt"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right"
+                      HelperText="@(_viewHelp ?  $"{_localizer["Asset.InvsAmt"]} + {_localizer["Asset.BorrowedAmt"]}" : string.Empty )">
+                    @($"{_report.NecessaryAmt:N0}")
+                </MudField>
+            </MudItem>
         }
 
-        <MudItem xs="12" sm="4">
-            <MudField Label="@_localizer["Asset.BalEvalAmt"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right"
-                              HelperText="@(_viewHelp ?  $"{_localizer["Positions"]} {_localizer["Asset.BalEvalAmt"]}" : string.Empty )" >
-                @($"{_report.BalEvalAmt:N0}")
-            </MudField>
-        </MudItem>
         <MudItem xs="12" sm="4">
             <MudField Label="@_localizer["Asset.Deposit"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
                 @($"{_report.Deposit:N0}")
             </MudField>
         </MudItem>
         <MudItem xs="12" sm="4">
+            <MudField Label="@_localizer["Asset.BalEvalAmt"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right"
+                      HelperText="@(_viewHelp ?  $"{_localizer["Positions"]} {_localizer["Asset.BalEvalAmt"]}" : string.Empty )">
+                @($"{_report.BalEvalAmt:N0}")
+            </MudField>
+        </MudItem>
+        <MudItem xs="12" sm="4">
             <MudField Label="@_localizer["Asset.DssAmt"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right"
-                              HelperText="@(_viewHelp ?  $"{_localizer["Asset.BalEvalAmt"]} + {_localizer["Asset.Deposit"]}" : string.Empty )" >
+                      HelperText="@(_viewHelp ?  $"{_localizer["Asset.BalEvalAmt"]} + {_localizer["Asset.Deposit"]}" : string.Empty )">
                 <MudText Style="color:darkred;font-weight:bold"> @($"{_report.DssAmt:N0}") </MudText>
             </MudField>
         </MudItem>
@@ -69,44 +66,40 @@
         </MudItem>
         <MudItem xs="12" sm="4">
             <MudField Label="@_localizer["Asset.InvsPnLRat"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right"
-                              HelperText="@(_viewHelp ? (IsReal ?  
-                                                         $"({_localizer["Asset.InvsPnL"]} / {_localizer["Asset.InvsAmt"]}) x 100" :  
-                                                         $"({_localizer["Asset.InvsPnL"]} / {_localizer["Asset.NecessaryAmt"]}) x 100"  ) : string.Empty )" >
-                @{
-                    if (_report.InvsPnLRat < 0)
-                    {
-                        <MudText Class="negative"> @($"{_report.InvsPnLRat:N2}") </MudText>
+                      HelperText="@(_viewHelp ? (IsReal ?
+                                                         $"({_localizer["Asset.InvsPnL"]} / {_localizer["Asset.InvsAmt"]}) x 100" :
+                                                         $"({_localizer["Asset.InvsPnL"]} / {_localizer["Asset.NecessaryAmt"]}) x 100"  ) : string.Empty )">
+                @if (_report.InvsPnLRat < 0)
+                {
+                    <MudText Class="negative"> @($"{_report.InvsPnLRat:N2}") </MudText>
 
-                    }
-                    else if (_report.InvsPnLRat == 0)
-                    {
-                        @($"{_report.InvsPnLRat:N2}")
-                    }
-                    else
-                    {
-                        <MudText Class="positive"> @($"{_report.InvsPnLRat:N2}") </MudText>
-                    }
+                }
+                else if (_report.InvsPnLRat == 0)
+                {
+                    @($"{_report.InvsPnLRat:N2}")
+                }
+                else
+                {
+                    <MudText Class="positive"> @($"{_report.InvsPnLRat:N2}") </MudText>
                 }
             </MudField>
         </MudItem>
         <MudItem xs="12" sm="4">
             <MudField Label="@_localizer["Asset.InvsPnL"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right"
-                              HelperText="@(_viewHelp ? (IsReal ?  
-                                                         $"{_localizer["Asset.DssAmt"]} - {_localizer["Asset.InvsAmt"]}" :  
-                                                         $"{_localizer["Asset.DssAmt"]} - {_localizer["Asset.NecessaryAmt"]}"  ) : string.Empty )" >
-                @{
-                    if (_report.InvsPnL < 0)
-                    {
-                        <MudText Class="negative"> @($"{_report.InvsPnL:N0}") </MudText>
-                    }
-                    else if (_report.InvsPnL == 0)
-                    {
-                        @($"{_report.InvsPnL:N0}")
-                    }
-                    else
-                    {
-                        <MudText Class="positive"> @($"{_report.InvsPnL:N0}") </MudText>
-                    }
+                      HelperText="@(_viewHelp ? (IsReal ?
+                                                         $"{_localizer["Asset.DssAmt"]} - {_localizer["Asset.InvsAmt"]}" :
+                                                         $"{_localizer["Asset.DssAmt"]} - {_localizer["Asset.NecessaryAmt"]}"  ) : string.Empty )">
+                @if (_report.InvsPnL < 0)
+                {
+                    <MudText Class="negative"> @($"{_report.InvsPnL:N0}") </MudText>
+                }
+                else if (_report.InvsPnL == 0)
+                {
+                    @($"{_report.InvsPnL:N0}")
+                }
+                else
+                {
+                    <MudText Class="positive"> @($"{_report.InvsPnL:N0}") </MudText>
                 }
             </MudField>
         </MudItem>
@@ -163,55 +156,49 @@
 
         <MudItem xs="12" sm="4">
             <MudField Label="@_localizer["Report.MinInvsPnL"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
-                @{
-                    if (_report.MinInvsPnL < 0)
-                    {
-                        <MudText Class="negative"> @($"{_report.MinInvsPnL:N0}") </MudText>
-                    }
-                    else if (_report.MinInvsPnL == 0)
-                    {
-                        @($"{_report.MinInvsPnL:N0}")
-                    }
-                    else
-                    {
-                        <MudText Class="positive"> @($"{_report.MinInvsPnL:N0}") </MudText>
-                    }
+                @if (_report.MinInvsPnL < 0)
+                {
+                    <MudText Class="negative"> @($"{_report.MinInvsPnL:N0}") </MudText>
+                }
+                else if (_report.MinInvsPnL == 0)
+                {
+                    @($"{_report.MinInvsPnL:N0}")
+                }
+                else
+                {
+                    <MudText Class="positive"> @($"{_report.MinInvsPnL:N0}") </MudText>
                 }
             </MudField>
         </MudItem>
         <MudItem xs="12" sm="4">
             <MudField Label="@_localizer["Report.MaxInvsPnL"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
-                @{
-                    if (_report.MaxInvsPnL < 0)
-                    {
-                        <MudText Class="negative"> @($"{_report.MaxInvsPnL:N0}") </MudText>
-                    }
-                    else if (_report.MaxInvsPnL == 0)
-                    {
-                        @($"{_report.MaxInvsPnL:N0}")
-                    }
-                    else
-                    {
-                        <MudText Class="positive"> @($"{_report.MaxInvsPnL:N0}") </MudText>
-                    }
+                @if (_report.MaxInvsPnL < 0)
+                {
+                    <MudText Class="negative"> @($"{_report.MaxInvsPnL:N0}") </MudText>
+                }
+                else if (_report.MaxInvsPnL == 0)
+                {
+                    @($"{_report.MaxInvsPnL:N0}")
+                }
+                else
+                {
+                    <MudText Class="positive"> @($"{_report.MaxInvsPnL:N0}") </MudText>
                 }
             </MudField>
         </MudItem>
         <MudItem xs="12" sm="4">
             <MudField Label="@_localizer["Report.AvgInvsPnL"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
-                @{
-                    if (_report.AvgInvsPnL < 0)
-                    {
-                        <MudText Class="negative"> @($"{_report.AvgInvsPnL:N0}") </MudText>
-                    }
-                    else if (_report.AvgInvsPnL == 0)
-                    {
-                        @($"{_report.AvgInvsPnL:N0}")
-                    }
-                    else
-                    {
-                        <MudText Class="positive"> @($"{_report.AvgInvsPnL:N0}") </MudText>
-                    }
+                @if (_report.AvgInvsPnL < 0)
+                {
+                    <MudText Class="negative"> @($"{_report.AvgInvsPnL:N0}") </MudText>
+                }
+                else if (_report.AvgInvsPnL == 0)
+                {
+                    @($"{_report.AvgInvsPnL:N0}")
+                }
+                else
+                {
+                    <MudText Class="positive"> @($"{_report.AvgInvsPnL:N0}") </MudText>
                 }
             </MudField>
         </MudItem>
@@ -260,19 +247,17 @@
         </MudItem>
         <MudItem xs="12" sm="4">
             <MudField Label="@_localizer["Report.PnL"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right">
-                @{
-                    if (_report.PnL < 0)
-                    {
-                        <MudText Class="negative"> @($"{_report.PnL:N0}") </MudText>
-                    }
-                    else if (_report.PnL == 0)
-                    {
-                        @($"{_report.PnL:N0}")
-                    }
-                    else
-                    {
-                        <MudText Class="positive"> @($"{_report.PnL:N0}") </MudText>
-                    }
+                @if (_report.PnL < 0)
+                {
+                    <MudText Class="negative"> @($"{_report.PnL:N0}") </MudText>
+                }
+                else if (_report.PnL == 0)
+                {
+                    @($"{_report.PnL:N0}")
+                }
+                else
+                {
+                    <MudText Class="positive"> @($"{_report.PnL:N0}") </MudText>
                 }
             </MudField>
         </MudItem>
@@ -334,19 +319,17 @@
         <MudItem xs="12" sm="6">
             <MudField Label="@_localizer["Report.PnLRatio"]" Variant="Variant.Outlined" Margin="Margin.Dense" Style="text-align:right"
                       HelperText="@(_viewHelp ? $"절대값({_localizer["Report.AvgProfit"]} / {_localizer["Report.AvgLoss"]})" :   string.Empty )">
-                @{
-                    if (_report.PnLRatio < 1)
-                    {
-                        <MudText Class="negative" Style="font-weight:bold" > @($"{_report.PnLRatio:N2}") </MudText>
-                    }
-                    else if (_report.PnLRatio == 1)
-                    {
-                        @($"{_report.PnLRatio:N2}")
-                    }
-                    else
-                    {
-                        <MudText Class="positive" Style="font-weight:bold"> @($"{_report.PnLRatio:N2}") </MudText>
-                    }
+                @if (_report.PnLRatio < 1)
+                {
+                    <MudText Class="negative" Style="font-weight:bold"> @($"{_report.PnLRatio:N2}") </MudText>
+                }
+                else if (_report.PnLRatio == 1)
+                {
+                    @($"{_report.PnLRatio:N2}")
+                }
+                else
+                {
+                    <MudText Class="positive" Style="font-weight:bold"> @($"{_report.PnLRatio:N2}") </MudText>
                 }
             </MudField>
         </MudItem>
@@ -377,7 +360,7 @@
 </MudPaper>
 
 @code {
-    [CascadingParameter(Name = "Report")] 
+    [CascadingParameter(Name = "Report")]
     private AssetReportDto Report { get; set; }
 
     [CascadingParameter(Name = "ViewHelp")]

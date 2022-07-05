@@ -59,8 +59,7 @@ else
                           Variant="Variant.Outlined"
                           Margin="Margin.Dense"
                           Style="text-align:right">
-                    @{
-                        if (TotalEvalPnL < 0)
+                        @if (TotalEvalPnL < 0)
                         {
                             <MudText Class="pe-1 negative" Style="font-weight:bold">@($"{TotalEvalPnL:N0}")</MudText>
                         }
@@ -72,7 +71,6 @@ else
                         {
                             <MudText Class="pe-1 positive" Style="font-weight:bold">@($"{TotalEvalPnL:N0}")</MudText>
                         }
-                    }
                 </MudField>
             </MudItem>
 
@@ -81,8 +79,7 @@ else
                           Variant="Variant.Outlined"
                           Margin="Margin.Dense"
                           Style="text-align:right">
-                    @{
-                        if (TotalPnLRat < 0)
+                        @if (TotalPnLRat < 0)
                         {
                             <MudText Class="pe-1 negative" Style="font-weight:bold">@($"{TotalPnLRat:N2}")</MudText>
                         }
@@ -94,7 +91,66 @@ else
                         {
                             <MudText Class="pe-1 positive" Style="font-weight:bold">@($"{TotalPnLRat:N2}")</MudText>
                         }
-                    }
+                </MudField>
+            </MudItem>
+            <MudItem xs="12" sm="3">
+                <MudField Label="@_localizer["Report.LossCount"]"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          Style="text-align:right">
+                        @if (LossCount > 0)
+                        {
+                            <MudText Class="pe-1 negative" Style="font-weight:bold">@($"{LossCount:N0}")</MudText>
+                        }
+                        else
+                        {
+                            <MudText Class="pe-1" />
+                        }
+                </MudField>
+            </MudItem>
+            <MudItem xs="12" sm="3">
+                <MudField Label="@_localizer["Report.ProfitCount"]"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          Style="text-align:right">
+                        @if (ProfitCount > 0)
+                        {
+                            <MudText Class="pe-1 positive" Style="font-weight:bold">@($"{ProfitCount:N0}")</MudText>
+                        }
+                        else
+                        {
+                            <MudText Class="pe-1" />
+                        }
+                </MudField>
+            </MudItem>
+            <MudItem xs="12" sm="3">
+                <MudField Label="@_localizer["Position.TotalLoss"]"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          Style="text-align:right">
+                        @if (ProfitCount > 0)
+                        {
+                            <MudText Class="pe-1 negative" Style="font-weight:bold">@($"{TotalLoss:N0}")</MudText>
+                        }
+                        else
+                        {
+                            <MudText Class="pe-1" />
+                        }
+                </MudField>
+            </MudItem>
+            <MudItem xs="12" sm="3">
+                <MudField Label="@_localizer["Position.TotalProfit"]"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          Style="text-align:right">
+                        @if (ProfitCount > 0)
+                        {
+                            <MudText Class="pe-1 positive" Style="font-weight:bold">@($"{TotalProfit:N0}")</MudText>
+                        }
+                        else
+                        {
+                            <MudText Class="pe-1" />
+                        }
                 </MudField>
             </MudItem>
         </MudGrid>

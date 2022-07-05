@@ -37,6 +37,10 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
         private long TotalBalEvalAmt { get; set; }
         private long TotalEvalPnL { get; set; }
         private float TotalPnLRat { get; set; }
+        public int ProfitCount { get; set; }
+        public int LossCount { get; set; }
+        public long TotalProfit { get; set; }
+        public long TotalLoss { get; set; }
 
         private int _activePanelIndex { get; set; } = 0;
 
@@ -158,6 +162,15 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
             TotalEvalPnL = (long)valids.Sum(f => f.EvalPnL);
             TotalPnLRat = (float)Ratio.ToPercentage(TotalEvalPnL, TotalPchsAmt);
             TotalAsset = TotalKRW + TotalBalEvalAmt;
+
+            var profits = valids.Where(f => f.EvalPnL > 0).ToArray();
+            var losses = valids.Where(f => f.EvalPnL < 0).ToArray();
+
+            TotalProfit = (long)profits.Sum(f => f.EvalPnL);
+            TotalLoss = (long)losses.Sum(f => f.EvalPnL);
+
+            ProfitCount = profits.Count();
+            LossCount = losses.Count();
 
             StateHasChanged();
         }
