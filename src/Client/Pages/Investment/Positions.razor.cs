@@ -127,7 +127,7 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
             var position = response.Data ?? new PositionsDto();
 
             _items = _mapper.Map<IEnumerable<PaperPositionDto>>(position.Coins ?? new List<PaperPositionDto>());
-            TotalKRW = (long)position.KRW?.balance;
+            TotalKRW = Convert.ToInt64(position.KRW?.balance);
             _unpositions = position.Unpositions ?? new List<SymbolDto>();
 
             if (response.Succeeded)

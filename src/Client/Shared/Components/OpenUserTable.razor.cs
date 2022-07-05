@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
 {
-    public partial class OpenUserTable 
+    public partial class OpenUserTable : IAsyncDisposable
     {
         [CascadingParameter(Name = "Users")]
         private IEnumerable<FollowerDto> Users

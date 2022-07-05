@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
 {
-    public partial class OrderTable
+    public partial class OrderTable : IAsyncDisposable
     {
         [CascadingParameter(Name = "Orders")]
         private IEnumerable<PaperOrderDto> Orders

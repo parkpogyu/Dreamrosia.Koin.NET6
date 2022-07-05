@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
 {
-    public partial class TradingPreference 
+    public partial class TradingPreference : IAsyncDisposable
     {
         [Inject] private ITradingTermsManager TradingTermsManager { get; set; }
         [Inject] private IMarketManager MarketManager { get; set; }
@@ -73,8 +73,8 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
         protected override async Task OnInitializedAsync()
         {
-            await _jsRuntime.InvokeVoidAsync("loadScript", "https://html2canvas.hertzen.com/dist/html2canvas.min.js");
-            await _jsRuntime.InvokeVoidAsync("loadScript", "js/screenshot.js");
+            await _jsRuntime.InvokeVoidAsync("LoadScript", "https://html2canvas.hertzen.com/dist/html2canvas.min.js");
+            await _jsRuntime.InvokeVoidAsync("LoadScript", "js/screenshot.js");
 
             SetSelectedSymbols();
             SetAutoAmountRate();

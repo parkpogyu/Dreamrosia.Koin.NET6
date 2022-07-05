@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Pages.Investment
 {
-    public partial class Transfers
+    public partial class Transfers : IAsyncDisposable
     {
         [Inject] private IInvestmentManager InvestmentManager { get; set; }
         [Parameter] public PageModes PageMode { get; set; }

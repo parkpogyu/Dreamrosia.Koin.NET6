@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
 {
-    public partial class CandleChart
+    public partial class CandleChart : IAsyncDisposable
     {
         [Inject] private IMACDService MACDService { get; set; }
 
@@ -51,9 +51,9 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
         protected override async Task OnInitializedAsync()
         {
-            await _jsRuntime.InvokeVoidAsync("loadScript", "_content/Blazor-ApexCharts/js/apex-charts.min.js");
-            await _jsRuntime.InvokeVoidAsync("loadScript", "_content/Blazor-ApexCharts/js/blazor-apex-charts.js");
-            await _jsRuntime.InvokeVoidAsync("loadScript", "js/chart/chart-label.js");
+            await _jsRuntime.InvokeVoidAsync("LoadScript", "_content/Blazor-ApexCharts/js/apex-charts.min.js");
+            await _jsRuntime.InvokeVoidAsync("LoadScript", "_content/Blazor-ApexCharts/js/blazor-apex-charts.js");
+            await _jsRuntime.InvokeVoidAsync("LoadScript", "js/chart/chart-label.js");
 
             _mapper = new MapperConfiguration(c => { c.AddProfile<CandleProfile>(); }).CreateMapper();
 

@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Pages.Utilities
 {
-    public partial class AuditTrails 
+    public partial class AuditTrails : IAsyncDisposable
     {
         [Inject] private IAuditManager AuditManager { get; set; }
         [Parameter] public string UserId { get; set; }

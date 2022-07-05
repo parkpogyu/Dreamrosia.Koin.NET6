@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
 {
-    public partial class PointTable 
+    public partial class PointTable : IAsyncDisposable
     {
         [CascadingParameter(Name = "Points")]
         private IEnumerable<PointDto> Points

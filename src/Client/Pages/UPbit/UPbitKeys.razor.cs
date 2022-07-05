@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Pages.UPbit
 {
-    public partial class UPbitKeys 
+    public partial class UPbitKeys : IAsyncDisposable
     {
         [Inject] private IUPbitKeyManager UPbitKeyManager { get; set; }
 

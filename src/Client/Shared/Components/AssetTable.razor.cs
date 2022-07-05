@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
 {
-    public partial class AssetTable
+    public partial class AssetTable : IAsyncDisposable
     {
         [CascadingParameter(Name = "Assets")]
         private IEnumerable<AssetDto> Assets

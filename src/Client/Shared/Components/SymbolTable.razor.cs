@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
 {
-    public partial class SymbolTable 
+    public partial class SymbolTable : IAsyncDisposable
     {
         [CascadingParameter(Name = "Symbols")]
         private IEnumerable<SymbolDto> Symbols

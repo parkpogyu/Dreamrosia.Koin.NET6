@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
 {
-    public partial class PositionTable 
+    public partial class PositionTable : IAsyncDisposable
     {
         [CascadingParameter(Name = "Positions")]
         private IEnumerable<PaperPositionDto> Positions

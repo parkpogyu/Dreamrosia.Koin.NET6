@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
 {
-    public partial class UserTable 
+    public partial class UserTable : IAsyncDisposable
     {
         [CascadingParameter(Name = "Users")]
         private IEnumerable<UserFullInfoDto> Users
@@ -29,7 +29,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             }
         }
 
-        [Parameter] public bool NavigatonToTab { get; set; }
+        [Parameter] public bool NavigatonToTab { get; set; } = true;
         [Parameter] public EventCallback<NavigationItem> NavigationItemSelected { get; set; }
 
         private MudTable<UserFullInfoDto> _table;
@@ -203,7 +203,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
         private async Task NavigateTo(string userId, string url)
         {
-            if (NavigatonToTab)
+            //if (NavigatonToTab)
             {
                 var user = _items.Single(f => f.Id.Equals(userId));
 
@@ -215,10 +215,10 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                     URL = url,
                 });
             }
-            else
-            {
-                _navigationManager.NavigateTo($"{url}/{userId}");
-            }
+            //else
+            //{
+            //    _navigationManager.NavigateTo($"{url}/{userId}");
+            //}
         }
 
         private async Task NavigateToSubscription(string userId)

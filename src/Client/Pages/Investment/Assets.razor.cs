@@ -30,8 +30,8 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
 
         protected override async Task OnInitializedAsync()
         {
-            await _jsRuntime.InvokeVoidAsync("loadScript", "https://html2canvas.hertzen.com/dist/html2canvas.min.js");
-            await _jsRuntime.InvokeVoidAsync("loadScript", "js/screenshot.js");
+            await _jsRuntime.InvokeVoidAsync("LoadScript", "https://html2canvas.hertzen.com/dist/html2canvas.min.js");
+            await _jsRuntime.InvokeVoidAsync("LoadScript", "js/screenshot.js");
 
             if (string.IsNullOrEmpty(UserId))
             {

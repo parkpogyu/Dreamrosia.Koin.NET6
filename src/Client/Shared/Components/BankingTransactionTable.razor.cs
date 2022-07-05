@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
 {
-    public partial class BankingTransactionTable 
+    public partial class BankingTransactionTable : IAsyncDisposable
     {
         [CascadingParameter(Name = "BankingTransactions")]
         private IEnumerable<BankingTransactionDto> BankingTransactions

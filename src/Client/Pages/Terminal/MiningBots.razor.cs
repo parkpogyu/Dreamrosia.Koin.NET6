@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Pages.Terminal
 {
-    public partial class MiningBots 
+    public partial class MiningBots : IAsyncDisposable
     {
         [Inject] private IMiningBotManager MiningBotManager { get; set; }
 

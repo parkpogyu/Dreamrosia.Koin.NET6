@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
 {
-    public partial class AssetChart 
+    public partial class AssetChart : IAsyncDisposable
     {
         [CascadingParameter(Name = "Assets")]
         private IEnumerable<AssetDto> Assets
@@ -44,9 +44,9 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
         protected override async Task OnInitializedAsync()
         {
-            await _jsRuntime.InvokeVoidAsync("loadScript", "_content/Blazor-ApexCharts/js/apex-charts.min.js");
-            await _jsRuntime.InvokeVoidAsync("loadScript", "_content/Blazor-ApexCharts/js/blazor-apex-charts.js");
-            await _jsRuntime.InvokeVoidAsync("loadScript", "js/chart/chart-label.js");
+            await _jsRuntime.InvokeVoidAsync("LoadScript", "_content/Blazor-ApexCharts/js/apex-charts.min.js");
+            await _jsRuntime.InvokeVoidAsync("LoadScript", "_content/Blazor-ApexCharts/js/blazor-apex-charts.js");
+            await _jsRuntime.InvokeVoidAsync("LoadScript", "js/chart/chart-label.js");
 
             _selectedSerieses = new List<string>()
             {
