@@ -263,7 +263,7 @@ namespace Dreamrosia.Koin.Bot.Services
             }
             else
             {
-                var total = Coins.Sum(f => f.BalEvalAmt) + Convert.ToDouble(Cash?.balance);
+                var total = Coins.Sum(f => f.BalEvalAmt) + Convert.ToDouble(Cash?.total_balance);
 
                 if (total == 0) { return false; }
                 if (TradingTerms.AmountOption == BidAmountOption.Auto && Signals.Count() == 0) { return false; }
