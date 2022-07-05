@@ -3,21 +3,19 @@
     <FluentValidationValidator @ref="_fluentValidationValidator" />
     <MudDialog>
         <TitleContent>
-            @{
-                if (RoleModel.Id == null)
-                {
-                    <MudText Typo="Typo.h6">
-                        <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-3 mb-n1" />
-                        @_localizer["Add Role"]
-                    </MudText>
-                }
-                else
-                {
-                    <MudText Typo="Typo.h6">
-                        <MudIcon Icon="@Icons.Material.Filled.Update" Class="mr-3 mb-n1" />
-                        @_localizer["Update Role"]
-                    </MudText>
-                }
+            @if (RoleModel.Id == null)
+            {
+                <MudText Typo="Typo.h6">
+                    <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-3 mb-n1" />
+                    @_localizer["Add Role"]
+                </MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.h6">
+                    <MudIcon Icon="@Icons.Material.Filled.Update" Class="mr-3 mb-n1" />
+                    @_localizer["Update Role"]
+                </MudText>
             }
         </TitleContent>
         <DialogContent>
@@ -27,15 +25,13 @@
         </DialogContent>
         <DialogActions>
             <MudButton Variant="Variant.Filled" OnClick="Cancel">@_localizer["Cancel"]</MudButton>
-            @{
-                if (RoleModel.Id == null)
-                {
-                    <MudButton Variant="Variant.Filled" ButtonType="MudBlazor.ButtonType.Submit" Disabled="@(!Validated)" Color="MudBlazor.Color.Success">@_localizer["Save"]</MudButton>
-                }
-                else
-                {
-                    <MudButton Variant="Variant.Filled" ButtonType="MudBlazor.ButtonType.Submit" Disabled="@(!Validated)" Color="MudBlazor.Color.Secondary">@_localizer["Update"]</MudButton>
-                }
+            @if (RoleModel.Id == null)
+            {
+                <MudButton Variant="Variant.Filled" ButtonType="MudBlazor.ButtonType.Submit" Disabled="@(!Validated)" Color="MudBlazor.Color.Success">@_localizer["Save"]</MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled" ButtonType="MudBlazor.ButtonType.Submit" Disabled="@(!Validated)" Color="MudBlazor.Color.Secondary">@_localizer["Update"]</MudButton>
             }
         </DialogActions>
     </MudDialog>

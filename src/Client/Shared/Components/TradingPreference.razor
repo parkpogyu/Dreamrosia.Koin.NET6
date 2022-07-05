@@ -360,11 +360,9 @@ else
                                   Filter="new Func<SymbolDto, bool>(Search)"
                                   Height="@_divTableHeight">
                             <ToolBarContent>
-                                @{
                                     <MudText Inline="true" Class="mt-4">
                                         @($"{_localizer["Trading.ChosenSymbols"]} ({(_selectedSymbols==null ? _localizer["All"] : _selectedSymbols.Count() == 0 ? _localizer["All"] :  $"{_selectedSymbols.Count():N0}")})")
                                     </MudText>
-                                }
                                 <MudSpacer />
                                 <MudTextField @bind-Value="@_searchString"
                                               Immediate="false"

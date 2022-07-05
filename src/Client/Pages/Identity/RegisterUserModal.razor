@@ -3,12 +3,10 @@
     <FluentValidationValidator @ref="_fluentValidationValidator" />
     <MudDialog>
         <TitleContent>
-            @{
-                <MudText Typo="Typo.h6">
-                    <MudIcon Icon="@Icons.Material.Filled.VerifiedUser" Class="mr-3 mb-n1" />
-                    @_localizer["Register User"]
-                </MudText>
-            }
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.VerifiedUser" Class="mr-3 mb-n1" />
+                @_localizer["Register User"]
+            </MudText>
         </TitleContent>
         <DialogContent>
             <MudTextField For="@(() => _registerUserModel.NickName)" @bind-Value="_registerUserModel.NickName" Label="@_localizer["User.NickName"]" />
@@ -21,9 +19,7 @@
         </DialogContent>
         <DialogActions>
             <MudButton Variant="Variant.Filled" OnClick="Cancel">@_localizer["Cancel"]</MudButton>
-            @{
-                <MudButton Variant="Variant.Filled" ButtonType="MudBlazor.ButtonType.Submit" Disabled="@(!Validated)" Color="MudBlazor.Color.Success">@_localizer["Register"]</MudButton>
-            }
+            <MudButton Variant="Variant.Filled" ButtonType="MudBlazor.ButtonType.Submit" Disabled="@(!Validated)" Color="MudBlazor.Color.Success">@_localizer["Register"]</MudButton>
         </DialogActions>
     </MudDialog>
 </EditForm>

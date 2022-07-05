@@ -1,5 +1,4 @@
-﻿
-@if (!_loaded)
+﻿@if (!_loaded)
 {
     <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
 }
@@ -9,8 +8,8 @@ else
         <MudGrid Class="mt-1">
             <MudItem xs="12" sm="3">
                 <MudField Label="@_localizer["SeasonSignal.Spring"]"
-                          Variant="Variant.Outlined"
-                          Margin="Margin.Dense">
+                      Variant="Variant.Outlined"
+                      Margin="Margin.Dense">
                     <div class="d-flex justify-space-between">
                         <MudIcon Icon="@(SymbolTable.GetSeasonSignalIcon(SeasonSignals.GoldenCross ))" Class="spring" Size="Size.Small" />
                         <MudText Class="pe-1 spring" Style="font-weight:bold;">@($"{_weeklySpring:N0} / {_dailySpring:N0}")</MudText>
@@ -19,8 +18,8 @@ else
             </MudItem>
             <MudItem xs="12" sm="3">
                 <MudField Label="@_localizer["SeasonSignal.Summer"]"
-                          Variant="Variant.Outlined"
-                          Margin="Margin.Dense">
+                      Variant="Variant.Outlined"
+                      Margin="Margin.Dense">
                     <div class="d-flex justify-space-between">
                         <MudIcon Icon="@(SymbolTable.GetSeasonSignalIcon(SeasonSignals.Above))" Class="summer" Size="Size.Small" />
                         <MudText Class="pe-1 summer" Style="font-weight:bold">@($"{_weeklySummer:N0} / {_dailySummer:N0}")</MudText>
@@ -29,8 +28,8 @@ else
             </MudItem>
             <MudItem xs="12" sm="3">
                 <MudField Label="@_localizer["SeasonSignal.Autumn"]"
-                          Variant="Variant.Outlined"
-                          Margin="Margin.Dense">
+                      Variant="Variant.Outlined"
+                      Margin="Margin.Dense">
                     <div class="d-flex justify-space-between">
                         <MudIcon Icon="@(SymbolTable.GetSeasonSignalIcon(SeasonSignals.DeadCross))" Class="autumn" Size="Size.Small" />
                         <MudText Class="pe-1 autumn" Style="font-weight:bold">@($"{_weeklyAutumn:N0} / {_dailyAutumn:N0}")</MudText>
@@ -39,8 +38,8 @@ else
             </MudItem>
             <MudItem xs="12" sm="3">
                 <MudField Label="@_localizer["SeasonSignal.Winter"]"
-                          Variant="Variant.Outlined"
-                          Margin="Margin.Dense">
+                      Variant="Variant.Outlined"
+                      Margin="Margin.Dense">
                     <div class="d-flex justify-space-between">
                         <MudIcon Icon="@(SymbolTable.GetSeasonSignalIcon(SeasonSignals.Below))" Class="winter" Size="Size.Small" />
                         <MudText Class="pe-1 winter" Style="font-weight:bold">@($"{_weeklyWinter:N0} / {_dailyWinter:N0}")</MudText>
@@ -49,46 +48,44 @@ else
             </MudItem>
             <MudItem xs="12" sm="3">
                 <MudField Label="@_localizer["Price.Rise"]"
-                          Variant="Variant.Outlined"
-                          Margin="Margin.Dense"
-                          Style="text-align:right">
+                      Variant="Variant.Outlined"
+                      Margin="Margin.Dense"
+                      Style="text-align:right">
                     <MudText Class="pe-1 positive" Style="font-weight:bold">@($"{_riseCount:N0}")</MudText>
                 </MudField>
             </MudItem>
             <MudItem xs="12" sm="3">
                 <MudField Label="@_localizer["Price.Even"]"
-                          Variant="Variant.Outlined"
-                          Margin="Margin.Dense"
-                          Style="text-align:right">
+                      Variant="Variant.Outlined"
+                      Margin="Margin.Dense"
+                      Style="text-align:right">
                     <MudText Class="pe-1" Style="font-weight:bold">@($"{_evenCount:N0}")</MudText>
                 </MudField>
             </MudItem>
             <MudItem xs="12" sm="3">
                 <MudField Label="@_localizer["Price.Fall"]"
-                          Variant="Variant.Outlined"
-                          Margin="Margin.Dense"
-                          Style="text-align:right">
+                      Variant="Variant.Outlined"
+                      Margin="Margin.Dense"
+                      Style="text-align:right">
                     <MudText Class="pe-1 negative" Style="font-weight:bold">@($"{_fallCount:N0}")</MudText>
                 </MudField>
             </MudItem>
             <MudItem xs="12" sm="3">
                 <MudField Label="@_localizer["Price.AvgChangeRate"]"
-                          Variant="Variant.Outlined"
-                          Margin="Margin.Dense"
-                          Style="text-align:right">
-                    @{
-                        if (_avgChangeRate < 0)
-                        {
-                            <MudText Class="pe-1 negative" Style="font-weight:bold">@($"{_avgChangeRate:N2}")</MudText>
-                        }
-                        else if (_avgChangeRate == 0)
-                        {
-                            <MudText Class="pe-1" Style="font-weight:bold">@($"{_avgChangeRate:N2}")</MudText>
-                        }
-                        else if (_avgChangeRate > 0)
-                        {
-                            <MudText Class="pe-1 positive" Style="font-weight:bold">@($"{_avgChangeRate:N2}")</MudText>
-                        }
+                      Variant="Variant.Outlined"
+                      Margin="Margin.Dense"
+                      Style="text-align:right">
+                    @if (_avgChangeRate < 0)
+                    {
+                        <MudText Class="pe-1 negative" Style="font-weight:bold">@($"{_avgChangeRate:N2}")</MudText>
+                    }
+                    else if (_avgChangeRate == 0)
+                    {
+                        <MudText Class="pe-1" Style="font-weight:bold">@($"{_avgChangeRate:N2}")</MudText>
+                    }
+                    else if (_avgChangeRate > 0)
+                    {
+                        <MudText Class="pe-1 positive" Style="font-weight:bold">@($"{_avgChangeRate:N2}")</MudText>
                     }
                 </MudField>
             </MudItem>

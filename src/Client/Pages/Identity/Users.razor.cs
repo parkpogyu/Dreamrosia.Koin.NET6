@@ -98,7 +98,7 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
 
                 var isRendered = await _jsRuntime.InvokeAsync<bool>("func_isRendered", _splitterId);
 
-                if(!isRendered) { return; }
+                if (!isRendered) { return; }
 
                 _isSplitterRendered = isRendered;
 

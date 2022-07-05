@@ -95,57 +95,55 @@ else
             <MudTd DataLabel=@_localizer["Symbol.code"]>
                 <CoinIcon Code="@context.code" Link="true" />
             </MudTd>
-            @{
-                    if (context.type == TransferType.deposit)
-                    {
-                    <MudTd DataLabel=@_localizer["Transfer.type"] Style="text-align:center;color:orangered">
-                        @($"{context.type.ToDescriptionString()}")
-                    </MudTd>
-                    }
-                    else
-                    {
-                    <MudTd DataLabel=@_localizer["Transfer.type"] Style="text-align:center;color:dodgerblue">
-                        @($"{context.type.ToDescriptionString()}")
-                    </MudTd>
-                    }
-
-                    if (context.Cash > 0)
-                    {
-                    <MudTd DataLabel=@_localizer["Transfer.Cash"] Style="text-align:right">
-                        @($"{context.Cash:N0}")
-                    </MudTd>
-                    }
-                    else
-                    {
-                    <MudTd DataLabel=@_localizer["Transfer.Cash"] />
-                    }
-
-                    if (context.Volume > 0)
-                    {
-                    <MudTd DataLabel=@_localizer["Transfer.Volume"] Style="text-align:right">
-                        @($"{context.Volume:N8}")
-                    </MudTd>
-                    }
-                    else
-                    {
-                    <MudTd DataLabel=@_localizer["Transfer.Volume"] />
-                    }
-
-                    if (context.fee > 0)
-                    {
-                    <MudTd DataLabel=@_localizer["Transfer.fee"] Style="text-align:right">
-                        @($"{context.fee:N2}")
-                    </MudTd>
-                    }
-                    else
-                    {
-                    <MudTd DataLabel=@_localizer["Transfer.fee"] />
-                    }
-
-                <MudTd DataLabel=@_localizer["Transfer.transaction_type"] Style="text-align:center">
-                    @($"{context.transaction_type.ToDescriptionString()}")
+            @if (context.type == TransferType.deposit)
+                {
+                <MudTd DataLabel=@_localizer["Transfer.type"] Style="text-align:center;color:orangered">
+                    @($"{context.type.ToDescriptionString()}")
                 </MudTd>
-            }
+                }
+                else
+                {
+                <MudTd DataLabel=@_localizer["Transfer.type"] Style="text-align:center;color:dodgerblue">
+                    @($"{context.type.ToDescriptionString()}")
+                </MudTd>
+                }
+
+            @if (context.Cash > 0)
+                {
+                <MudTd DataLabel=@_localizer["Transfer.Cash"] Style="text-align:right">
+                    @($"{context.Cash:N0}")
+                </MudTd>
+                }
+                else
+                {
+                <MudTd DataLabel=@_localizer["Transfer.Cash"] />
+                }
+
+            @if (context.Volume > 0)
+                {
+                <MudTd DataLabel=@_localizer["Transfer.Volume"] Style="text-align:right">
+                    @($"{context.Volume:N8}")
+                </MudTd>
+                }
+                else
+                {
+                <MudTd DataLabel=@_localizer["Transfer.Volume"] />
+                }
+
+            @if (context.fee > 0)
+                {
+                <MudTd DataLabel=@_localizer["Transfer.fee"] Style="text-align:right">
+                    @($"{context.fee:N2}")
+                </MudTd>
+                }
+                else
+                {
+                <MudTd DataLabel=@_localizer["Transfer.fee"] />
+                }
+
+            <MudTd DataLabel=@_localizer["Transfer.transaction_type"] Style="text-align:center">
+                @($"{context.transaction_type.ToDescriptionString()}")
+            </MudTd>
         </RowTemplate>
         <PagerContent>
             <TablePager />

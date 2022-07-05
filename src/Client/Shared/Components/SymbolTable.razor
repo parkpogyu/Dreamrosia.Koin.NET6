@@ -98,25 +98,23 @@
                 @(TickerDto.GetPriceText(context.trade_price))
             </MudTd>
             <MudTd DataLabel=@_localizer["Symbol.signed_change_rate"] Style="text-align:right">
-                @{
-                    if (context.signed_change_rate < 0)
-                    {
-                        <div style="text-align:right; color:dodgerblue">
-                            @($"{context.signed_change_rate:N2}")
-                        </div>
-                    }
-                    else if (context.signed_change_rate == 0)
-                    {
-                        <div style="text-align:right">
-                            @($"{context.signed_change_rate:N2}")
-                        </div>
-                    }
-                    else
-                    {
-                        <div style="text-align:right; color:orangered">
-                            @($"{context.signed_change_rate:N2}")
-                        </div>
-                    }
+                @if (context.signed_change_rate < 0)
+                {
+                    <div style="text-align:right; color:dodgerblue">
+                        @($"{context.signed_change_rate:N2}")
+                    </div>
+                }
+                else if (context.signed_change_rate == 0)
+                {
+                    <div style="text-align:right">
+                        @($"{context.signed_change_rate:N2}")
+                    </div>
+                }
+                else
+                {
+                    <div style="text-align:right; color:orangered">
+                        @($"{context.signed_change_rate:N2}")
+                    </div>
                 }
             </MudTd>
             <MudTd DataLabel=@_localizer["Symbol.WeeklySignal"] Style="@(GetSeasonSignalStyle(context.WeeklySignal))" Class="mud-text-align-center">
@@ -132,20 +130,18 @@
             <MudTd DataLabel=@_localizer["Symbol.marketCap"] Style="text-align:right">
                 @($"{context.marketCap:N0}")
             </MudTd>
-            @{
-                <MudTd DataLabel=@_localizer["Symbol.accTradePrice24h"] Style="text-align:right">
-                    @($"{context.accTradePrice24h:N0}")
+            <MudTd DataLabel=@_localizer["Symbol.accTradePrice24h"] Style="text-align:right">
+                @($"{context.accTradePrice24h:N0}")
+            </MudTd>
+            @if (context.market_warning == MarketAlert.None)
+            {
+                <MudTd DataLabel=@_localizer["Symbol.market_warning"] Style="text-align:center" />
+            }
+            else
+            {
+                <MudTd DataLabel=@_localizer["Symbol.market_warning"] Style="text-align:center">
+                    <MudIcon Icon="fas fa-exclamation-triangle" Size="Size.Small" Color="MudBlazor.Color.Warning" />
                 </MudTd>
-                if (context.market_warning == MarketAlert.None)
-                {
-                    <MudTd DataLabel=@_localizer["Symbol.market_warning"] Style="text-align:center" />
-                }
-                else
-                {
-                    <MudTd DataLabel=@_localizer["Symbol.market_warning"] Style="text-align:center">
-                        <MudIcon Icon="fas fa-exclamation-triangle" Size="Size.Small" Color="MudBlazor.Color.Warning" />
-                    </MudTd>
-                }
             }
         </RowTemplate>
         <PagerContent>
