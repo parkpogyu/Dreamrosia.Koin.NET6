@@ -280,14 +280,17 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                 item.UPbitKey.secret_key = EncryptProvider.AESDecrypt(item.UPbitKey.secret_key, key);
             }
 
-            DateTime utc = DateTime.UtcNow.Date;
-
-            var mapped = _mapper.Map<IEnumerable<SeasonSignalDto>>(_context.SeasonSignals
+            var signals = _mapper.Map<IEnumerable<SeasonSignalDto>>(_context.SeasonSignals
                                                                             .AsNoTracking()
                                                                             .Where(f => f.UserId.Equals(null)));
 
-            var signals = mapped.Where(f => f.UpdatedAt.ToUniversalTime() >= utc)
-                                .ToArray();
+            DateTime utc = DateTime.UtcNow.Date;
+
+            foreach (var signal in signals.Where(f => f.UpdatedAt.ToUniversalTime() < utc))
+            {
+                signal.WeeklySignal = SeasonSignals.Indeterminate;
+                signal.DailySignal = SeasonSignals.Indeterminate;
+            }
 
             if (chosenSymbols.Any())
             {
