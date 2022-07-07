@@ -69,6 +69,7 @@
             @if (IsReal)
             {
                 <MudTh> @_localizer["Order.state"] </MudTh>
+                <MudTh> @_localizer["Order.trades_count"] </MudTh>
             }
             else
             {
@@ -181,6 +182,10 @@
                         @($"{context.state.ToDescriptionString()}")
                     </MudTd>
                 }
+
+                <MudTd DataLabel=@_localizer["Order.trades_count"] Style="text-align:right">
+                    @($"{context.trades_count:N0}")
+                </MudTd>
             }
             else
             {

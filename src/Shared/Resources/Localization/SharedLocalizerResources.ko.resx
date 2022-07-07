@@ -523,7 +523,7 @@
     <value>주문상태</value>
   </data>
   <data name="Order.trades_count" xml:space="preserve">
-    <value>체결 횟수</value>
+    <value>체결건수</value>
   </data>
   <data name="Order.volume" xml:space="preserve">
     <value>주문수량</value>
@@ -1574,5 +1574,11 @@
   </data>
   <data name="User.IsAssignedBotTicket" xml:space="preserve">
     <value>티켓 할당</value>
+  </data>
+  <data name="Position.TotalLoss" xml:space="preserve">
+    <value>평가손실</value>
+  </data>
+  <data name="Position.TotalProfit" xml:space="preserve">
+    <value>평가수익</value>
   </data>
 </root>
