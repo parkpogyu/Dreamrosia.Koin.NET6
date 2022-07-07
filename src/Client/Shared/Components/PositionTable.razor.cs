@@ -30,6 +30,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private IEnumerable<PaperPositionDto> _items { get; set; }
         private bool? _chkIsListed { get; set; } = true;
         private string _searchString { get; set; } = string.Empty;
+        private int _rowsPerPage { get; set; } = TablePager.DefaultPageSize;
 
         private Guid _resizeSubscribedId { get; set; }
         private bool _isDivTableRendered { get; set; } = false;

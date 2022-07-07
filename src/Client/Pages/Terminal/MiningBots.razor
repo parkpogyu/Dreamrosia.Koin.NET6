@@ -18,7 +18,7 @@ else
                   Elevation="25"
                   Hover="true" Dense="true" Bordered="true" Striped="true"
                   FixedHeader="true" FixedFooter="true"
-                  RowsPerPage="@TablePager.DefaultPageSize"
+                  @bind-RowsPerPage="@_rowsPerPage"
                   Filter="new Func<MiningBotTicketDto, bool>(Search)"
                   Height="@_divTableHeight">
             <ToolBarContent>

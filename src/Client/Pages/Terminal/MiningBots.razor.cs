@@ -22,6 +22,7 @@ namespace Dreamrosia.Koin.Client.Pages.Terminal
         private IEnumerable<MiningBotTicketDto> _sources { get; set; } = new List<MiningBotTicketDto>();
         private bool? _chkIsAssignedBotTicket { get; set; } = true;
         private string _searchString = "";
+        private int _rowsPerPage { get; set; } = TablePager.DefaultPageSize;
 
         private Guid _resizeSubscribedId { get; set; }
         private bool _isDivTableRendered { get; set; } = false;
