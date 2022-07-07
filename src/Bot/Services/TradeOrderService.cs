@@ -263,10 +263,11 @@ namespace Dreamrosia.Koin.Bot.Services
             }
             else
             {
+                var count = Signals.Count();
                 var total = Coins.Sum(f => f.BalEvalAmt) + Convert.ToDouble(Cash?.total_balance);
 
                 if (total == 0) { return false; }
-                if (TradingTerms.AmountOption == BidAmountOption.Auto && Signals.Count() == 0) { return false; }
+                if (TradingTerms.AmountOption == BidAmountOption.Auto && count == 0) { return false; }
 #if DEBUG
                 // 회원등급별 최대 운용자산 맞춤
                 total = Math.Min(total, TradingTerms.MaximumAsset);
@@ -275,7 +276,7 @@ namespace Dreamrosia.Koin.Bot.Services
                 long maxBidAmount = TradingConstants.MaxBidAmount; // 업비트 최대 주문 금액: 1,000,000,000
 
                 float rate = TradingTerms.AmountOption == BidAmountOption.Auto ?
-                             1F / Signals.Count() : TradingTerms.AmountRate / 100F;
+                             1F / count : TradingTerms.AmountRate / 100F;
 
                 BidAmount = (long)(Math.Truncate((total * rate) / roundDown)) * roundDown;  // 절사 단위로 거래
 
@@ -376,7 +377,8 @@ namespace Dreamrosia.Koin.Bot.Services
                         }
                     }
 
-                    builder.AppendLine(string.Format("\t주문결과: {0}", response.Succeeded ? OrderState.done.ToDescriptionString() : response.FullMessage));
+                    builder.AppendLine($"\t주문상태: {(response.Succeeded ? result.state.ToDescriptionString() : response.FullMessage)}");
+
 #if DEBUG
                     builder.AppendLine($"\t비    고: {order.Remark} {response.FullMessage}");
 #else
