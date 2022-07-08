@@ -24,6 +24,13 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers
             return await response.ToResult<IEnumerable<CandleDto>>();
         }
 
+        public async Task<IResult<IEnumerable<MarketIndexDto>>> GetMarketIndicesAsync(DateTime? head, DateTime? rear)
+        {
+            var response = await _httpClient.GetAsync(Routes.MarketEndpoints.GetMarketIndices(Convert.ToDateTime(head), Convert.ToDateTime(rear)));
+
+            return await response.ToResult<IEnumerable<MarketIndexDto>>();
+        }
+
         public async Task<IResult<IEnumerable<SymbolDto>>> GetSymbolsAsync()
         {
             var response = await _httpClient.GetAsync(Routes.MarketEndpoints.GetSymbols);

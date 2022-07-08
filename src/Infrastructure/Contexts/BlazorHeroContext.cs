@@ -44,9 +44,9 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
         #region Market
         public DbSet<Candle> Candles { get; set; }
         public DbSet<Crix> Crixes { get; set; }
-        public DbSet<SeasonSignal> SeasonSignals { get; set; }
-
         public DbSet<Symbol> Symbols { get; set; }
+        public DbSet<SeasonSignal> SeasonSignals { get; set; }
+        public DbSet<MarketIndex> MarketIndices { get; set; }
         #endregion
 
         #region Settlement
@@ -635,6 +635,24 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .IsRequired(true)
                       .HasDefaultValue(MarketAlert.None)
                       .HasComment("투자주의");
+            });
+
+            builder.Entity<MarketIndex>(entity =>
+            {
+                entity.ToTable("MarketIndices").HasComment("마켓인덱스");
+
+                entity.Property(p => p.candleDateTimeUtc)
+                      .IsRequired(true)
+                      .HasComment("기준일시 (UTC)");
+
+                entity.Property(p => p.candleDateTimeKst)
+                      .IsRequired(true)
+                      .HasComment("기준일시 (KST)");
+
+                entity.Property(p => p.code)
+                      .HasMaxLength(100)
+                      .IsRequired(true)
+                      .HasComment("인덱스코드");
             });
             #endregion
 

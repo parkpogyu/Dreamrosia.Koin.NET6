@@ -1581,4 +1581,7 @@
   <data name="Position.TotalProfit" xml:space="preserve">
     <value>평가수익</value>
   </data>
+  <data name="Market.Index.UBMI" xml:space="preserve">
+    <value>UBMI</value>
+  </data>
 </root>

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Pages.Investment
@@ -14,6 +16,8 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
     public partial class Assets
     {
         [Inject] private IInvestmentManager InvestmentManager { get; set; }
+        [Inject] private IMarketManager MarketManager { get; set; }
+
         [CascadingParameter(Name = "ViewHelp")]
         private bool _viewHelp { get; set; }
         [Parameter] public PageModes PageMode { get; set; }
@@ -23,6 +27,8 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
         private string _userId { get; set; }
         private DateTime _signUpDate { get; set; }
         private AssetReportDto _report { get; set; } = new();
+        private IEnumerable<AssetExtensionDto> _assets { get; set; } = new List<AssetExtensionDto>();
+        private IEnumerable<MarketIndexDto> _indices { get; set; }
         private int _activePanelIndex { get; set; } = 0;
         private static string _hidden => "Visibility:hidden";
         private bool _isProcessing { get; set; } = false;
@@ -73,7 +79,22 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
 
             _report = response.Data ?? new AssetReportDto();
 
-            if (!response.Succeeded)
+            if (response.Succeeded)
+            {
+                await GetMarketIndicesAsync();
+
+                _assets = (from asset in _report.Assets
+                           from index in _indices.Where(f => f.candleDateTimeUtc == asset.created_at.Date).DefaultIfEmpty()
+                           select ((Func<AssetExtensionDto>)(() =>
+                           {
+                               var item = _mapper.Map<AssetExtensionDto>(asset);
+
+                               item.index = index?.tradePrice;
+
+                               return item;
+                           }))()).ToArray();
+            }
+            else
             {
                 foreach (var message in response.Messages)
                 {
@@ -85,6 +106,23 @@ namespace Dreamrosia.Koin.Client.Pages.Investment
             _isProcessing = false;
 
             StateHasChanged();
+        }
+
+        private  async  Task  GetMarketIndicesAsync()
+        {
+            var rear = _report.Assets.Min(f => f.created_at);
+            var head = _report.Assets.Max(f => f.created_at);
+
+            var response = await MarketManager.GetMarketIndicesAsync(rear, head);
+
+            _indices = response.Data ?? new List<MarketIndexDto>();
+
+            if (response.Succeeded) { return; }
+
+            foreach (var message in response.Messages)
+            {
+                _snackBar.Add(message, Severity.Error);
+            }
         }
 
         private async Task<string> ScreenshotAsync()

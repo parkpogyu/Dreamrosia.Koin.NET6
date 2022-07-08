@@ -21,8 +21,8 @@ namespace Test
         {
             ExchangeClientKeys.SetAuthenticationKey(new UPbitModels.UPbitKey()
             {
-                access_key = "HWQRJZkh6N8G5zg87fT0TkyTxjxPXiVlXNcPuO1s",
-                secret_key = "ix4bPRV9xt6rerDzBwpW6hsSzVXMRMurxdKrT8Pc",
+                access_key = "gPpxNNt3RhQJ85v2zW43FNdoRHw5Kr4uOk2O58fI",
+                secret_key = "3rrC7pZx9SnfgYObKuzv9KNlTUTgkTtF0eVpkFrO",
             });
 
             IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json")
@@ -85,7 +85,7 @@ namespace Test
         {
             ExOrders ExOrders = new ExOrders();
 
-            var result = await ExOrders.GetCompletedOrdersAsync(new DateTime(2022, 05, 30));
+            var result = await ExOrders.GetCompletedOrdersAsync(new DateTime(2022, 07, 04));
 
             if (result.Succeeded)
             {
@@ -93,24 +93,46 @@ namespace Test
 
                 if (result.Data.Any())
                 {
-                    var order = result.Data.Last();
+                    //var order = result.Data.Last();
+
+                    //ExOrder ExOrder = new ExOrder();
+
+                    //ExOrder.ExParameter parameter = new ExOrder.ExParameter()
+                    //{
+                    //    uuid = order.uuid,
+                    //};
+
+                    //var detail = await ExOrder.GetOrderAsync(parameter);
+
+                    //if (detail.Succeeded)
+                    //{
+                    //    _logger.Debug($"\n{ObjectDumper.Dump(detail.Data, DumpStyle.CSharp)}");
+                    //}
+                    //else
+                    //{
+                    //    _logger.Debug(ObjectDumper.Dump(detail, DumpStyle.CSharp));
+                    //}
 
                     ExOrder ExOrder = new ExOrder();
+                    ExOrder.ExParameter parameter;
 
-                    ExOrder.ExParameter parameter = new ExOrder.ExParameter()
+                    foreach (var order in result.Data)
                     {
-                        uuid = order.uuid,
-                    };
+                        parameter = new ExOrder.ExParameter()
+                        {
+                            uuid = order.uuid,
+                        };
 
-                    var detail = await ExOrder.GetOrderAsync(parameter);
+                        var detail = await ExOrder.GetOrderAsync(parameter);
 
-                    if (detail.Succeeded)
-                    {
-                        _logger.Debug($"\n{ObjectDumper.Dump(detail.Data, DumpStyle.CSharp)}");
-                    }
-                    else
-                    {
-                        _logger.Debug(ObjectDumper.Dump(detail, DumpStyle.CSharp));
+                        if (detail.Succeeded)
+                        {
+                            _logger.Debug($"\n{ObjectDumper.Dump(detail.Data, DumpStyle.CSharp)}");
+                        }
+                        else
+                        {
+                            _logger.Debug(ObjectDumper.Dump(detail, DumpStyle.CSharp));
+                        }
                     }
                 }
             }
@@ -623,6 +645,29 @@ namespace Test
             var b = a * (1F / 113F);
 
             var c = (long)(b / 1000) * 1000;
+        }
+
+        [TestMethod]
+        public async Task TestMarketIndex()
+        {
+            QtMarketIndex QtMarketIndex = new QtMarketIndex();
+
+            QtMarketIndex.QtParameter parameter = new QtMarketIndex.QtParameter()
+            {
+                code = "IDX.UPBIT.UBAI",
+                count = 100,
+            };
+
+            var result = await QtMarketIndex.GetMarketIndicesAsync(parameter);
+
+            if (result.Succeeded)
+            {
+                _logger.Debug($"\n{ObjectDumper.Dump(result.Data, DumpStyle.CSharp)}");
+            }
+            else
+            {
+                _logger.Debug(ObjectDumper.Dump(result, DumpStyle.CSharp));
+            }
         }
     }
 }

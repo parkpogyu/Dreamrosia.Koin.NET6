@@ -3,7 +3,9 @@ using Dreamrosia.Koin.Client.Infrastructure.Managers;
 using Dreamrosia.Koin.Shared.Common;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Pages.BackTesting
@@ -18,6 +20,8 @@ namespace Dreamrosia.Koin.Client.Pages.BackTesting
 
         private readonly BackTestingRequestDto _model = new BackTestingRequestDto();
         private BackTestingReportDto _report { get; set; } = new BackTestingReportDto();
+        private IEnumerable<AssetExtensionDto> _assets { get; set; } = new List<AssetExtensionDto>();
+        private IEnumerable<MarketIndexDto> _indices { get; set; }
         private IEnumerable<SymbolDto> _symbols { get; set; } = new List<SymbolDto>();
         private static string _hidden => "Visibility:hidden";
         private bool _isProcessing { get; set; } = false;
@@ -54,6 +58,19 @@ namespace Dreamrosia.Koin.Client.Pages.BackTesting
             if (response.Succeeded)
             {
                 _report = await ObjectGZip.DecompressAsync<BackTestingReportDto>(response.Data);
+
+                await GetMarketIndicesAsync();
+
+                _assets = (from asset in _report.Assets
+                           from index in _indices.Where(f => f.candleDateTimeUtc == asset.created_at.Date).DefaultIfEmpty()
+                           select ((Func<AssetExtensionDto>)(() =>
+                           {
+                               var item = _mapper.Map<AssetExtensionDto>(asset);
+
+                               item.index = index?.tradePrice;
+
+                               return item;
+                           }))()).ToArray();
             }
             else
             {
@@ -67,6 +84,23 @@ namespace Dreamrosia.Koin.Client.Pages.BackTesting
             _isProcessing = false;
 
             StateHasChanged();
+        }
+
+        private  async  Task  GetMarketIndicesAsync()
+        {
+            var rear = _report.Assets.Min(f => f.created_at);
+            var head = _report.Assets.Max(f => f.created_at);
+
+            var response = await MarketManager.GetMarketIndicesAsync(rear, head);
+
+            _indices = response.Data ?? new List<MarketIndexDto>();
+
+            if (response.Succeeded) { return; }
+
+            foreach (var message in response.Messages)
+            {
+                _snackBar.Add(message, Severity.Error);
+            }
         }
     }
 }

@@ -1,8 +1,12 @@
 ﻿using ApexCharts;
+using AutoMapper;
 using Dreamrosia.Koin.Application.DTO;
+using Dreamrosia.Koin.Application.Extensions;
+using Dreamrosia.Koin.Application.Mappings;
 using Dreamrosia.Koin.Shared.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MudBlazor;
 using MudBlazor.Services;
 using System;
 using System.Collections.Generic;
@@ -14,7 +18,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
     public partial class AssetChart : IAsyncDisposable
     {
         [CascadingParameter(Name = "Assets")]
-        private IEnumerable<AssetDto> Assets
+        private IEnumerable<AssetExtensionDto> Assets
         {
             get => _assets;
             set
@@ -27,20 +31,22 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         [Parameter] public DateTime? SignUpDate { get; set; }
 
         private bool _loaded { get; set; }
-        private IEnumerable<AssetDto> _assets { get; set; }
-        private IEnumerable<AssetDto> _items { get; set; } = new List<AssetDto>();
+        private IEnumerable<AssetExtensionDto> _assets { get; set; }
+        private IEnumerable<AssetExtensionDto> _items { get; set; } = new List<AssetExtensionDto>();
         private TimeFrames _selectedTimeFrame { get; set; } = TimeFrames.Week;
         private readonly string _divChartId = Guid.NewGuid().ToString();
         private Guid _resizeSubscribedId { get; set; }
         private bool _isDivChartRendered { get; set; } = false;
         private string _divChartHeight { get; set; } = "100%";
         private string _assetChartHeight { get; set; } = "100%";
-        private ApexChart<AssetDto> _refAssetChart { get; set; }
-        private ApexChart<AssetDto> _refRangeChart { get; set; }
-        private ApexChartOptions<AssetDto> _assetOptions;
-        private ApexChartOptions<AssetDto> _rangeOptions;
+        private ApexChart<AssetExtensionDto> _refAssetChart { get; set; }
+        private ApexChart<AssetExtensionDto> _refRangeChart { get; set; }
+        private ApexChartOptions<AssetExtensionDto> _assetOptions;
+        private ApexChartOptions<AssetExtensionDto> _rangeOptions;
         private string _selectedSeries { get; set; }
         private List<string> _selectedSerieses { get; set; }
+
+        private readonly List<string> _seriseNames = new List<string>();
 
         protected override async Task OnInitializedAsync()
         {
@@ -48,12 +54,34 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             await _jsRuntime.InvokeVoidAsync("LoadScript", "_content/Blazor-ApexCharts/js/blazor-apex-charts.js");
             await _jsRuntime.InvokeVoidAsync("LoadScript", "js/chart/chart-label.js");
 
+            _mapper = new MapperConfiguration(c => { c.AddProfile<AssetProfile>(); }).CreateMapper();
+
             _selectedSerieses = new List<string>()
             {
-                _localizer["Asset.DssAmt"],
                 _localizer["Asset.InvsPnL"],
                 _localizer["Asset.InvsAmt"],
             };
+
+            _seriseNames.Add(_localizer["Asset.BalEvalAmt"]);
+            _seriseNames.Add(_localizer["Asset.Deposit"]);
+            _seriseNames.Add(_localizer["Asset.InvsAmt"]);
+            _seriseNames.Add(_localizer["Asset.InvsPnL"]);
+            _seriseNames.Add(_localizer["Asset.InvsPnLRat"]);
+            _seriseNames.Add(_localizer["Asset.MDDInvsPnL"]);
+            _seriseNames.Add(_localizer["Asset.MDDInvsPnLRat"]);
+            if (IsReal)
+            {
+                _seriseNames.Add(_localizer["Asset.InAmt"]);
+                _seriseNames.Add(_localizer["Asset.OutAmt"]);
+            }
+            else
+            {
+                _seriseNames.Add(_localizer["Asset.BorrowedAmt"]);
+            }
+            _seriseNames.Add(_localizer["Asset.BidAmt"]);
+            _seriseNames.Add(_localizer["Asset.AskAmt"]);
+            _seriseNames.Add(_localizer["Asset.PnL"]);
+            _seriseNames.Add(_localizer["Market.Index.UBMI"]);
 
             SetChartOptions();
 
@@ -125,7 +153,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private void SetChartOptions()
         {
             #region Asset
-            _assetOptions = new ApexChartOptions<AssetDto>();
+            _assetOptions = new ApexChartOptions<AssetExtensionDto>();
 
             _assetOptions.Chart = new Chart()
             {
@@ -180,8 +208,6 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                 {
                     Formatter = @"func_chart_label.TooltipX",
                 },
-
-                Custom = @"func_chart_label.AssetTooltip",
             };
 
             if (SignUpDate is not null)
@@ -222,6 +248,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             _assetOptions.Yaxis = new List<YAxis>();
             _assetOptions.Yaxis.Add(new YAxis
             {
+                SeriesName = _localizer["Asset.DssAmt"],
                 Opposite = true,
                 Crosshairs = new AxisCrosshairs()
                 {
@@ -237,28 +264,11 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                 },
             });
 
-            //_assetOptions.Yaxis.Add(new YAxis
-            //{
-            //    SeriesName = _localizer["Asset.PnLRat"],
-
-            //    Crosshairs = new AxisCrosshairs()
-            //    { 
-            //        Show = true,
-            //    },
-            //    Labels = new AxisLabels
-            //    {
-            //        Formatter = @"func_chart_label.AxisRealNumberFormatter",
-            //    },
-            //    Tooltip = new AxisTooltip()
-            //    { 
-            //       Enabled = true,
-            //    }
-
-            //});
+            SetYaxis();
             #endregion
 
             #region Range
-            _rangeOptions = new ApexChartOptions<AssetDto>();
+            _rangeOptions = new ApexChartOptions<AssetExtensionDto>();
 
             _rangeOptions.Chart = new Chart()
             {
@@ -312,25 +322,82 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                 },
             };
 
-            _rangeOptions.Yaxis = new List<YAxis>();
-            _rangeOptions.Yaxis.Add(new YAxis
+            _rangeOptions.Yaxis = new List<YAxis>()
             {
-                Opposite = true,
-                TickAmount = 2,
-                Crosshairs = new AxisCrosshairs()
+                new YAxis 
                 {
-                    Show = true,
-                },
-                Labels = new YAxisLabels
-                {
-                    Formatter = @"func_chart_label.AxisRealNumberFormatter",
-                },
-                Tooltip = new AxisTooltip()
-                {
-                    Enabled = true,
+                    Opposite = true,
+                    TickAmount = 2,
+                    Crosshairs = new AxisCrosshairs()
+                    {
+                        Show = true,
+                    },
+                    Labels = new YAxisLabels
+                    {
+                        Formatter = @"func_chart_label.AxisRealNumberFormatter",
+                    },
+                    Tooltip = new AxisTooltip()
+                    {
+                        Enabled = true,
+                    } 
                 }
-            });
+            };
             #endregion
+        }
+
+        private void SetYaxis()
+        {
+            var removes = (from axis in _assetOptions.Yaxis
+                           from series in _selectedSerieses.Where(f => f.Equals(axis.SeriesName)).DefaultIfEmpty()
+                           where series == null
+                           select axis).ToArray();
+
+            foreach (var remove in removes)
+            {
+                if (remove.SeriesName.Equals(_localizer["Asset.DssAmt"]) && remove.Show == null)
+                {
+                    continue;
+                }
+
+                _assetOptions.Yaxis.Remove(remove);
+            }
+
+            var appends = (from series in _selectedSerieses
+                           from axis in _assetOptions.Yaxis.Where(f => f.SeriesName.Equals(series)).DefaultIfEmpty()
+                           where axis == null
+                           select series).ToArray();
+
+            foreach(var name in appends)
+            {
+                if (name.Equals(_localizer["Market.Index.UBMI"]))
+                {
+                    _assetOptions.Yaxis.Add(new YAxis
+                    {
+                        SeriesName = name,
+                        Opposite = false,
+                        Crosshairs = new AxisCrosshairs()
+                        {
+                            Show = true,
+                        },
+                        Labels = new YAxisLabels
+                        {
+                            Formatter = @"func_chart_label.AxisRealNumberFormatter",
+                        },
+                        Tooltip = new AxisTooltip()
+                        {
+                            Enabled = true,
+                        },
+                    });
+                }
+                else
+                {
+                    _assetOptions.Yaxis.Add(new YAxis
+                    {
+                        SeriesName = _localizer["Asset.DssAmt"],
+                        Show = false,
+                    });
+                }
+            }
         }
 
         private void SetAnnotationOptions()
@@ -372,112 +439,14 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             };
         }
 
-        private void SetChartData()
-        {
-            if (!Assets.Any())
-            {
-                _items = Assets.ToArray();
-
-                return;
-            }
-
-            DateTime first_day_of_period = Assets.Min(f => f.created_at);
-
-            List<List<AssetDto>> frameAssets = new List<List<AssetDto>>();
-            List<AssetDto> assets = new List<AssetDto>();
-
-            frameAssets.Add(assets);
-
-            if (_selectedTimeFrame == TimeFrames.Day)
-            {
-                _items = Assets.ToArray();
-
-                return;
-            }
-            else if (_selectedTimeFrame == TimeFrames.Week)
-            {
-                foreach (var asset in Assets)
-                {
-                    if (asset.created_at.DayOfWeek == DayOfWeek.Monday)
-                    {
-                        assets = new List<AssetDto>();
-
-                        frameAssets.Add(assets);
-                    }
-
-                    assets.Add(asset);
-                }
-            }
-            else if (_selectedTimeFrame == TimeFrames.Month)
-            {
-                foreach (var asset in Assets)
-                {
-                    if (asset.created_at.Day == 1)
-                    {
-                        assets = new List<AssetDto>();
-
-                        frameAssets.Add(assets);
-                    }
-
-                    assets.Add(asset);
-                }
-            }
-            else if (_selectedTimeFrame == TimeFrames.Year)
-            {
-                var year = first_day_of_period.Year;
-
-                foreach (var asset in Assets)
-                {
-                    if (asset.created_at.Year != year)
-                    {
-                        first_day_of_period = asset.created_at;
-
-                        year = first_day_of_period.Year;
-
-                        assets = new List<AssetDto>();
-
-                        frameAssets.Add(assets);
-                    }
-
-                    assets.Add(asset);
-                }
-            }
-
-            _items = frameAssets.Where(f => f.Any())
-                                .Select(f =>
-                                {
-                                    var head = f.First();
-                                    var rear = f.Last();
-
-                                    AssetDto group = new AssetDto()
-                                    {
-                                        BalEvalAmt = rear.BalEvalAmt,
-                                        Deposit = rear.Deposit,
-                                        InvsAmt = rear.InvsAmt,
-                                        BorrowedAmt = rear.BorrowedAmt,
-                                        InAmt = f.Sum(f => f.InAmt),
-                                        OutAmt = f.Sum(f => f.OutAmt),
-                                        AskAmt = f.Sum(f => f.AskAmt),
-                                        BidAmt = f.Sum(f => f.BidAmt),
-                                        Fee = f.Sum(f => f.Fee),
-                                        PnL = f.Sum(f => f.PnL),
-                                        MaxDssAmt = f.Max(f => f.MaxDssAmt),
-                                        MaxInvsPnL = f.Max(f => f.MaxInvsPnL),
-                                        PositionCount = f.Sum(f => f.PositionCount),
-                                        created_at = rear.created_at,
-                                    };
-
-                                    return group;
-                                }).ToArray();
-        }
-
         public void DrawChart(bool setData = false)
         {
             try
             {
                 if (setData)
                 {
-                    SetChartData();
+                    _items = _assets.GetTimeFrameAssets(_selectedTimeFrame);
+
                     SetAnnotationOptions();
                 }
 
@@ -506,6 +475,8 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private void SeriesSelectionChanged(IEnumerable<string> values)
         {
             _selectedSerieses = values.ToList();
+
+            SetYaxis();
 
             DrawChart(setData: false);
         }

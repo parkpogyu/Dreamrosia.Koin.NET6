@@ -12,12 +12,15 @@ namespace Dreamrosia.Koin.Server.Controllers
     public class MarketController : BaseApiController<MarketController>
     {
         private readonly ICandleService _candleService;
+        private readonly IMarketIndexService _marketIndexService;
         private readonly ISymbolService _symbolService;
 
         public MarketController(ICandleService candleService,
+                                IMarketIndexService marketIndexService,
                                 ISymbolService symbolService)
         {
             _candleService = candleService;
+            _marketIndexService = marketIndexService;   
             _symbolService = symbolService;
         }
 
@@ -35,6 +38,15 @@ namespace Dreamrosia.Koin.Server.Controllers
             var response = await _candleService.GetCandlesAsync(market,
                                                                 head.Date,
                                                                 rear.Date);
+
+            return Ok(response);
+        }
+
+        [Authorize(Policy = Permissions.Candles.View)]
+        [HttpGet("indices")]
+        public async Task<IActionResult> GetMarketIndices(DateTime head, DateTime rear)
+        {
+            var response = await _marketIndexService.GetMarketIndicesAsync(head.Date, rear.Date);
 
             return Ok(response);
         }

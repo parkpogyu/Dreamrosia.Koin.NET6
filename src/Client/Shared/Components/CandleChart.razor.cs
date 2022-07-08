@@ -1,7 +1,6 @@
 ﻿using ApexCharts;
 using AutoMapper;
 using Dreamrosia.Koin.Application.DTO;
-using Dreamrosia.Koin.Application.Interfaces.Services;
 using Dreamrosia.Koin.Application.Mappings;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -9,17 +8,14 @@ using Microsoft.JSInterop;
 using MudBlazor.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Shared.Components
 {
     public partial class CandleChart : IAsyncDisposable
     {
-        [Inject] private IMACDService MACDService { get; set; }
-
         [CascadingParameter(Name = "Candles")]
-        private IEnumerable<CandleDto> Candles
+        private IEnumerable<CandleExtensionDto> Candles
         {
             get => _items;
             set
@@ -28,7 +24,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
                 if (_isDivChartRendered)
                 {
-                    DrawChart(setData: true);
+                    DrawChart();
                 }
             }
         }
@@ -36,8 +32,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         [Parameter] public bool IsReal { get; set; } = true;
 
         private bool _loaded;
-        private IEnumerable<CandleDto> _items { get; set; }
-        private IEnumerable<CandleExtensionDto> _candles { get; set; } = new List<CandleExtensionDto>();
+        private IEnumerable<CandleExtensionDto> _items { get; set; }
 
         private Guid _resizeSubscribedId { get; set; }
         private bool _isDivChartRendered { get; set; } = false;
@@ -91,7 +86,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
                     await SetDivHeightAsync();
 
-                    DrawChart(setData: true);
+                    DrawChart();
                 }
             }
             catch (Exception)
@@ -157,8 +152,17 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                         Zoom = false,
                     }
                 },
-
             };
+
+            //_candleOptions.Stroke = new Stroke()
+            //{
+            //    Curve = Curve.Smooth,
+            //};
+
+            //_candleOptions.Legend = new Legend()
+            //{
+            //    Show = false,
+            //};
 
             _candleOptions.PlotOptions = new PlotOptions()
             {
@@ -193,23 +197,48 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                 }
             };
 
-            _candleOptions.Yaxis = new List<YAxis>();
-            _candleOptions.Yaxis.Add(new YAxis
+            _candleOptions.Yaxis = new List<YAxis>()
             {
-                Opposite = true,
-                Crosshairs = new AxisCrosshairs()
+                new YAxis
                 {
-                    Show = true,
+                    SeriesName = "Candle",
+                    Opposite = true,
+                    Crosshairs = new AxisCrosshairs()
+                    {
+                        Show = true,
+                    },
+                    Labels = new YAxisLabels
+                    {
+                        Formatter = @"func_chart_label.AxisRealNumberFormatter",
+                    }, 
+                    Tooltip = new AxisTooltip() 
+                    {
+                        Enabled = true,
+                    },
                 },
-                Labels = new YAxisLabels
-                {
-                    Formatter = @"func_chart_label.AxisRealNumberFormatter",
-                },
-                Tooltip = new AxisTooltip()
-                {
-                    Enabled = true,
-                },
-            });
+
+                //new YAxis
+                //{
+                //    SeriesName = "Index",
+                //    Title =  new AxisTitle()
+                //    {
+                //        Text ="Index"
+                //    },
+                //    Opposite = false,
+                //    Crosshairs = new AxisCrosshairs()
+                //    {
+                //        Show = true,
+                //    },
+                //    Labels = new YAxisLabels
+                //    {
+                //        Formatter = @"func_chart_label.AxisRealNumberFormatter",
+                //    },
+                //    Tooltip = new AxisTooltip() 
+                //    {
+                //        Enabled = true,
+                //    },
+                //},
+            };
             #endregion
 
             #region Signal
@@ -290,52 +319,29 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                 },
             };
 
-            _rangeOptions.Yaxis = new List<YAxis>();
-            _rangeOptions.Yaxis.Add(new YAxis
+            _rangeOptions.Yaxis = new List<YAxis>()
             {
-                Opposite = true,
-                TickAmount = 2,
-                Crosshairs = new AxisCrosshairs()
+                new YAxis 
                 {
-                    Show = true,
-                },
-                Labels = new YAxisLabels
-                {
-                    Formatter = @"func_chart_label.AxisRealNumberFormatter",
-                },
-                Tooltip = new AxisTooltip()
-                {
-                    Enabled = true,
-                },
-            });
+                    Opposite = true,
+                    TickAmount = 2,
+                    Crosshairs = new AxisCrosshairs()
+                    {
+                        Show = true,
+                    },
+                    Labels = new YAxisLabels
+                    {
+                        Formatter = @"func_chart_label.AxisRealNumberFormatter",
+                    },
+                }
+            };
             #endregion
         }
 
-        private void SetChartData()
-        {
-            var containers = MACDService.Generate(_items);
-
-            _candles = (from lt in _items
-                        from rt in containers.Where(f => f.Source.candle_date_time_utc == lt.candle_date_time_utc).DefaultIfEmpty()
-                        select ((Func<CandleExtensionDto>)(() =>
-                        {
-                            var item = _mapper.Map<CandleExtensionDto>(lt);
-
-                            item.signal = Convert.ToDouble(rt?.Histogram);
-
-                            return item;
-                        }))()).ToArray();
-        }
-
-        public void DrawChart(bool setData)
+        public void DrawChart()
         {
             try
             {
-                if (setData)
-                {
-                    SetChartData();
-                }
-
                 StateHasChanged();
 
                 Task.Run(async () =>

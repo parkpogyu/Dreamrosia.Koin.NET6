@@ -41,16 +41,22 @@ var func_chart_label = {
         return opts.w.globals.categoryLabels[value - 1];
     },
 
-    CandleTooltip: function ({ seriesIndex, dataPointIndex, w }) {
+    CandleTooltip: function ({seriesIndex, dataPointIndex, w }) {
 
-        if (w.globals.seriesCandleO[seriesIndex].length < dataPointIndex - 1) {
+        const series = w.config.series.find((series) => series.name.toLowerCase() === 'candle');
+
+        if (typeof series === "undefined" && series == null) {
             return "";
         }
 
-        const o = w.globals.seriesCandleO[seriesIndex][dataPointIndex]
-        const h = w.globals.seriesCandleH[seriesIndex][dataPointIndex]
-        const l = w.globals.seriesCandleL[seriesIndex][dataPointIndex]
-        const c = w.globals.seriesCandleC[seriesIndex][dataPointIndex]
+        if (series.length < dataPointIndex - 1) {
+            return "";
+        }
+
+        const o = series.data[dataPointIndex].y[0];
+        const h = series.data[dataPointIndex].y[1];
+        const l = series.data[dataPointIndex].y[2];
+        const c = series.data[dataPointIndex].y[3];
 
         return (
             '<div class="apexcharts-tooltip-box apexcharts-tooltip-candlestick">' +

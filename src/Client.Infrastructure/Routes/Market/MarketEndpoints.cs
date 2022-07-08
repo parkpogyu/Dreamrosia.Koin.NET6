@@ -13,6 +13,11 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Routes
             return $"api/market/candles?market={market}&head={head:d}&rear={rear:d}";
         }
 
+        public static string GetMarketIndices(DateTime head, DateTime rear)
+        {
+            return $"api/market/indices?head={head:d}&rear={rear:d}";
+        }
+
         public static string ExportCandles = "api/market/candles/export";
     }
 }
