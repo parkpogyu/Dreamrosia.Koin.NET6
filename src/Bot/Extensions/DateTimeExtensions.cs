@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dreamrosia.Koin.Bot.Extentions
+namespace Dreamrosia.Koin.Bot.Extensions
 {
     public static class DateTimeExtensions
     {

@@ -1,4 +1,4 @@
-﻿using Dreamrosia.Koin.Bot.Extentions;
+﻿using Dreamrosia.Koin.Bot.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using System;

@@ -1,5 +1,5 @@
 ﻿using Dreamrosia.Koin.Bot.DTO;
-using Dreamrosia.Koin.Bot.Extentions;
+using Dreamrosia.Koin.Bot.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

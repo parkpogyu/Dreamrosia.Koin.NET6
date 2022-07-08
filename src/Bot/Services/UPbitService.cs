@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Dreamrosia.Koin.Bot.DTO;
-using Dreamrosia.Koin.Bot.Extentions;
+using Dreamrosia.Koin.Bot.Extensions;
 using Dreamrosia.Koin.Bot.Interfaces;
 using Dreamrosia.Koin.Bot.Models;
 using Dreamrosia.Koin.Shared.Wrapper;

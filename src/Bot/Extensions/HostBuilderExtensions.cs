@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
 
-namespace Dreamrosia.Koin.Bot.Extentions
+namespace Dreamrosia.Koin.Bot.Extensions
 {
     internal static class HostBuilderExtensions
     {

@@ -6,7 +6,7 @@ using Quartz;
 using System;
 using System.Reflection;
 
-namespace Dreamrosia.Koin.Bot.Extentions
+namespace Dreamrosia.Koin.Bot.Extensions
 {
     internal static class ServiceCollectionExtensions
     {

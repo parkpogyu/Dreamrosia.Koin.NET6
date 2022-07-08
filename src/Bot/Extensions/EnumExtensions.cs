@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace Dreamrosia.Koin.Bot.Extentions
+namespace Dreamrosia.Koin.Bot.Extensions
 {
     public static class EnumExtensions
     {
