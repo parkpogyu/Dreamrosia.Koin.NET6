@@ -1584,4 +1584,7 @@
   <data name="Market.Index.UBMI" xml:space="preserve">
     <value>UBMI</value>
   </data>
+  <data name="Fixed Tooltip" xml:space="preserve">
+    <value>툴팁고정</value>
+  </data>
 </root>

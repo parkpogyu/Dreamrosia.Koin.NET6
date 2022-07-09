@@ -33,6 +33,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private bool _loaded { get; set; }
         private IEnumerable<AssetExtensionDto> _assets { get; set; }
         private IEnumerable<AssetExtensionDto> _items { get; set; } = new List<AssetExtensionDto>();
+        private bool _fixedTooltip { get; set; } = true;
         private TimeFrames _selectedTimeFrame { get; set; } = TimeFrames.Week;
         private readonly string _divChartId = Guid.NewGuid().ToString();
         private Guid _resizeSubscribedId { get; set; }
@@ -45,7 +46,6 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private ApexChartOptions<AssetExtensionDto> _rangeOptions;
         private string _selectedSeries { get; set; }
         private List<string> _selectedSerieses { get; set; }
-
         private readonly List<string> _seriseNames = new List<string>();
 
         protected override async Task OnInitializedAsync()
@@ -208,7 +208,17 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                 {
                     Formatter = @"func_chart_label.TooltipX",
                 },
+
             };
+
+            _assetOptions.Tooltip.Fixed = _fixedTooltip ?  
+                                            new TooltipFixed() 
+                                            {
+                                                Enabled = true,
+                                                Position = "bottomLeft",
+                                                OffsetX = 18,
+                                                OffsetY = -18,
+                                            } : null;
 
             if (SignUpDate is not null)
             {
@@ -309,6 +319,15 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                 },
             };
 
+            _rangeOptions.Tooltip.Fixed = _fixedTooltip ?  
+                                            new TooltipFixed() 
+                                            {
+                                                Enabled = true,
+                                                Position = "bottomLeft",
+                                                OffsetX = 18,
+                                                OffsetY = -18,
+                                            } : null;
+
             _rangeOptions.Xaxis = new XAxis
             {
                 AxisTicks = new AxisTicks()
@@ -395,6 +414,19 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                     {
                         SeriesName = _localizer["Asset.DssAmt"],
                         Show = false,
+                        Opposite = true,
+                        Crosshairs = new AxisCrosshairs()
+                        {
+                            Show = true,
+                        },
+                        Labels = new YAxisLabels
+                        {
+                            Formatter = @"func_chart_label.AxisRealNumberFormatter",
+                        },
+                        Tooltip = new AxisTooltip()
+                        {
+                            Enabled = true,
+                        },
                     });
                 }
             }
@@ -465,6 +497,31 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                 Console.WriteLine(ex.Message);
 #endif
             }
+        }
+
+        private void FixedTooltipChanged(bool value)
+        {
+            _fixedTooltip = value;
+
+            _assetOptions.Tooltip.Fixed = _fixedTooltip ?  
+                                            new TooltipFixed() 
+                                            {
+                                                Enabled = true,
+                                                Position = "bottomLeft",
+                                                OffsetX = 18,
+                                                OffsetY = -18,
+                                            } : null;
+
+            _rangeOptions.Tooltip.Fixed = _fixedTooltip ?  
+                                            new TooltipFixed() 
+                                            {
+                                                Enabled = true,
+                                                Position = "bottomLeft",
+                                                OffsetX = 18,
+                                                OffsetY = -18,
+                                            } : null;
+
+            DrawChart(setData: false);
         }
 
         private void TimeFrameSelectionChanged(IEnumerable<TimeFrames> values)

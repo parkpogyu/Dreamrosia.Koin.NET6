@@ -14,15 +14,21 @@
 }
 else
 {
-    <MudPaper Elevation="25" Class="flex-x-scroll-container pa-2 mb-1">
+    <MudPaper Elevation="25" Class="flex-x-scroll-container align-end pa-2 mb-1">
         <FullSpacer />
+        <MudCheckBox T="bool"
+                 Label="@_localizer["Fixed Tooltip"]"
+                 Checked="@_fixedTooltip"
+                 CheckedChanged="@((value)=> FixedTooltipChanged(value))"
+                 Color="MudBlazor.Color.Primary" Dense="true" />
+
         <MudSelect T="TimeFrames"
                Label="@_localizer["TimeFrames"]"
                Dense="true"
                Margin="Margin.None"
                FullWidth="false"
                Style="max-width:112px;min-width:112px;"
-               Class="ml-2 mr-2"
+               Class="ml-4 mr-2"
                MultiSelection="false"
                @bind-Value="@_selectedTimeFrame"
                SelectedValuesChanged="@((value)=> TimeFrameSelectionChanged(value))">
