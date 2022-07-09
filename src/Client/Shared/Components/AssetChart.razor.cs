@@ -6,7 +6,6 @@ using Dreamrosia.Koin.Application.Mappings;
 using Dreamrosia.Koin.Shared.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using MudBlazor;
 using MudBlazor.Services;
 using System;
 using System.Collections.Generic;
@@ -211,8 +210,8 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
             };
 
-            _assetOptions.Tooltip.Fixed = _fixedTooltip ?  
-                                            new TooltipFixed() 
+            _assetOptions.Tooltip.Fixed = _fixedTooltip ?
+                                            new TooltipFixed()
                                             {
                                                 Enabled = true,
                                                 Position = "bottomLeft",
@@ -319,8 +318,8 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                 },
             };
 
-            _rangeOptions.Tooltip.Fixed = _fixedTooltip ?  
-                                            new TooltipFixed() 
+            _rangeOptions.Tooltip.Fixed = _fixedTooltip ?
+                                            new TooltipFixed()
                                             {
                                                 Enabled = true,
                                                 Position = "bottomLeft",
@@ -343,7 +342,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
             _rangeOptions.Yaxis = new List<YAxis>()
             {
-                new YAxis 
+                new YAxis
                 {
                     Opposite = true,
                     TickAmount = 2,
@@ -358,7 +357,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                     Tooltip = new AxisTooltip()
                     {
                         Enabled = true,
-                    } 
+                    }
                 }
             };
             #endregion
@@ -386,7 +385,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                            where axis == null
                            select series).ToArray();
 
-            foreach(var name in appends)
+            foreach (var name in appends)
             {
                 if (name.Equals(_localizer["Market.Index.UBMI"]))
                 {
@@ -503,8 +502,8 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         {
             _fixedTooltip = value;
 
-            _assetOptions.Tooltip.Fixed = _fixedTooltip ?  
-                                            new TooltipFixed() 
+            _assetOptions.Tooltip.Fixed = _fixedTooltip ?
+                                            new TooltipFixed()
                                             {
                                                 Enabled = true,
                                                 Position = "bottomLeft",
@@ -512,8 +511,8 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                                                 OffsetY = -18,
                                             } : null;
 
-            _rangeOptions.Tooltip.Fixed = _fixedTooltip ?  
-                                            new TooltipFixed() 
+            _rangeOptions.Tooltip.Fixed = _fixedTooltip ?
+                                            new TooltipFixed()
                                             {
                                                 Enabled = true,
                                                 Position = "bottomLeft",

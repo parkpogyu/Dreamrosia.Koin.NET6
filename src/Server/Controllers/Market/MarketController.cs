@@ -20,7 +20,7 @@ namespace Dreamrosia.Koin.Server.Controllers
                                 ISymbolService symbolService)
         {
             _candleService = candleService;
-            _marketIndexService = marketIndexService;   
+            _marketIndexService = marketIndexService;
             _symbolService = symbolService;
         }
 

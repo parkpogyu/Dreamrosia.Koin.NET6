@@ -86,7 +86,7 @@ namespace Dreamrosia.Koin.Client.Pages.BackTesting
             StateHasChanged();
         }
 
-        private  async  Task  GetMarketIndicesAsync()
+        private async Task GetMarketIndicesAsync()
         {
             var rear = _report.Assets.Min(f => f.created_at);
             var head = _report.Assets.Max(f => f.created_at);

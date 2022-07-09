@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Interfaces.Services;
 using Dreamrosia.Koin.Domain.Entities;
 using Dreamrosia.Koin.Infrastructure.Contexts;
@@ -41,7 +40,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
             DateTime now = DateTime.UtcNow.Date;
 
-            parameter.count = last is null ? parameter.count :  (int)now.Subtract(last.candleDateTimeUtc).TotalDays + 1;
+            parameter.count = last is null ? parameter.count : (int)now.Subtract(last.candleDateTimeUtc).TotalDays + 1;
 
             var result = await QtMarketIndex.GetMarketIndicesAsync(parameter);
 

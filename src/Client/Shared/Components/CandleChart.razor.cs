@@ -210,8 +210,8 @@ namespace Dreamrosia.Koin.Client.Shared.Components
                     Labels = new YAxisLabels
                     {
                         Formatter = @"func_chart_label.AxisRealNumberFormatter",
-                    }, 
-                    Tooltip = new AxisTooltip() 
+                    },
+                    Tooltip = new AxisTooltip()
                     {
                         Enabled = true,
                     },
@@ -321,7 +321,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
 
             _rangeOptions.Yaxis = new List<YAxis>()
             {
-                new YAxis 
+                new YAxis
                 {
                     Opposite = true,
                     TickAmount = 2,
