@@ -146,11 +146,10 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                     long roundDown = 1000;
                     long maxBidAmount = 1000000000;
 
-                    float rate = (model.AmountOption == BidAmountOption.Auto ?
-                                 100F / count : model.AmountRate) / 100F;
+                    float rate = model.AmountOption == BidAmountOption.Auto ?
+                                 1F / count : model.AmountRate / 100F;
 
-                    amount = (long)(total * rate);
-                    amount = (long)(((float)amount / (float)roundDown) * roundDown);  // 절사 단위로 거래
+                    amount = (long)(Math.Truncate((total * rate) / roundDown)) * roundDown;  // 절사 단위로 거래
 
                     if (amount < model.Minimum)
                     {
