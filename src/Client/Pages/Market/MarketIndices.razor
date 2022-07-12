@@ -1,0 +1,51 @@
+﻿@page "/market/indices"
+@attribute [Authorize(Policy = Permissions.Candles.View)]
+
+<PageMenuTitle Menus="@(new []
+{
+    $"{_localizer["Market"]}",
+    $"{_localizer["UBMI"]}(UPbit Market Index)",
+})" />
+
+@if (!_loaded)
+{
+    <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudPaper Elevation="25" Class="flex-x-scroll-container pa-2 mb-1 ">
+        <FullSpacer />
+        <MudSelect T="TimeFrames"
+               Label="@_localizer["TimeFrames"]"
+               Dense="true"
+               Margin="Margin.None"
+               FullWidth="false"
+               Style="max-width:112px;min-width:112px;"
+               Class="mud-select-1 ml-4 mr-4"
+               MultiSelection="false"
+               @bind-Value="@_selectedTimeFrame"
+               SelectedValuesChanged="@((value)=> TimeFrameSelectionChanged(value))">
+            <MudSelectItem T="TimeFrames" Value="TimeFrames.Day">@TimeFrames.Day.ToDescriptionString()</MudSelectItem>
+            <MudSelectItem T="TimeFrames" Value="TimeFrames.Week">@TimeFrames.Week.ToDescriptionString()</MudSelectItem>
+            <MudSelectItem T="TimeFrames" Value="TimeFrames.Month">@TimeFrames.Month.ToDescriptionString()</MudSelectItem>
+        </MudSelect>
+
+        <DateRangePicker DateRange="_dateRange"
+                     SelectedTerm="_dateRangeTerm"
+                     SelectedTermChanged="SelectedTermChanged" />
+
+        <MudButton DisableElevation
+               OnClick="GetMarketIndicesAsync"
+               Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface"
+               Color="MudBlazor.Color.Primary"
+               Size="Size.Small"
+               Class="align-self-end-button ml-4">
+            @_localizer["Reload"]
+        </MudButton>
+    </MudPaper>
+
+    <CascadingValue Value="@_items" Name="Candles">
+        <CandleChart />
+    </CascadingValue>
+}

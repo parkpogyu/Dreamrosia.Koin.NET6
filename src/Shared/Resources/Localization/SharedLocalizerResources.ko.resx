@@ -1587,4 +1587,7 @@
   <data name="Fixed Tooltip" xml:space="preserve">
     <value>툴팁고정</value>
   </data>
+  <data name="UBMI" xml:space="preserve">
+    <value>UBMI</value>
+  </data>
 </root>
