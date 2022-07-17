@@ -59,15 +59,9 @@ namespace Dreamrosia.Koin.Client.Pages.Market
                 }
             }
 
-            List<Task> tasks = new List<Task>();
-
-            tasks.Add(GetSymbolsAsync());
-            tasks.Add(GetCandlesAsync());
-            tasks.Add(GetMarketIndicesAsync());
-
-            await Task.WhenAll(tasks).ConfigureAwait(false);
-
-            SetItems();
+            await GetSymbolsAsync();
+            await GetMarketIndicesAsync();
+            await GetCandlesAsync();
 
             _loaded = true;
         }
@@ -97,11 +91,16 @@ namespace Dreamrosia.Koin.Client.Pages.Market
                                                                Convert.ToDateTime(_dateRange.End));
             _sources = response.Data ?? new List<CandleDto>();
 
-            if (response.Succeeded) { return; }
-
-            foreach (var message in response.Messages)
+            if (response.Succeeded)
             {
-                _snackBar.Add(message, Severity.Error);
+                SetItems();
+            }
+            else
+            {
+                foreach (var message in response.Messages)
+                {
+                    _snackBar.Add(message, Severity.Error);
+                }
             }
         }
 
@@ -160,8 +159,6 @@ namespace Dreamrosia.Koin.Client.Pages.Market
             _symbol = value;
 
             await GetCandlesAsync();
-
-            SetItems();
         }
 
         private async Task SelectedTermChanged(DateRangeTerms value)
@@ -170,14 +167,8 @@ namespace Dreamrosia.Koin.Client.Pages.Market
 
             _dateRangeTerm = value;
 
-            List<Task> tasks = new List<Task>();
-
-            tasks.Add(GetCandlesAsync());
-            tasks.Add(GetMarketIndicesAsync());
-
-            await Task.WhenAll(tasks).ConfigureAwait(false);
-
-            SetItems();
+            await GetMarketIndicesAsync();
+            await GetCandlesAsync();
         }
     }
 }
