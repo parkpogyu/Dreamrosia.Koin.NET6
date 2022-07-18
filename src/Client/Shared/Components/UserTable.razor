@@ -105,7 +105,7 @@
 
             <MudTd DataLabel=@_localizer["Membership.Level"] Style="text-align:center">
                 @{
-                    var level = context.Subscription.Membership.Level;
+                    var level = context.Subscription.Level;
 
                     if (level == MembershipLevel.Free)
                     {
@@ -188,7 +188,7 @@
                                         <tr>
                                             <td style="text-align:center">
                                                 @{
-                                                    var level = context.Subscription.Membership.Level;
+                                                    var level = context.Subscription.Level;
                                                     if (level == MembershipLevel.Free)
                                                     {
                                                         <MudText Typo="Typo.body2" Class="winter"> @(level.ToDescriptionString()) </MudText>
@@ -204,13 +204,13 @@
                                                 }
                                             </td>
                                             <td style="text-align:right">
-                                                @($"{context.Subscription.Membership.CommissionRate:N2}")
+                                                @($"{context.Subscription.CommissionRate:N2}")
                                             </td>
                                             <td style="text-align:right">
-                                                @($"{context.Subscription.Membership.DailyDeductionPoint:N0}")
+                                                @($"{context.Subscription.DailyDeductionPoint:N0}")
                                             </td>
                                             <td style="text-align:right">
-                                                @($"{context.Subscription.Membership.MaximumAsset:N0}")
+                                                @($"{context.Subscription.MaximumAsset:N0}")
                                             </td>
                                             <td style="text-align:center">
                                                 @if (context.Subscription.GoBoast)

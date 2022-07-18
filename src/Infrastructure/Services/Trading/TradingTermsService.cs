@@ -47,8 +47,8 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             {
                 var user = await _context.Users
                                          .AsNoTracking()
-                                         .Include(i => i.Memberships)
                                          .Include(i => i.UPbitKey)
+                                         .Include(i => i.Subscription)
                                          .Include(i => i.TradingTerms)
                                          .Include(i => i.ChosenSymbols)
                                          .SingleOrDefaultAsync(p => p.Id.Equals(userId));
@@ -59,15 +59,12 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                 }
                 else
                 {
-                    var membership = user.Memberships
-                                         .OrderByDescending(f => f.CreatedOn)
-                                         .First();
 
                     var item = _mapper.Map<TradingTermsDto>(user.TradingTerms);
 
                     item.UPbitKey = _mapper.Map<UPbitKeyDto>(user.UPbitKey);
                     item.ChosenSymbols = user.ChosenSymbols.Select(f => f.market).ToArray();
-                    item.MaximumAsset = membership.MaximumAsset;
+                    item.MaximumAsset = user.Subscription.MaximumAsset;
 
                     return await Result<TradingTermsDto>.SuccessAsync(item);
                 }

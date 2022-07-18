@@ -184,8 +184,8 @@ else if (_succeeded)
                                            Size="Size.Small"
                                            Class="ml-2 mr-3"
                                            OnClick="ChangeMembershipAsync"
-                                           Disabled="@((_model.Level == _user.Subscription?.Membership.Level && _model.MaximumAsset == _user.Subscription.Membership.MaximumAsset) ||
-                                                            DateTime.Now.Subtract( _user.Subscription.Membership.CreatedOn).TotalDays < 1)">
+                                           Disabled="@((_model.Level == _user.Subscription.Level && _model.MaximumAsset == _user.Subscription.MaximumAsset) ||
+                                                            DateTime.Now.Subtract( _user.Subscription.LastCreatedOn).TotalDays < 1)">
                                         @_localizer["Change"]
                                     </MudButton>
                                 </div>

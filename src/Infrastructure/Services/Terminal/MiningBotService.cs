@@ -185,7 +185,6 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             // hubconnection 에서 호출 시 발생하는 것으로 보임 
             //var user = await _context.Users
             //                         .AsNoTracking()
-            //                         .Include(i => i.Memberships)
             //                         .Include(i => i.UPbitKey)
             //                         .Include(i => i.TradingTerms)
             //                         .Include(i => i.ChosenSymbols)
@@ -240,11 +239,15 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                                       .OrderByDescending(f => f.created_at)
                                       .FirstOrDefaultAsync();
 
-            var membership = await _context.Memberships
-                                           .AsNoTracking()
-                                           .Where(f => f.UserId.Equals(userId))
-                                           .OrderByDescending(f => f.CreatedOn)
-                                           .FirstOrDefaultAsync();
+            //var membership = await _context.Memberships
+            //                               .AsNoTracking()
+            //                               .Where(f => f.UserId.Equals(userId))
+            //                               .OrderByDescending(f => f.CreatedOn)
+            //                               .FirstOrDefaultAsync();
+
+            var subscription = await _context.Subscriptions
+                                             .AsNoTracking()
+                                             .SingleOrDefaultAsync(f => f.Id.Equals(userId));
 
             var tradingTerms = await _context.TradingTerms
                                              .AsNoTracking()
@@ -263,7 +266,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
             item.Ticket = bot.Ticket;
 
-            item.MaximumAsset = membership.MaximumAsset;
+            item.MaximumAsset = subscription.MaximumAsset;
             //item.MaximumAsset = 1000000000;
 
             item.LastOrder = _mapper.Map<OrderDto>(order);

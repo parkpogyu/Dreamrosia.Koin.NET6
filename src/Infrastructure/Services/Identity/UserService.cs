@@ -148,25 +148,13 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                                 var item = _mapper.Map<UserFullInfoDto>(usr);
 
                                 item.UserCode = usrcode.ProviderKey;
-
-                                var membership = usr.Memberships.OrderByDescending(o => o.CreatedOn).First();
-
-                                item.Subscription.Membership = _mapper.Map<MembershipDto>(membership);
-                                item.TradingTerms = _mapper.Map<TradingTermsDto>(usr.TradingTerms);
-                                item.MiningBotTicket = _mapper.Map<MiningBotTicketDto>(usr.MiningBotTicket);
-                                item.UPbitKey = _mapper.Map<UPbitKeyDto>(usr.UPbitKey);
+                                item.Subscription.LastCreatedOn = usr.Memberships.OrderByDescending(f => f.CreatedOn)
+                                                                                 .First().CreatedOn;    
 
                                 if (item.Subscription.Recommender is not null)
                                 {
                                     item.Subscription.Recommender.UserCode = reccode?.ProviderKey;
                                 }
-
-                                if (item.UPbitKey is not null)
-                                {
-                                    item.UPbitKey.access_key = string.Empty;
-                                    item.UPbitKey.secret_key = string.Empty;
-                                }
-
 
                                 return item;
                             }))()).SingleOrDefault();
@@ -194,7 +182,6 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                                                  .AsNoTracking()
                                                  .Where(f => head.Date <= f.CreatedOn && f.CreatedOn < rear.Date.AddDays(1))
                                                  .Include(i => i.Subscription).ThenInclude(i => i.Recommender)
-                                                 .Include(i => i.Memberships)
                                                  .Include(i => i.MiningBotTicket)
                                                  .Include(i => i.TradingTerms)
                                                  .Include(i => i.UPbitKey)
@@ -208,14 +195,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                              {
                                  var item = _mapper.Map<UserFullInfoDto>(usr);
 
-                                 var membership = usr.Memberships.OrderByDescending(o => o.CreatedOn).First();
-
                                  item.UserCode = ext.ProviderKey;
-
-                                 item.Subscription.Membership = _mapper.Map<MembershipDto>(membership);
-                                 item.TradingTerms = _mapper.Map<TradingTermsDto>(usr.TradingTerms);
-                                 item.MiningBotTicket = _mapper.Map<MiningBotTicketDto>(usr.MiningBotTicket);
-                                 item.UPbitKey = _mapper.Map<UPbitKeyDto>(usr.UPbitKey);
 
                                  if (item.UPbitKey is not null)
                                  {
@@ -256,7 +236,6 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                 var items = (from usr in _context.Users
                                                  .AsNoTracking()
                                                  .Include(i => i.Subscription).ThenInclude(i => i.Recommender)
-                                                 .Include(i => i.Memberships)
                                                  .Include(i => i.TradingTerms)
                                                  .Include(i => i.MiningBotTicket)
                                                  .Where(f => userId.Equals(f.Subscription.RecommenderId) &&
@@ -271,10 +250,8 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                              {
                                  var item = _mapper.Map<FollowerDto>(usr);
 
-                                 var membership = usr.Memberships.OrderByDescending(o => o.CreatedOn).First();
-
                                  item.UserCode = ext.ProviderKey;
-                                 item.MembershipLevel = membership.Level;
+                                 item.MembershipLevel = usr.Subscription.Level;
                                  item.TimeFrame = usr.TradingTerms.TimeFrame;
                                  item.AutoTrading = usr.TradingTerms.AutoTrading;
                                  item.IsAssignedBot = usr.MiningBotTicket is null ? false : true;
@@ -299,7 +276,6 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                 var items = (from usr in _context.Users
                                                  .AsNoTracking()
                                                  .Include(i => i.Subscription)
-                                                 .Include(i => i.Memberships)
                                                  .Include(i => i.TradingTerms)
                                                  .Where(f => (head.Date <= f.CreatedOn && f.CreatedOn < rear.Date.AddDays(1)) &&
                                                              f.Subscription.GoBoast)
@@ -313,10 +289,8 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                              {
                                  var item = _mapper.Map<BoasterDto>(usr);
 
-                                 var membership = usr.Memberships.OrderByDescending(o => o.CreatedOn).First();
-
                                  item.UserCode = ext.ProviderKey;
-                                 item.MembershipLevel = membership.Level;
+                                 item.MembershipLevel = usr.Subscription.Level;
                                  item.TimeFrame = usr.TradingTerms.TimeFrame;
 
                                  return item;
@@ -438,7 +412,6 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                     return await Result<MembershipDto>.FailAsync(_localizer["User Not Found!"]);
                 }
 
-
                 if (last.Level == model.Level && last.MaximumAsset == model.MaximumAsset)
                 {
                     return await Result<MembershipDto>.FailAsync(string.Format(_localizer["{0} Is Equal"], _localizer["Subscription.Info"]));
@@ -451,8 +424,18 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
 
                 var mebership = _mapper.Map<Membership>(model);
 
+                var subscription = await _context.Subscriptions.SingleAsync(f => f.Id.Equals(model.UserId));
+
+                subscription.Level = model.Level;
+                subscription.MaximumAsset = (long)model.MaximumAsset;
+                subscription.CommissionRate = model.CommissionRate;
+                subscription.DailyDeductionPoint = model.DailyDeductionPoint;
+
                 await _intUnitOfWork.Repository<Membership>().AddAsync(mebership);
                 await _intUnitOfWork.Commit(new CancellationToken());
+
+                await _strUnitOfWork.Repository<Subscription>().UpdateAsync(subscription);
+                await _strUnitOfWork.Commit(new CancellationToken());
 
                 _mapper.Map(mebership, model);
 

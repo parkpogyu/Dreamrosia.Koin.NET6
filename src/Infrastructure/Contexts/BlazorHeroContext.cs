@@ -271,6 +271,26 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .HasMaxLength(36)
                       .HasComment("UserId");
 
+                entity.Property(p => p.Level)
+                      .IsRequired(true)
+                      .HasDefaultValue(MembershipLevel.Free)
+                      .HasComment("회원등급");
+
+                entity.Property(p => p.MaximumAsset)
+                      .IsRequired(true)
+                      .HasDefaultValue(DefaultValue.TradingTerms.MaximumAsset4Free)
+                      .HasComment("최대 운용자산");
+
+                entity.Property(p => p.CommissionRate)
+                      .IsRequired(true)
+                      .HasDefaultValue(DefaultValue.Fees.CommissionRate)
+                      .HasComment("수수료율");
+
+                entity.Property(p => p.DailyDeductionPoint)
+                      .IsRequired(true)
+                      .HasDefaultValue(DefaultValue.ChargingPoint.Free)
+                      .HasComment("차감포인트");
+
                 entity.Property(p => p.GoBoast)
                       .HasDefaultValue(false)
                       .HasComment("자랑하기");

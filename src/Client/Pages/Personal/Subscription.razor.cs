@@ -83,7 +83,8 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
             if (result.Succeeded)
             {
                 _user = result.Data ?? new UserFullInfoDto();
-                _model = _mapper.Map<MembershipDto>(_user.Subscription.Membership ?? new MembershipDto());
+                _model = _mapper.Map<MembershipDto>(_user.Subscription);
+                _model.UserId = _userId;
             }
 
             _succeeded = result.Succeeded;
@@ -209,7 +210,7 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
 
                     _model = _mapper.Map<MembershipDto>(response.Data);
 
-                    _mapper.Map(response.Data, _user.Subscription.Membership);
+                    _mapper.Map(response.Data, _user.Subscription);
                 }
             }
             else

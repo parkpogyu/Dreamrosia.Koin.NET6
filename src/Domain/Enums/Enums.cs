@@ -12,36 +12,24 @@ namespace Dreamrosia.Koin.Domain.Enums
 
         [Description("고급")]
         Advanced,
-
-        //[Description("크리스탈")]
-        //Crystal,
-
-        //[Description("루비")]
-        //Ruby,
-
-        //[Description("사파이어")]
-        //Sappire,
-
-        //[Description("에메랄드")]
-        //Emerald,
-
-        //[Description("다이아몬드")]
-        //Diamond,
     }
 
     public enum PointType
     {
-        [Description("환불")]
-        Refund,
-
         [Description("충전")]
         Charging,
+
+        [Description("쿠폰")]
+        Coupon,
+
+        [Description("인센티브")]
+        Incentive,
 
         [Description("사용")]
         Redeem,
 
-        [Description("쿠폰")]
-        Coupon,
+        [Description("환불")]
+        Refund,
     }
 
     public enum DateRangeTerms

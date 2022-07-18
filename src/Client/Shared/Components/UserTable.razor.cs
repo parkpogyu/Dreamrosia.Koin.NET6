@@ -121,7 +121,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private void SetItems()
         {
             _items = _sources.Where(f => (_selectedMemberships is null ? true :
-                                          _selectedMemberships.Any() ? _selectedMemberships.Contains(f.Subscription.Membership.Level.ToDescriptionString()) : true) &&
+                                          _selectedMemberships.Any() ? _selectedMemberships.Contains(f.Subscription.Level.ToDescriptionString()) : true) &&
                                          (_chkIsAutoTrading is null ? true : f.TradingTerms.AutoTrading == (bool)_chkIsAutoTrading) &&
                                          (_selectedTimeFrames is null ? true :
                                           _selectedTimeFrames.Any() ? _selectedTimeFrames.Contains(f.TradingTerms.TimeFrame.ToDescriptionString()) : true) &&

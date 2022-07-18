@@ -13,6 +13,9 @@ namespace Dreamrosia.Koin.Application.Mappings
                                                   .ForMember(d => d.CreatedOn, o => o.Ignore());
 
             CreateMap<MembershipDto, MembershipDto>();
+            CreateMap<SubscriptionDto, MembershipDto>().ForMember(d => d.CreatedOn, o => o.MapFrom(s => s.LastCreatedOn))
+                                                       .ReverseMap()
+                                                       .ForMember(d => d.LastCreatedOn, o => o.MapFrom(s => s.CreatedOn));
         }
     }
 }
