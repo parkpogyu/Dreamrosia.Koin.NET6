@@ -84,7 +84,6 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
             {
                 _user = result.Data ?? new UserFullInfoDto();
                 _model = _mapper.Map<MembershipDto>(_user.Subscription);
-                _model.UserId = _userId;
             }
 
             _succeeded = result.Succeeded;

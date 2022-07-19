@@ -8,7 +8,9 @@ namespace Dreamrosia.Koin.Application.Mappings
     {
         public SubscriptionProfile()
         {
-            CreateMap<Subscription, SubscriptionDto>();
+            CreateMap<Subscription, SubscriptionDto>().ForMember(d => d.UserId, o => o.MapFrom(s => s.Id))
+                                                      .ReverseMap()
+                                                      .ForMember(d => d.Id, o => o.MapFrom(s => s.UserId));
         }
     }
 }

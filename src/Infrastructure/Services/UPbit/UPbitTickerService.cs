@@ -12,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using UPbitModels = Dreamrosia.Koin.UPbit.Infrastructure.Models;
 
 namespace Dreamrosia.Koin.Infrastructure.Services
 {
@@ -23,7 +22,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
         private readonly IMapper _mapper;
         private readonly ILogger<UPbitTickerService> _logger;
 
-        public Dictionary<string, UPbitModels.Ticker> Tickers { get; private set; } = new Dictionary<string, UPbitModels.Ticker>();
+        public Dictionary<string, WsTicker.WsResponse> Tickers { get; private set; } = new Dictionary<string, WsTicker.WsResponse>();
 
         private readonly WsTicker WsTicker = new WsTicker();
 
@@ -68,7 +67,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 foreach (var item in items)
                 {
-                    Tickers[item.market] = new UPbitModels.Ticker()
+                    Tickers[item.market] = new WsTicker.WsResponse()
                     {
                         market = item.market,
                         trade_price = item.trade_price
@@ -135,6 +134,22 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             catch (Exception ex)
             {
                 return await Result<IEnumerable<TickerDto>>.FailAsync(ex.Message);
+            }
+        }
+
+        public async Task<IResult<IEnumerable<DelistingSymbolDto>>> GetDelistingSymbolsAsync()
+        {
+            try
+            {
+                var items = Tickers.Values.Where(f => f.delisting_date is not null).ToArray();
+
+                var mapped = _mapper.Map<IEnumerable<DelistingSymbolDto>>(items);
+
+                return await Result<IEnumerable<DelistingSymbolDto>>.SuccessAsync(mapped);
+            }
+            catch (Exception ex)
+            {
+                return await Result<IEnumerable<DelistingSymbolDto>>.FailAsync(ex.Message);
             }
         }
     }

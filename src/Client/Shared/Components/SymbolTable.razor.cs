@@ -38,7 +38,6 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private string _searchString { get; set; } = string.Empty;
         private int _rowsPerPage { get; set; } = TablePager.DefaultPageSize;
 
-
         private Guid _resizeSubscribedId { get; set; }
         private bool _isDivTableRendered { get; set; } = false;
         private string _divTableHeight { get; set; } = "100%";

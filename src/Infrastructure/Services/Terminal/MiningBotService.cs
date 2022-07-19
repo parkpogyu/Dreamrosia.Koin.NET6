@@ -283,17 +283,37 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                 item.UPbitKey.secret_key = EncryptProvider.AESDecrypt(item.UPbitKey.secret_key, key);
             }
 
-            var signals = _mapper.Map<IEnumerable<SeasonSignalDto>>(_context.SeasonSignals
-                                                                            .AsNoTracking()
-                                                                            .Where(f => f.UserId.Equals(null)));
-
             DateTime utc = DateTime.UtcNow.Date;
 
-            foreach (var signal in signals.Where(f => f.UpdatedAt.ToUniversalTime() < utc))
-            {
-                signal.WeeklySignal = SeasonSignals.Indeterminate;
-                signal.DailySignal = SeasonSignals.Indeterminate;
-            }
+            var delistings = _context.DelistingSymbols.AsNoTracking().ToArray();
+
+            var mapped = _mapper.Map<IEnumerable<SeasonSignalDto>>(_context.SeasonSignals
+                                                                           .AsNoTracking()
+                                                                           .Where(f => f.UserId.Equals(null)));
+
+            var signals = (from lt in mapped
+                           from rt in delistings.Where(f => f.Id.Equals(lt.market) &&
+                                                       utc < f.CloseAt && f.CloseAt < utc.AddDays(8)).DefaultIfEmpty()
+                           select ((Func<SeasonSignalDto>)(() =>
+                           {
+                               if (lt.UpdatedAt.ToUniversalTime() < utc)
+                               {
+                                   lt.WeeklySignal = SeasonSignals.Indeterminate;
+                                   lt.DailySignal = SeasonSignals.Indeterminate;
+                               }
+
+                               if (rt is not null)
+                               {
+                                   lt.WeeklySignal = SeasonSignals.DeadCross;
+
+                                   if (rt.CloseAt < utc.AddDays(2))
+                                   {
+                                       lt.DailySignal = SeasonSignals.DeadCross;
+                                   }
+                               }
+
+                               return lt;
+                           }))()).ToArray();
 
             if (chosenSymbols.Any())
             {

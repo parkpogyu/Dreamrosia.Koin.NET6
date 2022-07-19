@@ -4,6 +4,7 @@ using Dreamrosia.Koin.Shared.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Infrastructure.Managers
@@ -36,6 +37,27 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers
             var response = await _httpClient.GetAsync(Routes.MarketEndpoints.GetSymbols);
 
             return await response.ToResult<IEnumerable<SymbolDto>>();
+        }
+
+        public async Task<IResult<IEnumerable<DelistingSymbolDto>>> GetDelistingSymbolsAsync()
+        {
+            var response = await _httpClient.GetAsync(Routes.MarketEndpoints.GetDelistingSymbols);
+
+            return await response.ToResult<IEnumerable<DelistingSymbolDto>>();
+        }
+
+        public async Task<IResult> RegistDelistingSymbolAsync(DelistingSymbolDto model)
+        {
+            var response = await _httpClient.PostAsJsonAsync(Routes.MarketEndpoints.RegistDelistingdSymbol, model);
+
+            return await response.ToResult<string>();
+        }
+
+        public async Task<IResult> DeleteDelistingSymbolsAsync(IEnumerable<DelistingSymbolDto> models)
+        {
+            var response = await _httpClient.PostAsJsonAsync(Routes.MarketEndpoints.DeleteDelistingSymbols, models);
+
+            return await response.ToResult<string>();
         }
     }
 }

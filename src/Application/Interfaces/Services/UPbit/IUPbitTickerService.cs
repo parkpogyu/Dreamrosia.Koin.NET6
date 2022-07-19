@@ -9,6 +9,7 @@ namespace Dreamrosia.Koin.Application.Interfaces.Services
     {
         void RequestTickers(IEnumerable<string> codes);
         Task<IResult<IEnumerable<TickerDto>>> GetTradePricesAsync();
+        Task<IResult<IEnumerable<DelistingSymbolDto>>> GetDelistingSymbolsAsync();
         Task<IResult<int>> InitializeAsync();
     }
 }

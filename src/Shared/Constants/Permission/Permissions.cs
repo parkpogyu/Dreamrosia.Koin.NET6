@@ -48,6 +48,7 @@ namespace Dreamrosia.Koin.Shared.Constants.Permission
         public static class Symbols
         {
             public const string View = "Permissions.Symbols.View";
+            public const string Edit = "Permissions.Symbols.Edit";
             public const string Export = "Permissions.Symbols.Export";
         }
 

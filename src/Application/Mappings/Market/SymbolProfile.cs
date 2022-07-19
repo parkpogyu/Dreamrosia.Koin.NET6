@@ -17,6 +17,10 @@ namespace Dreamrosia.Koin.Application.Mappings
                                            .ForMember(d => d.accTradePrice24h, o => o.MapFrom(s => s.accTradePrice24h / 100000000));
 
             CreateMap<SeasonSignalDto, SymbolDto>();
+
+            CreateMap<DelistingSymbol, DelistingSymbolDto>().ForMember(d => d.market, o => o.MapFrom(s => s.Id))
+                                                            .ReverseMap()
+                                                            .ForMember(d => d.Id, o => o.MapFrom(s => s.market));
         }
     }
 }

@@ -1,0 +1,152 @@
+﻿@page "/market/delistingsymbols"
+@attribute [Authorize(Policy = Permissions.Symbols.View)]
+
+<style>
+    .mud-table-body .mud-table-row .mud-table-cell .d-flex {
+        justify-content: center;
+    }
+</style>
+
+<PageMenuTitle Menus="@(new []
+{
+    $"{_localizer["Market"]}",
+    $"{_localizer["Delisting Symbols"]}",
+})" />
+
+@if (!_loaded)
+{
+    <MudProgressCircular Color="MudBlazor.Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudPaper Elevation="25" Class="flex-x-scroll-container pa-2 mb-1 ">
+        @if (_canEditDelistingSymbols)
+        {
+            <div class="d-flex align-end">
+                <MudAutocomplete T="SymbolDto"
+                         Label="@($"{_localizer["Symbol.korean_name"]}, {_localizer["Symbol.code"]}")"
+                         Value="_symbol"
+                         ValueChanged="MarketValueChanged"
+                         SearchFunc="@AutoCompleteSearch"
+                         ToStringFunc="@(e=> e is null ? null : $"{e.korean_name}")"
+                         Margin="Margin.Dense"
+                         Dense="true"
+                         Variant="Variant.Outlined"
+                         Class="symbol-autocomplete mb-n1">
+                    <ItemTemplate Context="e">
+                        <div class="d-flex align-center" style="text-align:center">
+                            <CoinIcon Code=@($"{e.code}") />
+                            <MudText Style="text-align:center">&nbsp;@($"{e.korean_name}") </MudText>
+                        </div>
+                    </ItemTemplate>
+                    <ItemSelectedTemplate Context="e">
+                        <div class="d-flex align-center" style="text-align:center">
+                            <CoinIcon Code=@($"{e.code}") />
+                            <MudText Style="text-align:center">&nbsp;@($"{e.korean_name}") </MudText>
+                        </div>
+                    </ItemSelectedTemplate>
+                </MudAutocomplete>
+
+                <MudDatePicker @bind-Date="@_model.NotifiedAt"
+                       PickerVariant="PickerVariant.Dialog"
+                       Label="@_localizer["Notified Date"]"
+                       DateFormat="d"
+                       TitleDateFormat="MMM-dd(ddd)"
+                       AutoClose="false"
+                       Class="mud-date-picker ml-4" />
+
+                <MudDatePicker @bind-Date="@_model.CloseAt"
+                       PickerVariant="PickerVariant.Dialog"
+                       Label="@_localizer["Delisting Date"]"
+                       DateFormat="d"
+                       TitleDateFormat="MMM-dd(ddd)"
+                       AutoClose="false"
+                       Class="mud-date-picker ml-2" />
+
+                <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Secondary"
+                   Size="Size.Small"
+                   OnClick="RegistDelistingSymbolAsync"
+                   Class="ml-4">
+                    @_localizer["Register"]
+                </MudButton>
+
+                <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Secondary"
+                   Size="Size.Small"
+                   OnClick="DeleteDelistingSymbolsAsync"
+                   Class="ml-8">
+                    @_localizer["Delete"]
+                </MudButton>
+            </div>
+        }
+
+        <FullSpacer />
+
+        <MudButton DisableElevation
+               OnClick="GetDelistingSymbolsAsync"
+               Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface"
+               Color="MudBlazor.Color.Primary"
+               Size="Size.Small"
+               Class="align-self-end-button ml-4">
+            @_localizer["Reload"]
+        </MudButton>
+    </MudPaper>
+
+    <div id="@_divTableId">
+        <MudTable T="DelistingSymbolDto"
+              Items="_items"
+              @bind-SelectedItems="_selectedItems"
+              Elevation="25"
+              Hover="true" Dense="true" Bordered="true" Striped="true"
+              FixedHeader="true" FixedFooter="true"
+              MultiSelection="_canEditDelistingSymbols"
+              @bind-RowsPerPage="@_rowsPerPage"
+              Filter="new Func<DelistingSymbolDto, bool>(Search)"
+              Class="mt-1"
+              Height="@_divTableHeight">
+            <ToolBarContent>
+                <div class="flex-x-scroll-container pa-2" style="width:100%">
+
+                    <FullSpacer />
+                    <MudTextField @bind-Value="@_searchString"
+                              Immediate="false"
+                              FullWidth="false"
+                              Placeholder="@_localizer["Search"]"
+                              Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small"
+                              Class="ml-4 search-box" />
+                </div>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<DelistingSymbolDto, object>(x => x.market)">@_localizer["Symbol.code"]</MudTableSortLabel>
+                </MudTh>
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<DelistingSymbolDto, object>(x => x.korean_name)">@_localizer["Symbol.korean_name"]</MudTableSortLabel>
+                </MudTh>
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<DelistingSymbolDto, object>(x => x.NotifiedAt)">@_localizer["Notified Date"]</MudTableSortLabel>
+                </MudTh>
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<DelistingSymbolDto, object>(x => x.CloseAt)">@_localizer["Delisting Date"]</MudTableSortLabel>
+                </MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel=@_localizer["Symbol.code"]>
+                    @($"{context.market}")
+                </MudTd>
+                <MudTd DataLabel=@_localizer["Symbol.korean_name"]>
+                    @($"{context.korean_name}")
+                </MudTd>
+                <MudTd DataLabel=@_localizer["Notified Date"] Style="text-align:center">
+                    @($"{context.NotifiedAt:d}")
+                </MudTd>
+                <MudTd DataLabel=@_localizer["Delisting Date"] Style="text-align:center">
+                    @($"{context.CloseAt:d}")
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <TablePager />
+            </PagerContent>
+        </MudTable>
+    </div>
+}

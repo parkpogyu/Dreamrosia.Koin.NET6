@@ -5,6 +5,8 @@ namespace Dreamrosia.Koin.Application.DTO
 {
     public class SubscriptionDto
     {
+        public string UserId { get; set; }
+
         #region Membership
         public MembershipLevel Level { get; set; }
         public long MaximumAsset { get; set; }

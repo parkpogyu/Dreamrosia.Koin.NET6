@@ -45,6 +45,7 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
         public DbSet<Candle> Candles { get; set; }
         public DbSet<Crix> Crixes { get; set; }
         public DbSet<Symbol> Symbols { get; set; }
+        public DbSet<DelistingSymbol> DelistingSymbols { get; set; }
         public DbSet<SeasonSignal> SeasonSignals { get; set; }
         public DbSet<MarketIndex> MarketIndices { get; set; }
         #endregion
@@ -655,6 +656,25 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .IsRequired(true)
                       .HasDefaultValue(MarketAlert.None)
                       .HasComment("투자주의");
+            });
+
+            builder.Entity<DelistingSymbol>(entity =>
+            {
+                entity.ToTable("DelistingSymbols").HasComment("상장폐지코인");
+
+                entity.Property(p => p.Id)
+                      .HasMaxLength(20)
+                      .HasComment("마켓코드");
+
+                entity.Property(p => p.korean_name)
+                      .HasMaxLength(50)
+                      .HasComment("한글명");
+
+                entity.Property(p => p.NotifiedAt)
+                      .HasComment("공지일");
+
+                entity.Property(p => p.CloseAt)
+                      .HasComment("폐지일");
             });
 
             builder.Entity<MarketIndex>(entity =>

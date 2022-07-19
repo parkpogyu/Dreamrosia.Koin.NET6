@@ -1590,4 +1590,13 @@
   <data name="UBMI" xml:space="preserve">
     <value>UBMI</value>
   </data>
+  <data name="Delisting Date" xml:space="preserve">
+    <value>상장폐지일</value>
+  </data>
+  <data name="Delisting Symbols" xml:space="preserve">
+    <value>상장폐지코인</value>
+  </data>
+  <data name="Notified Date" xml:space="preserve">
+    <value>공지일</value>
+  </data>
 </root>
