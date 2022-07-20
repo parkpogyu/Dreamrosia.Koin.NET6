@@ -7,5 +7,8 @@ namespace Dreamrosia.Koin.Bot.DTO
     {
         [JsonIgnore]
         public string Remark { get; set; }
+
+        [JsonIgnore]
+        public double BalEvalAmt { get; set; }  
     }
 }

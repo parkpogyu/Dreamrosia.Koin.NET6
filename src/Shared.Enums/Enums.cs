@@ -77,7 +77,10 @@ namespace Dreamrosia.Koin.Shared.Enums
         Pyramiding,
 
         [Description("청산")]
-        Liquidate
+        Liquidate,
+
+        [Description("조정")]
+        Rebalancing
     }
 
     public enum OrderBy

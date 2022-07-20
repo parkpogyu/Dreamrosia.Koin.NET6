@@ -99,15 +99,16 @@ namespace Dreamrosia.Koin.Bot.Services
 
             if (TradingTerms.LiquidatePositions)
             {
-                foreach (var position in sellables)
+                foreach (var item in sellables)
                 {
                     orders.Add(new OrderPostParameterDto()
                     {
                         side = OrderSide.ask,
-                        market = position.market,
+                        market = item.market,
                         ord_type = OrderType.market,
-                        volume = position.balance,
-                        Remark = string.Format("{0}, {1:N2}", OrderReason.Liquidate.ToDescriptionString(), position.PnLRat),
+                        volume = item.balance,
+                        BalEvalAmt = item.BalEvalAmt,
+                        Remark = string.Format("{0}, {1:N2}", OrderReason.Liquidate.ToDescriptionString(), item.PnLRat),
                     });
                 }
 
@@ -128,6 +129,7 @@ namespace Dreamrosia.Koin.Bot.Services
                     market = item.market,
                     ord_type = OrderType.market,
                     volume = item.balance,
+                    BalEvalAmt = item.BalEvalAmt,
                     Remark = string.Format("{0}, {1:N2}", OrderReason.Signal.ToDescriptionString(), item.PnLRat),
                 });
             }
@@ -146,6 +148,7 @@ namespace Dreamrosia.Koin.Bot.Services
                         market = item.market,
                         ord_type = OrderType.market,
                         volume = item.balance,
+                        BalEvalAmt = item.BalEvalAmt,
                         Remark = string.Format("{0}, {1} / {2}, {3:N2}%",
                                  reason.ToDescriptionString(),
                                  GetPriceText(item.trade_price),
@@ -217,13 +220,17 @@ namespace Dreamrosia.Koin.Bot.Services
                 if (coin is PositionDto)
                 {
                     amount = BidAmount - coin.BalEvalAmt;
+                    amount = amount < TradingConstants.MinOrderableAmount ? TradingConstants.MinOrderableAmount : amount;
                 }
                 else
                 {
                     amount = BidAmount;
                 }
 
-                if (Convert.ToDouble(Cash?.balance) < amount || amount < TradingConstants.MinOrderableAmount) { continue; }
+                if (!TradingTerms.Rebalancing)
+                {
+                    if (Convert.ToDouble(Cash?.balance) < amount) { continue; }
+                }
 
                 orders.Add(new OrderPostParameterDto()
                 {
@@ -232,10 +239,81 @@ namespace Dreamrosia.Koin.Bot.Services
                     ord_type = OrderType.price,
                     price = Convert.ToDecimal(amount),
                     Remark = OrderReason.Signal.ToDescriptionString()
-                }); ;
+                });
             }
 
             return orders;
+        }
+
+        private (IEnumerable<OrderPostParameterDto>, IEnumerable<OrderPostParameterDto>) GetRebalancingOders(IEnumerable<OrderPostParameterDto> asks, IEnumerable<OrderPostParameterDto> bids)
+        {
+            List<OrderPostParameterDto> rebalancings = new();
+
+            var available = Convert.ToDouble(Cash?.balance) + asks.Sum(f => f.BalEvalAmt);
+
+            var amount = Convert.ToDouble(bids.Sum(f => f.price));
+
+            if (available > amount)
+            {
+                return (rebalancings, bids);
+            }
+
+            var necessary = amount - available;
+
+            // 금일 매수종목 제외
+            DateTime utc = DateTime.UtcNow.Date;
+            var todays = ThisWeekOrders.Where(f => f.created_at.ToUniversalTime().Date == utc.Date && f.side == OrderSide.bid);
+
+            var limit = TradingConstants.MinOrderableAmount * 1.5F;
+
+            var sellables = (from coin in Coins.Where(f => limit < f.BalEvalAmt && f.locked == 0)
+                             from order in todays.Where(f => f.market.Equals(coin.market)).DefaultIfEmpty()
+                             from ask in asks.Where(f=>f.market.Equals(coin.market)).DefaultIfEmpty()
+                             where order is null && ask is null
+                             select coin).ToArray();
+
+            if (!sellables.Any())
+            {
+                return (rebalancings, rebalancings);
+            }
+
+            if (TradingTerms.RebalancingOrder == OrderBy.asc)
+            {
+                sellables = sellables.OrderBy(f => f.PnLRat).ToArray();
+            }
+            else
+            {
+                sellables = sellables.OrderByDescending(f => f.PnLRat).ToArray();
+            }
+
+            // 분담금
+            var minimum = TradingConstants.MinOrderableAmount * 1.03F;
+            var apportionment = Math.Ceiling(necessary / sellables.Count());
+
+            apportionment = apportionment < minimum ? minimum : apportionment;
+
+            int takes = (int)Math.Ceiling(necessary / apportionment);
+
+            takes = takes < 1 ? 1 : takes;
+
+            decimal balance;
+
+            foreach (var item in sellables.Take(takes))
+            {
+                balance = (decimal)Math.Round(apportionment / item.trade_price, 8);
+
+                rebalancings.Add(new OrderPostParameterDto()
+                {
+                    side = OrderSide.ask,
+                    market = item.market,
+                    ord_type = OrderType.market,
+                    volume = balance,
+                    BalEvalAmt = item.BalEvalAmt,
+                    Remark = OrderReason.Rebalancing.ToDescriptionString(),
+                });
+            }
+
+            return (rebalancings, bids);
         }
 
         private void AdjustOriginalBidOrders()
@@ -318,7 +396,18 @@ namespace Dreamrosia.Koin.Bot.Services
                 List<OrderPostParameterDto> orders = new List<OrderPostParameterDto>();
 
                 orders.AddRange(asks);
-                orders.AddRange(bids);
+
+                if (TradingTerms.Rebalancing)
+                {
+                    (IEnumerable<OrderPostParameterDto> asks, IEnumerable<OrderPostParameterDto> bids) rebalancing = GetRebalancingOders(asks, bids);
+
+                    orders.AddRange(rebalancing.asks);
+                    orders.AddRange(rebalancing.bids);
+                }
+                else
+                {
+                    orders.AddRange(bids);
+                }
 
                 if (!orders.Any()) { return; }
 

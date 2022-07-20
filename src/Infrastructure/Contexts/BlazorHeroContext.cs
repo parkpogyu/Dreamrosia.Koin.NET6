@@ -674,7 +674,7 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .HasComment("공지일");
 
                 entity.Property(p => p.CloseAt)
-                      .HasComment("폐지일");
+                      .HasComment("상장폐지일");
             });
 
             builder.Entity<MarketIndex>(entity =>
@@ -980,6 +980,16 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .IsRequired(true)
                       .HasDefaultValue(false)
                       .HasComment("자동거래");
+
+                entity.Property(p => p.Rebalancing)
+                      .IsRequired(true)
+                      .HasDefaultValue(false)
+                      .HasComment("보유코인조정");
+
+                entity.Property(p => p.RebalancingOrder)
+                      .IsRequired(true)
+                      .HasDefaultValue(OrderBy.asc)
+                      .HasComment("매도순서");
                 #endregion
             });
             #endregion

@@ -291,9 +291,13 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                                                                            .AsNoTracking()
                                                                            .Where(f => f.UserId.Equals(null)));
 
+            // 미반영된 시그널 제외
+            // 상장폐지예정종목 제외
+            int wait_day1 = 8;
+            int wait_day2 = 2;
             var signals = (from lt in mapped
                            from rt in delistings.Where(f => f.Id.Equals(lt.market) &&
-                                                       utc < f.CloseAt && f.CloseAt < utc.AddDays(8)).DefaultIfEmpty()
+                                                       utc < f.CloseAt && f.CloseAt < utc.AddDays(wait_day1)).DefaultIfEmpty()
                            select ((Func<SeasonSignalDto>)(() =>
                            {
                                if (lt.UpdatedAt.ToUniversalTime() < utc)
@@ -306,7 +310,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                                {
                                    lt.WeeklySignal = SeasonSignals.DeadCross;
 
-                                   if (rt.CloseAt < utc.AddDays(2))
+                                   if (rt.CloseAt < utc.AddDays(wait_day2))
                                    {
                                        lt.DailySignal = SeasonSignals.DeadCross;
                                    }

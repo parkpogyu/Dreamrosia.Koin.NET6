@@ -278,7 +278,7 @@ else
                             </MudCardHeader>
                             <MudCardContent>
                                 <MudGrid>
-                                    <MudItem xs="12" sm="4">
+                                    <MudItem xs="12" sm="12">
                                         <MudField Label="@_localizer["Trading.MaximumAsset"]"
                                                   Margin="Margin.Dense" Variant="Variant.Outlined"
                                                   Disabled="true"
@@ -286,7 +286,7 @@ else
                                             <MudText Align="MudBlazor.Align.Right"> @($"{_model.MaximumAsset:N0}")</MudText>
                                         </MudField>
                                     </MudItem>
-                                    <MudItem xs="12" sm="4">
+                                    <MudItem xs="12" sm="6">
                                         <MudField Label="@_localizer["Trading.AutoTrading"]"
                                                   Margin="Margin.Dense" Variant="Variant.Outlined"
                                                   HelperText="@(_viewHelp ?  $"{_localizer["UPbit.Open API"]}를 통한 {_localizer["Trading.AutoTrading"]}": string.Empty )">
@@ -295,7 +295,7 @@ else
                                                        Class="mb-n2 mt-n2" />
                                         </MudField>
                                     </MudItem>
-                                    <MudItem xs="12" sm="4">
+                                    <MudItem xs="12" sm="6">
                                         <MudSelect T="TimeFrames"
                                                    Label="@_localizer["TimeFrames"]"
                                                    Dense="true"
@@ -308,8 +308,29 @@ else
                                             <MudSelectItem T="TimeFrames" Value="TimeFrames.Week">@TimeFrames.Week.ToDescriptionString()</MudSelectItem>
                                         </MudSelect>
                                     </MudItem>
+                                    <MudItem xs="12" sm="6">
+                                        <MudField Label="@_localizer["Trading.Rebalancing"]"
+                                                  Margin="Margin.Dense" Variant="Variant.Outlined"
+                                                   HelperText="@(_viewHelp ?  @_localizer["Partial sale of holding coins in case of insufficient purchase amount"]: string.Empty )">
+                                            <MudSwitch @bind-Checked="@_model.Rebalancing"
+                                                       Color="MudBlazor.Color.Secondary"
+                                                       Class="mb-n2 mt-n2" />
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem xs="12" sm="6">
+                                        <MudSelect T="OrderBy"
+                                                   Label="@_localizer["Trading.RebalancingOrder"]"
+                                                   Dense="true"
+                                                   Variant="Variant.Outlined"
+                                                   Margin="Margin.Dense"
+                                                   MultiSelection="false"
+                                                   @bind-Value="@_model.RebalancingOrder"
+                                                   HelperText="@(_viewHelp ?  @_localizer["Priority when selling"]: string.Empty )">
+                                            <MudSelectItem T="OrderBy" Value="OrderBy.asc">@_localizer["in order of loss"]</MudSelectItem>
+                                            <MudSelectItem T="OrderBy" Value="OrderBy.desc">@_localizer["in order of profit"]</MudSelectItem>
+                                        </MudSelect>
+                                    </MudItem>
                                 </MudGrid>
-
                             </MudCardContent>
                         </MudCard>
 

@@ -36,6 +36,8 @@ namespace Dreamrosia.Koin.Bot.DTO
         public bool AutoTrading { get; set; } = false;
         public TimeFrames TimeFrame { get; set; } = TimeFrames.Day;
         public long MaximumAsset { get; set; } = 1500000;
+        public bool Rebalancing { get; set; } = false;
+        public OrderBy RebalancingOrder{ get; set; } = OrderBy.asc;
         #endregion
 
         public UPbitKeyDto UPbitKey { get; set; }

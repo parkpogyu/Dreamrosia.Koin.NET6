@@ -1599,4 +1599,22 @@
   <data name="Notified Date" xml:space="preserve">
     <value>공지일</value>
   </data>
+  <data name="in order of loss" xml:space="preserve">
+    <value>손실순</value>
+  </data>
+  <data name="in order of profit" xml:space="preserve">
+    <value>수익순</value>
+  </data>
+  <data name="Partial sale of holding coins in case of insufficient purchase amount" xml:space="preserve">
+    <value>매수금액 부족시 보유코인 부분매도</value>
+  </data>
+  <data name="Priority when selling" xml:space="preserve">
+    <value>보유코인 조정시 매도순서</value>
+  </data>
+  <data name="Trading.Rebalancing" xml:space="preserve">
+    <value>보유코인 조정</value>
+  </data>
+  <data name="Trading.RebalancingOrder" xml:space="preserve">
+    <value>보유코인 조정시 매도순서</value>
+  </data>
 </root>
