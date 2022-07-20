@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using System;
 using Dreamrosia.Koin.Application.DTO;
-using UPbitModels = Dreamrosia.Koin.UPbit.Infrastructure.Models;
 using Dreamrosia.Koin.UPbit.Infrastructure.Clients;
+using System;
+using UPbitModels = Dreamrosia.Koin.UPbit.Infrastructure.Models;
 
 namespace Dreamrosia.Koin.Infrastructure.Mappings
 {

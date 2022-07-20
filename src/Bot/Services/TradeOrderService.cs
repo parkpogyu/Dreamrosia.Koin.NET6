@@ -268,7 +268,7 @@ namespace Dreamrosia.Koin.Bot.Services
 
             var sellables = (from coin in Coins.Where(f => limit < f.BalEvalAmt && f.locked == 0)
                              from order in todays.Where(f => f.market.Equals(coin.market)).DefaultIfEmpty()
-                             from ask in asks.Where(f=>f.market.Equals(coin.market)).DefaultIfEmpty()
+                             from ask in asks.Where(f => f.market.Equals(coin.market)).DefaultIfEmpty()
                              where order is null && ask is null
                              select coin).ToArray();
 

@@ -36,7 +36,7 @@ namespace Dreamrosia.Koin.Application.DTO
         public TimeFrames TimeFrame { get; set; } = TimeFrames.Day;
         public long MaximumAsset { get; set; } = DefaultValue.TradingTerms.MaximumAsset4Free;
         public bool Rebalancing { get; set; } = false;
-        public OrderBy RebalancingOrder{ get; set; } = OrderBy.asc;
+        public OrderBy RebalancingOrder { get; set; } = OrderBy.asc;
         #endregion
 
         public UPbitKeyDto UPbitKey { get; set; }

@@ -8,8 +8,8 @@ using Microsoft.JSInterop;
 using MudBlazor;
 using MudBlazor.Services;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dreamrosia.Koin.Client.Pages.Market
@@ -155,7 +155,7 @@ namespace Dreamrosia.Koin.Client.Pages.Market
 
         private async Task DeleteDelistingSymbolsAsync()
         {
-            if (_selectedItems is null || !_selectedItems.Any()) { return; }    
+            if (_selectedItems is null || !_selectedItems.Any()) { return; }
 
             var response = await MarketManager.DeleteDelistingSymbolsAsync(_selectedItems);
 

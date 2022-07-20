@@ -9,6 +9,6 @@ namespace Dreamrosia.Koin.Bot.DTO
         public string Remark { get; set; }
 
         [JsonIgnore]
-        public double BalEvalAmt { get; set; }  
+        public double BalEvalAmt { get; set; }
     }
 }

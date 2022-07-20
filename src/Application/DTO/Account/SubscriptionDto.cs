@@ -12,7 +12,7 @@ namespace Dreamrosia.Koin.Application.DTO
         public long MaximumAsset { get; set; }
         public float CommissionRate { get; set; }
         public int DailyDeductionPoint { get; set; }
-        public DateTime  LastCreatedOn { get; set; }
+        public DateTime LastCreatedOn { get; set; }
         #endregion
 
         public bool GoBoast { get; set; }

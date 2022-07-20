@@ -149,7 +149,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
 
                                 item.UserCode = usrcode.ProviderKey;
                                 item.Subscription.LastCreatedOn = usr.Memberships.OrderByDescending(f => f.CreatedOn)
-                                                                                 .First().CreatedOn;    
+                                                                                 .First().CreatedOn;
 
                                 if (item.Subscription.Recommender is not null)
                                 {

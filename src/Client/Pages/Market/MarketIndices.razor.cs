@@ -33,10 +33,10 @@ namespace Dreamrosia.Koin.Client.Pages.Market
 
         protected override async Task OnInitializedAsync()
         {
-            _mapper = new MapperConfiguration(c => 
-            { 
-                c.AddProfile<MarketIndexProfile>(); 
-                c.AddProfile<CandleProfile>(); 
+            _mapper = new MapperConfiguration(c =>
+            {
+                c.AddProfile<MarketIndexProfile>();
+                c.AddProfile<CandleProfile>();
             }).CreateMapper();
 
             var userId = _authenticationManager.CurrentUser().GetUserId();

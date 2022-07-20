@@ -29,10 +29,10 @@ namespace Dreamrosia.Koin.Domain.Entities
         #endregion
 
         #region General Terms
-        public bool AutoTrading { get; set; } 
+        public bool AutoTrading { get; set; }
         public TimeFrames TimeFrame { get; set; }
         public bool Rebalancing { get; set; }
-        public OrderBy RebalancingOrder{ get; set; } 
+        public OrderBy RebalancingOrder { get; set; }
         #endregion
 
         public IDomainUser User { get; set; }
