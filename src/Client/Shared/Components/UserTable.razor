@@ -255,6 +255,8 @@
                                             }
                                             <th>@_localizer["Trading.AutoTrading"]</th>
                                             <th>@_localizer["TimeFrames"]</th>
+                                            <th>@_localizer["Trading.Rebalancing"]</th>
+                                            <th>@_localizer["Trading.RebalancingOrder"]</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -322,6 +324,17 @@
                                             </td>
                                             <td style="text-align:center">
                                                 @($"{context.TradingTerms.TimeFrame.ToDescriptionString()}")
+                                            </td>
+                                            <td style="text-align:center">
+                                                @if (context.TradingTerms.Rebalancing)
+                                                {
+                                                    <MudIcon Icon="@Icons.Filled.Check" Size="Size.Small" />
+                                                }
+                                            </td>
+                                            <td style="text-align:center">
+                                                @(string.Format("{0}", context.TradingTerms.RebalancingOrder == OrderBy.asc ? 
+                                                                      _localizer["in order of loss"] :
+                                                                      _localizer["in order of profit"]))
                                             </td>
                                         </tr>
                                     </tbody>

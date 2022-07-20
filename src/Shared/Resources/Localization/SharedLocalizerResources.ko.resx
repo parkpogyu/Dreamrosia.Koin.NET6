@@ -1615,6 +1615,6 @@
     <value>보유코인 조정</value>
   </data>
   <data name="Trading.RebalancingOrder" xml:space="preserve">
-    <value>보유코인 조정시 매도순서</value>
+    <value>매도순서</value>
   </data>
 </root>

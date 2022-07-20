@@ -262,7 +262,8 @@ namespace Dreamrosia.Koin.Bot.Services
 
             // 금일 매수종목 제외
             DateTime utc = DateTime.UtcNow.Date;
-            var todays = ThisWeekOrders.Where(f => f.created_at.ToUniversalTime().Date == utc.Date && f.side == OrderSide.bid);
+            var todays = ThisWeekOrders.Where(f => f.created_at.ToUniversalTime().Date == utc.Date && 
+                                                   f.side == OrderSide.bid);
 
             var limit = TradingConstants.MinOrderableAmount * 1.5F;
 
@@ -411,6 +412,21 @@ namespace Dreamrosia.Koin.Bot.Services
 
                 if (!orders.Any()) { return; }
 
+                await DoTradeAsync(orders); 
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+        }
+
+        private async Task DoTradeAsync(IEnumerable<OrderPostParameterDto> orders)
+        {
+            List<OrderPostParameterDto> temporaryErrors = new List<OrderPostParameterDto>();
+
+            try
+            {
                 StringBuilder builder = new StringBuilder();
 
                 ExOrderPost exOrderPost = new ExOrderPost();
@@ -418,6 +434,7 @@ namespace Dreamrosia.Koin.Bot.Services
                 IResult<Order> response = null;
 
                 Order result;
+                string message;
 
                 foreach (var order in orders)
                 {
@@ -466,7 +483,14 @@ namespace Dreamrosia.Koin.Bot.Services
                         }
                     }
 
-                    builder.AppendLine($"\t주문상태: {(response.Succeeded ? result.state.ToDescriptionString() : response.FullMessage)}");
+                    message = $"[{response.Code}]:{response.FullMessage}";
+
+                    if (response.FullMessage?.Contains("일시적인 거래량 급증으로 먼저 접수된 주문을 처리중입니다.") == true)
+                    {
+                        temporaryErrors.Add(order);
+                    }
+
+                    builder.AppendLine($"\t주문상태: {(response.Succeeded ? result.state.ToDescriptionString() : message)}");
 
 #if DEBUG
                     builder.AppendLine($"\t비    고: {order.Remark} {response.FullMessage}");
@@ -481,6 +505,12 @@ namespace Dreamrosia.Koin.Bot.Services
             {
                 _logger.LogError(ex, ex.Message);
             }
+
+            if (!temporaryErrors.Any()) { return; }
+            
+            await Task.Delay(100);
+
+            await DoTradeAsync(temporaryErrors);
         }
 
         private string GetPriceText(double price)
