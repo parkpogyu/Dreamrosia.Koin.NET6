@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 namespace Dreamrosia.Koin.Server.Schedules
 {
     [DisallowConcurrentExecution]
-    public class MappingMiningBotJob : IJob
+    public class DelistingSymbolJob : IJob
     {
-        private readonly IMiningBotService _miningBotService;
-        private readonly ILogger<DetermineSeasonSignalJob> _logger;
+        private readonly IDelistingSymbolService _delistingSymbolService;
+        private readonly ILogger<DelistingSymbolJob> _logger;
 
-        public MappingMiningBotJob(IMiningBotService miningBotService,
-                                   ILogger<DetermineSeasonSignalJob> logger)
+        public DelistingSymbolJob(IDelistingSymbolService delistingSymbolService,
+                                  ILogger<DelistingSymbolJob> logger)
         {
-            _miningBotService = miningBotService;
+            _delistingSymbolService = delistingSymbolService;
             _logger = logger;
         }
 
@@ -23,7 +23,7 @@ namespace Dreamrosia.Koin.Server.Schedules
         {
             try
             {
-                await _miningBotService.MappingMiningBotAsync();
+                await _delistingSymbolService.CollectDelistingSymbolsAsync();
             }
             catch (Exception ex)
             {

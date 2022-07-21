@@ -380,14 +380,15 @@ namespace Dreamrosia.Koin.Server.Extensions
             {
                 q.UseMicrosoftDependencyInjectionJobFactory();
 
-                q.AddJobAndTrigger<MappingMiningBotJob>();
+                q.AddJobAndTrigger<MiningBotJob>();
 
                 if (config.Mode == ServerModes.Server ||
                     config.Mode == ServerModes.Agent)
                 {
-                    q.AddJobAndTrigger<DetermineSeasonSignalJob>();
-                    q.AddJobAndTrigger<CollectMarketIndexJob>();
-                    q.AddJobAndTrigger<CollectDelistingSymbolJob>();
+                    q.AddJobAndTrigger<SeasonSignalJob>();
+                    q.AddJobAndTrigger<MarketIndexJob>();
+                    q.AddJobAndTrigger<DelistingSymbolJob>();
+                    q.AddJobAndTrigger<PointJob>();
                 }
             });
 
@@ -405,17 +406,21 @@ namespace Dreamrosia.Koin.Server.Extensions
             var configKey = $"Quartz:{jobName}";
             var cronSchedule = "* * * * * ?";
 
-            if (typeof(T) == typeof(DetermineSeasonSignalJob))
+            if (typeof(T) == typeof(SeasonSignalJob))
             {
                 cronSchedule = "5 * * * * ?";
             }
-            else if (typeof(T) == typeof(CollectMarketIndexJob))
+            else if (typeof(T) == typeof(MarketIndexJob))
             {
                 cronSchedule = "10 * * * * ?";
             }
-            else if (typeof(T) == typeof(CollectDelistingSymbolJob))
+            else if (typeof(T) == typeof(DelistingSymbolJob))
             {
                 cronSchedule = "15 * * * * ?";
+            }
+            else if (typeof(T) == typeof(PointJob))
+            {
+                cronSchedule = "30 0 0 * * ?";
             }
 
             // Some minor validation

@@ -28,10 +28,11 @@
                            SelectedValues="@_selectedPointTypes"
                            SelectedValuesChanged="@((values)=> PointTypeSelectionChanged(values))"
                            Class="mud-multi-select-1">
-                    <MudSelectItem T="string" Value="@(PointType.Charging.ToDescriptionString())">@(PointType.Charging.ToDescriptionString())</MudSelectItem>
-                    <MudSelectItem T="string" Value="@(PointType.Redeem.ToDescriptionString())">@(PointType.Redeem.ToDescriptionString())</MudSelectItem>
-                    <MudSelectItem T="string" Value="@(PointType.Refund.ToDescriptionString())">@(PointType.Coupon.ToDescriptionString())</MudSelectItem>
-                    <MudSelectItem T="string" Value="@(PointType.Refund.ToDescriptionString())">@(PointType.Refund.ToDescriptionString())</MudSelectItem>
+
+                    @foreach (var term in (PointType[])Enum.GetValues(typeof(PointType)))
+                    {
+                        <MudSelectItem T="string" Value="@(term.ToDescriptionString())">@(term.ToDescriptionString())</MudSelectItem>
+                    }
                 </MudSelect>
                 <MudTextField @bind-Value="@_searchString"
                               Immediate="false"
@@ -44,9 +45,7 @@
         <HeaderContent>
             <MudTh> @_localizer["Point.done_at"] </MudTh>
             <MudTh> @_localizer["Point.PointType"] </MudTh>
-            <MudTh> @_localizer["Point.Charing"] </MudTh>
-            <MudTh> @_localizer["Point.Redeem"] </MudTh>
-            <MudTh> @_localizer["Point.Refund"] </MudTh>
+            <MudTh> @_localizer["Point.Amount"] </MudTh>
             <MudTh> @_localizer["Point.Balance"] </MudTh>
             <MudTh> @_localizer["Membership.Level"] </MudTh>
         </HeaderContent>
@@ -57,24 +56,24 @@
             <MudTd DataLabel=@_localizer["Point.PointType"] Style="text-align:center">
                 @($"{context.Type.ToDescriptionString()}")
             </MudTd>
-            <MudTd DataLabel=@_localizer["Point.Charging"] Style="text-align:right">
-                @if (context.Charging > 0)
-                {
-                    @($"{context.Charging:N0}")
-                }
-            </MudTd>
-            <MudTd DataLabel=@_localizer["Point.Reedeem"] Style="text-align:right">
-                @if (context.Reedeem > 0)
-                {
-                    @($"{context.Reedeem:N0}")
-                }
-            </MudTd>
-            <MudTd DataLabel=@_localizer["Point.Refund"] Style="text-align:right">
-                @if (context.Refund > 0)
-                {
-                    @($"{context.Refund:N0}")
-                }
-            </MudTd>
+            @if (context.Type == PointType.Charging || context.Type == PointType.Coupon)
+            {
+                <MudTd DataLabel=@_localizer["Point.Amount"] Style="text-align:right;color:orangered">
+                    @if (context.Amount > 0)
+                    {
+                        @($"{context.Amount:N0}")
+                    }
+                </MudTd>
+            }
+            else
+            {
+                <MudTd DataLabel=@_localizer["Point.Amount"] Style="text-align:right;color:dodgerblue">
+                    @if (context.Amount > 0)
+                    {
+                        @($"{context.Amount:N0}")
+                    }
+                </MudTd>
+            }
             <MudTd DataLabel=@_localizer["Point.Balance"] Style="text-align:right">
                 @($"{context.Balance:N0}")
             </MudTd>

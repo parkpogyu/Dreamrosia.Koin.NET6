@@ -21,15 +21,15 @@ else
         <FullSpacer />
         <DateRangePicker DateRange="_dateRange"
                      SelectedTerm="_dateRangeTerm"
-                     SelectedTermChanged="SelectedTermChanged"/>
+                     SelectedTermChanged="SelectedTermChanged" />
 
         <MudButton DisableElevation
-                   OnClick="GetFollowersAsync"
-                   Variant="Variant.Filled"
-                   StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface"
-                   Color="MudBlazor.Color.Primary"
-                   Size="Size.Small"
-                   Class="align-self-end-button ml-4">
+               OnClick="GetFollowersAsync"
+               Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Refresh" IconColor="MudBlazor.Color.Surface"
+               Color="MudBlazor.Color.Primary"
+               Size="Size.Small"
+               Class="align-self-end-button ml-4">
             @_localizer["Reload"]
         </MudButton>
     </MudPaper>

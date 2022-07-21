@@ -150,13 +150,13 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 await _unitOfWork.Commit(new CancellationToken());
 
-                return await Result<string>.SuccessAsync(model.UserId, string.Format(_localizer["{0} Updated"], _localizer["UPbit.Open API Key"]));
+                return await Result.SuccessAsync(string.Format(_localizer["{0} Updated"], _localizer["UPbit.Open API Key"]));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<string>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
 
@@ -177,13 +177,13 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                     await _unitOfWork.Commit(new CancellationToken());
                 }
 
-                return await Result<bool>.SuccessAsync(true);
+                return await Result.SuccessAsync();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<string>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
 

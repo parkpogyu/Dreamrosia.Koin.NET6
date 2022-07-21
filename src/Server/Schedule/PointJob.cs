@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 namespace Dreamrosia.Koin.Server.Schedules
 {
     [DisallowConcurrentExecution]
-    public class CollectDelistingSymbolJob : IJob
+    public class PointJob : IJob
     {
-        private readonly IDelistingSymbolService _delistingSymbolService;
-        private readonly ILogger<CollectDelistingSymbolJob> _logger;
+        private readonly IPointService _pointService;
+        private readonly ILogger<PointJob> _logger;
 
-        public CollectDelistingSymbolJob(IDelistingSymbolService delistingSymbolService,
-                                         ILogger<CollectDelistingSymbolJob> logger)
+        public PointJob(IPointService pointService,
+                        ILogger<PointJob> logger)
         {
-            _delistingSymbolService = delistingSymbolService;
+            _pointService = pointService;
             _logger = logger;
         }
 
@@ -23,7 +23,7 @@ namespace Dreamrosia.Koin.Server.Schedules
         {
             try
             {
-                await _delistingSymbolService.CollectDelistingSymbolsAsync();
+                await _pointService.DailyDeductPoint();
             }
             catch (Exception ex)
             {

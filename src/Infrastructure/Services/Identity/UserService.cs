@@ -361,7 +361,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                     await _strUnitOfWork.Repository<Subscription>().UpdateAsync(item);
                     await _strUnitOfWork.Commit(new CancellationToken());
 
-                    return await Result<string>.SuccessAsync(model.UserId, string.Format(_localizer["{0} Updated"], _localizer["Subscription.Recommender"]));
+                    return await Result.SuccessAsync(string.Format(_localizer["{0} Updated"], _localizer["Subscription.Recommender"]));
                 }
 
             }
@@ -369,7 +369,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
             {
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<string>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
 

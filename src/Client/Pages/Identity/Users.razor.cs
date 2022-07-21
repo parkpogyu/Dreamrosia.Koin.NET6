@@ -167,6 +167,10 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
             {
                 view.Title = _localizer["Follower"];
             }
+            else if (view.URL.Equals("/personal/points"))
+            {
+                view.Title = _localizer["Points"];
+            }
             else if (view.URL.Equals("/investment/positions"))
             {
                 view.Title = _localizer["Positions"];

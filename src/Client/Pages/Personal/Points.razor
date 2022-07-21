@@ -2,11 +2,14 @@
 @page "/personal/points/{userId}"
 @attribute [Authorize(Policy = Permissions.Points.View)]
 
-<PageMenuTitle Menus="@(new []
+@if (PageMode == PageModes.None)
+{
+    <PageMenuTitle Menus="@(new []
 {
     $"{_localizer["Personal"]}",
-    $"{_localizer["Settlement.Points"]}",
-})" />
+    $"{_localizer["Points"]}",
+})" UserId="@UserId"  />
+}
 
 @if (!_loaded)
 {

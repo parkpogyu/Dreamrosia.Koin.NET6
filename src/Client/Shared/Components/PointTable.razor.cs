@@ -160,7 +160,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         //        await _jsRuntime.InvokeVoidAsync("Download", new
         //        {
         //            ByteArray = data,
-        //            FileName = $"{_localizer["Settlement.Points"]}.xlsx",
+        //            FileName = $"{_localizer["Points"]}.xlsx",
 
         //            MimeType = ApplicationConstants.MimeTypes.OpenXml
         //        });

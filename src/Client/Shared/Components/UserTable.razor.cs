@@ -236,6 +236,11 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             await NavigateTo(userId, "/personal/followers");
         }
 
+        private async Task NavigateToPoints(string userId)
+        {
+            await NavigateTo(userId, "/personal/points");
+        }
+
         private async Task NavigateToPositions(string userId)
         {
             await NavigateTo(userId, "/investment/positions");

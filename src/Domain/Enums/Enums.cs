@@ -26,7 +26,7 @@ namespace Dreamrosia.Koin.Domain.Enums
         Incentive,
 
         [Description("사용")]
-        Redeem,
+        Deduct,
 
         [Description("환불")]
         Refund,

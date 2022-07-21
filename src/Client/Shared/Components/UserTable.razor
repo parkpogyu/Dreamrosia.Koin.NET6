@@ -153,6 +153,7 @@
                                 <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToUPbitKey(context.Id))">@_localizer["UPbit.AuthKey"]</MudButton>
                             }
                             <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToFollowers(context.Id))">@_localizer["Follower"]</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToPoints(context.Id))">@_localizer["Points"]</MudButton>
                             @if (context.UPbitKey is not null)
                             {
                                 <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Size="Size.Small" Class="auto-min-width ml-1" OnClick="@(() => NavigateToPositions(context.Id))">@_localizer["Positions"]</MudButton>

@@ -2,6 +2,7 @@
 using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Interfaces.Repositories;
 using Dreamrosia.Koin.Application.Interfaces.Services;
+using Dreamrosia.Koin.Domain.Enums;
 using Dreamrosia.Koin.Domain.Entities;
 using Dreamrosia.Koin.Infrastructure.Contexts;
 using Dreamrosia.Koin.Infrastructure.Models.Identity;
@@ -17,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dreamrosia.Koin.Shared.Constants.Application;
 
 namespace Dreamrosia.Koin.Infrastructure.Services
 {
@@ -249,6 +251,12 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                                              .AsNoTracking()
                                              .SingleOrDefaultAsync(f => f.Id.Equals(userId));
 
+            var point = await _context.Points
+                                      .AsNoTracking()
+                                      .Where(f => f.Id.Equals(userId))
+                                      .OrderBy(f => f.done_at)
+                                      .LastOrDefaultAsync();
+
             var tradingTerms = await _context.TradingTerms
                                              .AsNoTracking()
                                              .SingleOrDefaultAsync(f => f.Id.Equals(userId));
@@ -266,8 +274,19 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
             item.Ticket = bot.Ticket;
 
-            item.MaximumAsset = subscription.MaximumAsset;
-            //item.MaximumAsset = 1000000000;
+#if DEBUG
+
+            if (MembershipLevel.Free < subscription.Level &&
+                0 < subscription.DailyDeductionPoint && 
+                Convert.ToInt64(point?.Balance) < subscription.DailyDeductionPoint)
+            {
+                item.MaximumAsset = DefaultValue.TradingTerms.MaximumAsset4Free;
+            }
+            else
+#endif
+            {
+                item.MaximumAsset = subscription.MaximumAsset;
+            }
 
             item.LastOrder = _mapper.Map<OrderDto>(order);
             item.LastDeposit = _mapper.Map<TransferDto>(deposit);

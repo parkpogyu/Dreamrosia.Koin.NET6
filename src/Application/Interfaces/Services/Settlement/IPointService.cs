@@ -8,5 +8,6 @@ namespace Dreamrosia.Koin.Application.Interfaces.Services
     public interface IPointService
     {
         Task<IResult<IEnumerable<PointDto>>> GetPointsAsync(PointsRequestDto model);
+        Task<IResult> DailyDeductPoint();
     }
 }

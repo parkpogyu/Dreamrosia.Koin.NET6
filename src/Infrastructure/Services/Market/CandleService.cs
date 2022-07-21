@@ -123,7 +123,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 await _unitOfWork.Commit(new CancellationToken());
 
-                return await Result<int>.SuccessAsync(models.Count(), string.Format(_localizer["{0} Updated"], _localizer["Candles"]));
+                return await Result.SuccessAsync(string.Format(_localizer["{0} Updated"], _localizer["Candles"]));
 
             }
             catch (Exception ex)
@@ -132,7 +132,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<int>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
     }

@@ -59,6 +59,10 @@ else
                                 {
                                     <Dreamrosia.Koin.Client.Pages.Personal.Followers UserId="@item.UserId" PageMode="@_pageMode" />
                                 }
+                                else if (item.URL.Equals("/personal/points"))
+                                {
+                                    <Dreamrosia.Koin.Client.Pages.Personal.Points UserId="@item.UserId" PageMode="@_pageMode" />
+                                }
                                 else if (item.URL.Equals("/investment/positions"))
                                 {
                                     <Dreamrosia.Koin.Client.Pages.Investment.Positions UserId="@item.UserId" PageMode="@_pageMode" />

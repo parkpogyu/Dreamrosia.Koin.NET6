@@ -8,20 +8,20 @@ using System.Threading.Tasks;
 namespace Dreamrosia.Koin.Server.Schedules
 {
     [DisallowConcurrentExecution]
-    public class DetermineSeasonSignalJob : IJob
+    public class SeasonSignalJob : IJob
     {
         private readonly IUPbitCrixService _upbitCrixService;
         private readonly IUPbitSymbolService _upbitSymbolService;
         private readonly IUPbitCandleService _upbitCandleService;
         private readonly ISeasonSignalService _seasonSignalService;
-        private readonly ILogger<DetermineSeasonSignalJob> _logger;
+        private readonly ILogger<SeasonSignalJob> _logger;
 
-        public DetermineSeasonSignalJob(IUPbitCrixService upbitCrixService,
-                                        IUPbitSymbolService upbitSymbolService,
-                                        IUPbitCandleService upbitCandleService,
-                                        ISeasonSignalService seasonSignalService,
-                                        ILogger<DetermineSeasonSignalJob> logger)
-        {
+        public SeasonSignalJob(IUPbitCrixService upbitCrixService,
+                               IUPbitSymbolService upbitSymbolService,
+                               IUPbitCandleService upbitCandleService,
+                               ISeasonSignalService seasonSignalService,
+                               ILogger<SeasonSignalJob> logger)
+{
             _upbitCrixService = upbitCrixService;
             _upbitSymbolService = upbitSymbolService;
             _upbitCandleService = upbitCandleService;

@@ -6,7 +6,7 @@ namespace Dreamrosia.Koin.Domain.Entities
 {
     public class Point : AuditableEntity<int>
     {
-        public int TransactionId { get; set; }
+        public int? TransactionId { get; set; }
 
         public string UserId { get; set; }
         public DateTime done_at { get; set; }

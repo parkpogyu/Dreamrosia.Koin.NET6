@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 namespace Dreamrosia.Koin.Server.Schedules
 {
     [DisallowConcurrentExecution]
-    public class CollectMarketIndexJob : IJob
+    public class MiningBotJob : IJob
     {
-        private readonly IUPbitMarketIndexService _upbitMarketIndexService;
-        private readonly ILogger<CollectMarketIndexJob> _logger;
+        private readonly IMiningBotService _miningBotService;
+        private readonly ILogger<MiningBotJob> _logger;
 
-        public CollectMarketIndexJob(IUPbitMarketIndexService upbitMarketIndexService,
-                                     ILogger<CollectMarketIndexJob> logger)
+        public MiningBotJob(IMiningBotService miningBotService,
+                            ILogger<MiningBotJob> logger)
         {
-            _upbitMarketIndexService = upbitMarketIndexService;
+            _miningBotService = miningBotService;
             _logger = logger;
         }
 
@@ -23,7 +23,7 @@ namespace Dreamrosia.Koin.Server.Schedules
         {
             try
             {
-                await _upbitMarketIndexService.GetMarketIndicesAsync();
+                await _miningBotService.MappingMiningBotAsync();
             }
             catch (Exception ex)
             {

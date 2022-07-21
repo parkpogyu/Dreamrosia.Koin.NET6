@@ -1,5 +1,6 @@
 ﻿using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Extensions;
+using Dreamrosia.Koin.Client.Enums;
 using Dreamrosia.Koin.Client.Extensions;
 using Dreamrosia.Koin.Client.Infrastructure.Managers;
 using Dreamrosia.Koin.Domain.Enums;
@@ -15,6 +16,7 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
     public partial class Points
     {
         [Inject] private ISettlementManager SettlmentManager { get; set; }
+        [Parameter] public PageModes PageMode { get; set; }
 
         [Parameter] public string UserId { get; set; }
 

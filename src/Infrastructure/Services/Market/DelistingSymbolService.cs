@@ -77,7 +77,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 await _unitOfWork.Commit(new CancellationToken());
 
-                return await Result<string>.SuccessAsync(string.Format(_localizer["{0} Updated"], _localizer["Delisting Symbols"]));
+                return await Result.SuccessAsync(string.Format(_localizer["{0} Updated"], _localizer["Delisting Symbols"]));
             }
             catch (Exception ex)
             {
@@ -85,7 +85,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<string>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
 
@@ -103,16 +103,9 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                     await _unitOfWork.Repository<DelistingSymbol>().DeleteAsync(item);
                 }
 
-                if (items.Any())
-                {
-                    await _unitOfWork.Commit(new CancellationToken());
+                await _unitOfWork.Commit(new CancellationToken());
 
-                    return await Result<string>.SuccessAsync(string.Format(_localizer["{0} Deleted"], _localizer["Delisting Symbols"]));
-                }
-                else
-                {
-                    return await Result<string>.FailAsync(string.Format(_localizer["{0} Not Found"], _localizer["Delisting Symbols"]));
-                }
+                return await Result.SuccessAsync(string.Format(_localizer["{0} Deleted"], _localizer["Delisting Symbols"]));
             }
             catch (Exception ex)
             {
@@ -120,7 +113,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<string>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
 
@@ -151,25 +144,18 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                         await _unitOfWork.Repository<DelistingSymbol>().AddAsync(_mapper.Map<DelistingSymbol>(item));
                     }
 
-                    if (items.Any())
-                    {
-                        await _unitOfWork.Commit(new CancellationToken());
+                    await _unitOfWork.Commit(new CancellationToken());
 
-                        return await Result<string>.SuccessAsync(string.Format(_localizer["{0} Saved"], _localizer["Delisting Symbols"]));
-                    }
-                    else
-                    {
-                        return await Result<string>.FailAsync(string.Format(_localizer["{0} Not Found"], _localizer["Delisting Symbols"]));
-                    }
+                    return await Result.SuccessAsync(string.Format(_localizer["{0} Saved"], _localizer["Delisting Symbols"]));
                 }
                 else
                 {
-                    return await Result<string>.FailAsync(_localizer["An unhandled error has occurred."]);
+                    return await Result.FailAsync(_localizer["An unhandled error has occurred."]);
                 }
             }
             catch (Exception ex)
             {
-                return await Result<string>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
     }

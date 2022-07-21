@@ -262,7 +262,7 @@ namespace Dreamrosia.Koin.Bot.Services
 
             // 금일 매수종목 제외
             DateTime utc = DateTime.UtcNow.Date;
-            var todays = ThisWeekOrders.Where(f => f.created_at.ToUniversalTime().Date == utc.Date && 
+            var todays = ThisWeekOrders.Where(f => f.created_at.ToUniversalTime().Date == utc.Date &&
                                                    f.side == OrderSide.bid);
 
             var limit = TradingConstants.MinOrderableAmount * 1.5F;
@@ -348,9 +348,10 @@ namespace Dreamrosia.Koin.Bot.Services
                 if (total == 0) { return false; }
                 if (TradingTerms.AmountOption == BidAmountOption.Auto && count == 0) { return false; }
 #if DEBUG
+#endif
                 // 회원등급별 최대 운용자산 맞춤
                 total = Math.Min(total, TradingTerms.MaximumAsset);
-#endif
+
                 long roundDown = TradingConstants.RoundDownUnit; // 절사 단위
                 long maxBidAmount = TradingConstants.MaxBidAmount; // 업비트 최대 주문 금액: 1,000,000,000
 
@@ -412,7 +413,7 @@ namespace Dreamrosia.Koin.Bot.Services
 
                 if (!orders.Any()) { return; }
 
-                await DoTradeAsync(orders); 
+                await DoTradeAsync(orders);
 
             }
             catch (Exception ex)
@@ -485,7 +486,8 @@ namespace Dreamrosia.Koin.Bot.Services
 
                     message = $"[{response.Code}]:{response.FullMessage}";
 
-                    if (response.FullMessage?.Contains("일시적인 거래량 급증으로 먼저 접수된 주문을 처리중입니다.") == true)
+                    if (response.Code.Equals("too_many_request_order") ||
+                        response.FullMessage?.Contains("일시적인 거래량 급증으로 먼저 접수된 주문을 처리중입니다.") == true )
                     {
                         temporaryErrors.Add(order);
                     }
@@ -507,9 +509,8 @@ namespace Dreamrosia.Koin.Bot.Services
             }
 
             if (!temporaryErrors.Any()) { return; }
-            
-            await Task.Delay(100);
 
+            await Task.Delay(100);
             await DoTradeAsync(temporaryErrors);
         }
 

@@ -88,7 +88,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                                          .SingleOrDefaultAsync(p => p.Id.Equals(model.UserId));
                 if (user is null)
                 {
-                    return await Result<string>.FailAsync(_localizer["User Not Found!"]);
+                    return await Result.FailAsync(_localizer["User Not Found!"]);
                 }
 
                 results.Add(await UpdateTradingTermsAsync(_mapper.Map<TradingTerms>(model)));
@@ -96,11 +96,11 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 if (results.Count == results.Count(f => f.Succeeded))
                 {
-                    return await Result<string>.SuccessAsync(model.UserId, string.Format(_localizer["{0} Updated"], _localizer["TradingTerms"]));
+                    return await Result.SuccessAsync(string.Format(_localizer["{0} Updated"], _localizer["TradingTerms"]));
                 }
                 else
                 {
-                    return await Result<string>.FailAsync(results.Where(f => !f.Succeeded).SelectMany(f => f.Messages).ToList());
+                    return await Result.FailAsync(results.Where(f => !f.Succeeded).SelectMany(f => f.Messages).ToList());
                 }
 
             }
@@ -108,7 +108,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             {
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<string>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
 
@@ -119,13 +119,13 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                 await _strUnitOfWork.Repository<TradingTerms>().UpdateAsync(model);
                 await _strUnitOfWork.Commit(new CancellationToken());
 
-                return await Result<string>.SuccessAsync(model.Id, string.Format(_localizer["{0} Updated"], _localizer["TradingTerms"]));
+                return await Result.SuccessAsync(string.Format(_localizer["{0} Updated"], _localizer["TradingTerms"]));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<string>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
 
@@ -171,7 +171,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 await _intUnitOfWork.Commit(new CancellationToken());
 
-                return await Result<string>.SuccessAsync(string.Format(_localizer["{0} Updated"], _localizer["Trading.ChosenSymbols"]));
+                return await Result.SuccessAsync(string.Format(_localizer["{0} Updated"], _localizer["Trading.ChosenSymbols"]));
             }
             catch (Exception ex)
             {
@@ -179,7 +179,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<string>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
     }

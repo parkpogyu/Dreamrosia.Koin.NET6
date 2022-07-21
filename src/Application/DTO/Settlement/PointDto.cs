@@ -10,7 +10,7 @@ namespace Dreamrosia.Koin.Application.DTO
     {
         public int Id { get; set; }
 
-        public int TransactionId { get; set; }
+        public int? TransactionId { get; set; }
         public string UserId { get; set; }
         public DateTime done_at { get; set; }
         public MembershipLevel Membership { get; set; }
@@ -20,12 +20,6 @@ namespace Dreamrosia.Koin.Application.DTO
 
         [JsonIgnore]
         public DateTime? transaction_at => Transaction is null ? null : Transaction.done_at;
-        [JsonIgnore]
-        public long Charging => (Type == PointType.Charging || Type == PointType.Coupon) ? Amount : 0;
-        [JsonIgnore]
-        public long Reedeem => Type == PointType.Redeem ? Amount : 0;
-        [JsonIgnore]
-        public long Refund => Type == PointType.Refund ? Amount : 0;
 
         public BankingTransactionDto Transaction { get; set; }
     }

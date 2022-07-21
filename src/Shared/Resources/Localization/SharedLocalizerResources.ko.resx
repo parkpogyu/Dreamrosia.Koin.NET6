@@ -1488,7 +1488,7 @@
   <data name="File Select" xml:space="preserve">
     <value>파일선택</value>
   </data>
-  <data name="Settlement.Points" xml:space="preserve">
+  <data name="Points" xml:space="preserve">
     <value>포인트 내역</value>
   </data>
   <data name="BankingTransaction.AccountHolder" xml:space="preserve">
@@ -1539,7 +1539,7 @@
   <data name="Point.PointType" xml:space="preserve">
     <value>포인트 종류</value>
   </data>
-  <data name="Point.Redeem" xml:space="preserve">
+  <data name="Point.Deduct" xml:space="preserve">
     <value>사용 포인트</value>
   </data>
   <data name="Point.Refund" xml:space="preserve">

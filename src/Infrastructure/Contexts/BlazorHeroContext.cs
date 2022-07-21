@@ -756,6 +756,7 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                 entity.ToTable("Points").HasComment("포인트 정보");
 
                 entity.Property(p => p.TransactionId)
+                      .IsRequired(false)
                       .HasComment("입금 거래번호");
 
                 entity.Property(p => p.UserId)
@@ -773,7 +774,7 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                       .HasComment("회원등급");
 
                 entity.Property(p => p.Type)
-                      .HasDefaultValue(PointType.Redeem)
+                      .HasDefaultValue(PointType.Deduct)
                       .IsRequired(true)
                       .HasComment("거래종류");
 

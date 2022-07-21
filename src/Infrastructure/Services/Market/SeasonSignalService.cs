@@ -65,7 +65,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             }
         }
 
-        public async Task<IResult<int>> UpdateSeasonSignalsAsync(string userId)
+        public async Task<IResult> UpdateSeasonSignalsAsync(string userId)
         {
             try
             {
@@ -98,20 +98,20 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 if (saved.Succeeded)
                 {
-                    return await Result<int>.SuccessAsync(items.Count());
+                    return await Result.SuccessAsync();
                 }
                 else
                 {
                     _logger.LogWarning($"SaveSeasonSignalsAsync: {saved.FullMessage}");
 
-                    return await Result<int>.FailAsync(saved.Messages);
+                    return await Result.FailAsync(saved.Messages);
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<int>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
 
@@ -184,14 +184,14 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 await _unitOfWork.Commit(new CancellationToken());
 
-                return await Result<int>.SuccessAsync(models.Count(), string.Format(_localizer["{0} Updated"], _localizer["SeasonSignals"]));
+                return await Result.SuccessAsync(string.Format(_localizer["{0} Updated"], _localizer["SeasonSignals"]));
 
             }
             catch (Exception)
             {
                 await _unitOfWork.Rollback();
 
-                throw;
+                return await Result.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
     }
