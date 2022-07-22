@@ -2,6 +2,7 @@
 using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Interfaces.Services;
 using Dreamrosia.Koin.Shared.Common;
+using Dreamrosia.Koin.Shared.Constants.Application;
 using Dreamrosia.Koin.Shared.Enums;
 using Dreamrosia.Koin.Shared.Extensions;
 using Dreamrosia.Koin.Shared.Localization;
@@ -85,7 +86,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
             foreach (var date in dates)
             {
-                model.Amount = (long)AdjustBidAmount(asset.DssAmt, count);
+                model.Amount = (int)AdjustBidAmount(asset.DssAmt, count);
 
                 Parallel.ForEach(traders, trader =>
                 {
@@ -135,7 +136,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             {
                 bool applyMarket = model.ApplyMarketPrice;
 
-                long amount = 0;
+                int amount = 0;
 
                 if (model.AmountOption == BidAmountOption.Fixed)
                 {
@@ -143,13 +144,13 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                 }
                 else
                 {
-                    long roundDown = 1000;
-                    long maxBidAmount = 1000000000;
+                    int roundDown = StaticValue.TradingTerms.RoundDown;
+                    int maxBidAmount = StaticValue.TradingTerms.MaximumAmount;
 
                     float rate = model.AmountOption == BidAmountOption.Auto ?
-                                 1F / count : model.AmountRate / 100F;
+                                 1F / count : model.AmountRate / StaticValue.Hundred;
 
-                    amount = (long)(Math.Truncate((total * rate) / roundDown)) * roundDown;  // 절사 단위로 거래
+                    amount = (int)(Math.Truncate((total * rate) / roundDown)) * roundDown;  // 절사 단위로 거래
 
                     if (amount < model.Minimum)
                     {

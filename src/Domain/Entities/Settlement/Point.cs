@@ -12,8 +12,8 @@ namespace Dreamrosia.Koin.Domain.Entities
         public DateTime done_at { get; set; }
         public MembershipLevel Membership { get; set; }
         public PointType Type { get; set; }
-        public long Amount { get; set; }
-        public long Balance { get; set; }
+        public int Amount { get; set; }
+        public int Balance { get; set; }
 
         public IDomainUser User { get; set; }
         public BankingTransaction Transaction { get; set; }

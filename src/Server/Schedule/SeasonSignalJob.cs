@@ -21,7 +21,7 @@ namespace Dreamrosia.Koin.Server.Schedules
                                IUPbitCandleService upbitCandleService,
                                ISeasonSignalService seasonSignalService,
                                ILogger<SeasonSignalJob> logger)
-{
+        {
             _upbitCrixService = upbitCrixService;
             _upbitSymbolService = upbitSymbolService;
             _upbitCandleService = upbitCandleService;

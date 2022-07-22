@@ -48,8 +48,5 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Models
         public Market market { get; set; }
         public Position bid_account { get; set; }
         public Position ask_account { get; set; }
-
-        public static long MinimumBidAmount => 10000;
-        public static long MinimumOrderableAmount => 5000;
     }
 }

@@ -24,9 +24,9 @@ namespace Dreamrosia.Koin.Application.DTO
         #region Bid Terms
         public BidAmountOption AmountOption { get; set; } = BidAmountOption.Auto;
         public float AmountRate { get; set; } = 1F;
-        public long Amount { get; set; } = 10000;
-        public long Minimum { get; set; } = 10000;
-        public long Maximum { get; set; } = 0;
+        public int Amount { get; set; } = 10000;
+        public int Minimum { get; set; } = 10000;
+        public int Maximum { get; set; } = 0;
         public bool Pyramiding { get; set; } = false;
         public bool ApplyMarketPrice { get; set; } = true;
         #endregion
@@ -34,7 +34,7 @@ namespace Dreamrosia.Koin.Application.DTO
         #region General Terms
         public bool AutoTrading { get; set; } = false;
         public TimeFrames TimeFrame { get; set; } = TimeFrames.Day;
-        public long MaximumAsset { get; set; } = DefaultValue.TradingTerms.MaximumAsset4Free;
+        public long MaximumAsset { get; set; } = StaticValue.TradingTerms.MaximumAsset4Free;
         public bool Rebalancing { get; set; } = false;
         public OrderBy RebalancingOrder { get; set; } = OrderBy.asc;
         #endregion

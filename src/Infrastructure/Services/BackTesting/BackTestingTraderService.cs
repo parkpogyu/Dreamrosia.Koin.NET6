@@ -288,7 +288,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             order.avg_price = next.opening_price;
             order.executed_volume = (decimal)(terms.Amount / next.opening_price);
             order.exec_amount = order.avg_price * (double)order.executed_volume;
-            order.paid_fee = (decimal)(order.exec_amount * DefaultValue.Fees.Rate4KRW);
+            order.paid_fee = (decimal)(order.exec_amount * StaticValue.Fees.Rate4KRW);
             order.VolumeRate = (float)Ratio.ToPercentage((double)next.candle_acc_trade_volume, (double)order.executed_volume);
 
             return order;
@@ -312,7 +312,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
             order.avg_price = next.opening_price;
             order.exec_amount = order.avg_price * (double)order.executed_volume;
-            order.paid_fee = (decimal)(order.exec_amount * DefaultValue.Fees.Rate4KRW);
+            order.paid_fee = (decimal)(order.exec_amount * StaticValue.Fees.Rate4KRW);
             order.PnL = (double)Position.balance * (order.avg_price - Position.avg_buy_price);
             order.PnLRat = (float)Ratio.ToSignedPercentage(order.avg_price, Position.avg_buy_price);
             order.VolumeRate = (float)Ratio.ToPercentage(next.candle_acc_trade_volume, (double)order.executed_volume);

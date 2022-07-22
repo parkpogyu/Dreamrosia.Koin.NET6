@@ -15,8 +15,8 @@ namespace Dreamrosia.Koin.Application.DTO
         public DateTime done_at { get; set; }
         public MembershipLevel Membership { get; set; }
         public PointType Type { get; set; }
-        public long Amount { get; set; }
-        public long Balance { get; set; }
+        public int Amount { get; set; }
+        public int Balance { get; set; }
 
         [JsonIgnore]
         public DateTime? transaction_at => Transaction is null ? null : Transaction.done_at;

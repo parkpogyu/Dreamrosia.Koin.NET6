@@ -25,9 +25,9 @@ namespace Dreamrosia.Koin.Bot.DTO
         #region Bid Terms
         public BidAmountOption AmountOption { get; set; } = BidAmountOption.Auto;
         public float AmountRate { get; set; } = 1F;
-        public long Amount { get; set; } = 10000;
-        public long Minimum { get; set; } = 10000;
-        public long Maximum { get; set; } = 0;
+        public int Amount { get; set; } = 10000;
+        public int Minimum { get; set; } = 10000;
+        public int Maximum { get; set; } = 0;
         public bool Pyramiding { get; set; } = false;
         public bool ApplyMarketPrice { get; set; } = true;
         #endregion

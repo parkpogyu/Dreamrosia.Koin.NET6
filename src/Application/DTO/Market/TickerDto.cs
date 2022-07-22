@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Dreamrosia.Koin.Shared.Constants.Application;
+using System.ComponentModel.DataAnnotations;
 
 namespace Dreamrosia.Koin.Application.DTO
 {
@@ -18,7 +19,7 @@ namespace Dreamrosia.Koin.Application.DTO
             {
                 return $"{price:N4}";
             }
-            else if (1 < price && price < 100)
+            else if (1 < price && price < StaticValue.Hundred)
             {
                 return $"{price:N2}";
             }

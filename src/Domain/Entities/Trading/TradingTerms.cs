@@ -21,9 +21,9 @@ namespace Dreamrosia.Koin.Domain.Entities
         #region Bid Terms
         public BidAmountOption AmountOption { get; set; }
         public float AmountRate { get; set; }
-        public long Amount { get; set; }
-        public long Minimum { get; set; }
-        public long Maximum { get; set; }
+        public int Amount { get; set; }
+        public int Minimum { get; set; }
+        public int Maximum { get; set; }
         public bool Pyramiding { get; set; }
         public bool ApplyMarketPrice { get; set; }
         #endregion

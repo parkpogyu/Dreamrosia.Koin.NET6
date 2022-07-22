@@ -1,6 +1,6 @@
 ﻿namespace Dreamrosia.Koin.Shared.Constants.Application
 {
-    public static class DefaultValue
+    public static class StaticValue
     {
         public static class TradingTerms
         {
@@ -8,8 +8,9 @@
             public static int MaximumAsset4Basic => 15000000;
             public static int MinimumAsset4Advanced => 20000000;
             public static int MinimumAmount => 10000;
-            public static int MaximumAmount => 100000000;
+            public static int MaximumAmount => 1000000000;
             public static long MaximumAsset => 10000000000;
+            public static int RoundDown => 1000;
         }
 
         public static class Fees
@@ -29,5 +30,10 @@
             public static int Basic => 990;
             public static int Divider => 5000000;
         }
+
+        public static int Hundred => 100;
+        public static int Thousand => 1000;
+        public static int HundredMillion => 100000000;
+        public static int Billion => 1000000000;
     }
 }

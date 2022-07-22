@@ -70,23 +70,23 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                                           .Include(i => i.Subscription)
                                           .Include(i => i.TradingTerms)
                                           .Include(i => i.Points)
-                                          .Where(f => f.Subscription.Level > MembershipLevel.Free && 
+                                          .Where(f => f.Subscription.Level != MembershipLevel.Free &&
                                                       f.Subscription.DailyDeductionPoint > 0)
                                           .ToArrayAsync();
 
                 DateTime now = DateTime.Now;
 
                 Point last = null;
-                long balance = 0;
+                int balance = 0;
 
                 foreach (var user in users)
                 {
                     last = user.Points.SingleOrDefault(f => f.Type == PointType.Deduct &&
                                                             f.done_at.Date == now.Date);
 
-                    if (last is not null ) { continue; }
+                    if (last is not null) { continue; }
 
-                    balance = Convert.ToInt64(last?.Balance);
+                    balance = Convert.ToInt32(last?.Balance);
 
                     if (balance < user.Subscription.DailyDeductionPoint) { continue; }
 

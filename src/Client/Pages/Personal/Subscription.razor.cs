@@ -124,19 +124,19 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
 
             if (_model.Level == MembershipLevel.Free)
             {
-                _model.DailyDeductionPoint = DefaultValue.ChargingPoint.Free;
-                _model.MaximumAsset = DefaultValue.TradingTerms.MaximumAsset4Free;
+                _model.DailyDeductionPoint = StaticValue.ChargingPoint.Free;
+                _model.MaximumAsset = StaticValue.TradingTerms.MaximumAsset4Free;
             }
             else if (_model.Level == MembershipLevel.Basic)
             {
-                _model.DailyDeductionPoint = DefaultValue.ChargingPoint.Basic;
-                _model.MaximumAsset = DefaultValue.TradingTerms.MaximumAsset4Basic;
+                _model.DailyDeductionPoint = StaticValue.ChargingPoint.Basic;
+                _model.MaximumAsset = StaticValue.TradingTerms.MaximumAsset4Basic;
             }
             else
             {
-                if (_model.MaximumAsset < DefaultValue.TradingTerms.MinimumAsset4Advanced)
+                if (_model.MaximumAsset < StaticValue.TradingTerms.MinimumAsset4Advanced)
                 {
-                    _model.MaximumAsset = DefaultValue.TradingTerms.MinimumAsset4Advanced;
+                    _model.MaximumAsset = StaticValue.TradingTerms.MinimumAsset4Advanced;
                 }
 
                 SetDailyDeductionPoint();
@@ -147,7 +147,7 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
 
         private void MaximumAssetChanged(float value, bool update = true)
         {
-            var solution = value / DefaultValue.ChargingPoint.Divider;
+            var solution = value / StaticValue.ChargingPoint.Divider;
 
             var integer = (long)solution;
 
@@ -159,11 +159,11 @@ namespace Dreamrosia.Koin.Client.Pages.Personal
             }
             else if (real < .5)
             {
-                _model.MaximumAsset = integer * DefaultValue.ChargingPoint.Divider;
+                _model.MaximumAsset = integer * StaticValue.ChargingPoint.Divider;
             }
             else
             {
-                _model.MaximumAsset = (integer + 1) * DefaultValue.ChargingPoint.Divider;
+                _model.MaximumAsset = (integer + 1) * StaticValue.ChargingPoint.Divider;
             }
 
             SetDailyDeductionPoint();

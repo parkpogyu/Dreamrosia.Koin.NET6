@@ -245,17 +245,17 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
 
                 entity.Property(p => p.MaximumAsset)
                       .IsRequired(true)
-                      .HasDefaultValue(DefaultValue.TradingTerms.MaximumAsset4Free)
+                      .HasDefaultValue(StaticValue.TradingTerms.MaximumAsset4Free)
                       .HasComment("최대 운용자산");
 
                 entity.Property(p => p.CommissionRate)
                       .IsRequired(true)
-                      .HasDefaultValue(DefaultValue.Fees.CommissionRate)
+                      .HasDefaultValue(StaticValue.Fees.CommissionRate)
                       .HasComment("수수료율");
 
                 entity.Property(p => p.DailyDeductionPoint)
                       .IsRequired(true)
-                      .HasDefaultValue(DefaultValue.ChargingPoint.Free)
+                      .HasDefaultValue(StaticValue.ChargingPoint.Free)
                       .HasComment("차감포인트");
 
                 entity.HasOne(p => p.User as BlazorHeroUser)
@@ -279,17 +279,17 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
 
                 entity.Property(p => p.MaximumAsset)
                       .IsRequired(true)
-                      .HasDefaultValue(DefaultValue.TradingTerms.MaximumAsset4Free)
+                      .HasDefaultValue(StaticValue.TradingTerms.MaximumAsset4Free)
                       .HasComment("최대 운용자산");
 
                 entity.Property(p => p.CommissionRate)
                       .IsRequired(true)
-                      .HasDefaultValue(DefaultValue.Fees.CommissionRate)
+                      .HasDefaultValue(StaticValue.Fees.CommissionRate)
                       .HasComment("수수료율");
 
                 entity.Property(p => p.DailyDeductionPoint)
                       .IsRequired(true)
-                      .HasDefaultValue(DefaultValue.ChargingPoint.Free)
+                      .HasDefaultValue(StaticValue.ChargingPoint.Free)
                       .HasComment("차감포인트");
 
                 entity.Property(p => p.GoBoast)

@@ -37,7 +37,7 @@ namespace Dreamrosia.Koin.Bot.Services
         /// </summary>
         private readonly int DelayPositionCheckTime = 3;
 
-        private long BidAmount { get; set; }
+        private int BidAmount { get; set; }
 
         public TradeOrderService(IMapper mapper,
                                  ILogger<TradeOrderService> logger)
@@ -347,18 +347,17 @@ namespace Dreamrosia.Koin.Bot.Services
 
                 if (total == 0) { return false; }
                 if (TradingTerms.AmountOption == BidAmountOption.Auto && count == 0) { return false; }
-#if DEBUG
-#endif
+
                 // 회원등급별 최대 운용자산 맞춤
                 total = Math.Min(total, TradingTerms.MaximumAsset);
 
-                long roundDown = TradingConstants.RoundDownUnit; // 절사 단위
-                long maxBidAmount = TradingConstants.MaxBidAmount; // 업비트 최대 주문 금액: 1,000,000,000
+                int roundDown = TradingConstants.RoundDown; // 절사 단위
+                int maxBidAmount = TradingConstants.MaxBidAmount; // 업비트 최대 주문 금액: 1,000,000,000
 
                 float rate = TradingTerms.AmountOption == BidAmountOption.Auto ?
                              1F / count : TradingTerms.AmountRate / 100F;
 
-                BidAmount = (long)(Math.Truncate((total * rate) / roundDown)) * roundDown;  // 절사 단위로 거래
+                BidAmount = (int)(Math.Truncate((total * rate) / roundDown)) * roundDown;  // 절사 단위로 거래
 
                 if (BidAmount < TradingTerms.Minimum)
                 {
@@ -413,8 +412,12 @@ namespace Dreamrosia.Koin.Bot.Services
 
                 if (!orders.Any()) { return; }
 
-                await DoTradeAsync(orders);
+                while (orders.Any())
+                {
+                    orders = (await DoTradeAsync(orders)).ToList();
 
+                    await Task.Delay(100);
+                }
             }
             catch (Exception ex)
             {
@@ -422,7 +425,7 @@ namespace Dreamrosia.Koin.Bot.Services
             }
         }
 
-        private async Task DoTradeAsync(IEnumerable<OrderPostParameterDto> orders)
+        private async Task<IEnumerable<OrderPostParameterDto>> DoTradeAsync(IEnumerable<OrderPostParameterDto> orders)
         {
             List<OrderPostParameterDto> temporaryErrors = new List<OrderPostParameterDto>();
 
@@ -487,7 +490,7 @@ namespace Dreamrosia.Koin.Bot.Services
                     message = $"[{response.Code}]:{response.FullMessage}";
 
                     if (response.Code.Equals("too_many_request_order") ||
-                        response.FullMessage?.Contains("일시적인 거래량 급증으로 먼저 접수된 주문을 처리중입니다.") == true )
+                        response.FullMessage?.Contains("일시적인 거래량 급증으로 먼저 접수된 주문을 처리중입니다.") == true)
                     {
                         temporaryErrors.Add(order);
                     }
@@ -508,10 +511,7 @@ namespace Dreamrosia.Koin.Bot.Services
                 _logger.LogError(ex, ex.Message);
             }
 
-            if (!temporaryErrors.Any()) { return; }
-
-            await Task.Delay(100);
-            await DoTradeAsync(temporaryErrors);
+            return temporaryErrors;
         }
 
         private string GetPriceText(double price)

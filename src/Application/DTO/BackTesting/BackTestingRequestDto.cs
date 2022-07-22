@@ -5,7 +5,7 @@ namespace Dreamrosia.Koin.Application.DTO
 {
     public class BackTestingRequestDto : TradingTermsDto
     {
-        public long SeedMoney { get; set; } = DefaultValue.TradingTerms.MaximumAsset4Basic;
+        public long SeedMoney { get; set; } = StaticValue.TradingTerms.MaximumAsset4Basic;
         public DateTime? HeadDate { get; set; } = new DateTime(2017, 09, 25);
         public DateTime? RearDate { get; set; } = DateTime.Now.Date;
         public bool IncludeOrders { get; set; }
@@ -21,18 +21,18 @@ namespace Dreamrosia.Koin.Application.DTO
         public float _Amount
         {
             get => Amount;
-            set => Amount = (long)value;
+            set => Amount = (int)value;
         }
 
         public float _Minimum
         {
             get => Minimum;
-            set => Minimum = (long)value;
+            set => Minimum = (int)value;
         }
         public float _Maximum
         {
             get => Maximum;
-            set => Maximum = (long)value;
+            set => Maximum = (int)value;
         }
         #endregion
     }

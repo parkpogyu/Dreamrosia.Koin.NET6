@@ -2,10 +2,11 @@
 using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Interfaces.Repositories;
 using Dreamrosia.Koin.Application.Interfaces.Services;
-using Dreamrosia.Koin.Domain.Enums;
 using Dreamrosia.Koin.Domain.Entities;
+using Dreamrosia.Koin.Domain.Enums;
 using Dreamrosia.Koin.Infrastructure.Contexts;
 using Dreamrosia.Koin.Infrastructure.Models.Identity;
+using Dreamrosia.Koin.Shared.Constants.Application;
 using Dreamrosia.Koin.Shared.Enums;
 using Dreamrosia.Koin.Shared.Localization;
 using Dreamrosia.Koin.Shared.Wrapper;
@@ -18,7 +19,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dreamrosia.Koin.Shared.Constants.Application;
 
 namespace Dreamrosia.Koin.Infrastructure.Services
 {
@@ -276,11 +276,11 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
 #if DEBUG
 
-            if (MembershipLevel.Free < subscription.Level &&
-                0 < subscription.DailyDeductionPoint && 
+            if (subscription.Level != MembershipLevel.Free &&
+                0 < subscription.DailyDeductionPoint &&
                 Convert.ToInt64(point?.Balance) < subscription.DailyDeductionPoint)
             {
-                item.MaximumAsset = DefaultValue.TradingTerms.MaximumAsset4Free;
+                item.MaximumAsset = StaticValue.TradingTerms.MaximumAsset4Free;
             }
             else
 #endif

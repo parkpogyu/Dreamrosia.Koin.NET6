@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Domain.Entities;
+using Dreamrosia.Koin.Shared.Constants.Application;
 
 namespace Dreamrosia.Koin.Application.Mappings
 {
@@ -13,8 +14,8 @@ namespace Dreamrosia.Koin.Application.Mappings
                                           .ForMember(d => d.Id, o => o.MapFrom(s => s.market));
 
             CreateMap<CrixDto, SymbolDto>().ForMember(d => d.trade_price, o => o.MapFrom(s => s.price))
-                                           .ForMember(d => d.marketCap, o => o.MapFrom(s => s.marketCap / 100000000))
-                                           .ForMember(d => d.accTradePrice24h, o => o.MapFrom(s => s.accTradePrice24h / 100000000));
+                                           .ForMember(d => d.marketCap, o => o.MapFrom(s => s.marketCap / StaticValue.HundredMillion))
+                                           .ForMember(d => d.accTradePrice24h, o => o.MapFrom(s => s.accTradePrice24h / StaticValue.HundredMillion));
 
             CreateMap<SeasonSignalDto, SymbolDto>();
 

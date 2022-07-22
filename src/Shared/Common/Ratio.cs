@@ -1,4 +1,6 @@
-﻿namespace Dreamrosia.Koin.Shared.Common
+﻿using Dreamrosia.Koin.Shared.Constants.Application;
+
+namespace Dreamrosia.Koin.Shared.Common
 {
     public class Ratio
     {
@@ -9,15 +11,12 @@
 
         public static double ToSignedPercentage(double numerator, double denominator)
         {
-            return (ToRatio(numerator, denominator) - 1) * Hundreadth;
+            return (ToRatio(numerator, denominator) - 1) * StaticValue.Hundred;
         }
 
         public static double ToPercentage(double numerator, double denominator)
         {
-            return ToRatio(numerator, denominator) * Hundreadth;
+            return ToRatio(numerator, denominator) * StaticValue.Hundred;
         }
-
-        public static double Hundreadth => 100;
     }
-
 }
