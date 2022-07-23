@@ -41,7 +41,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             WsTicker.OnMessageReceived += WsTicker_OnMessageReceived;
         }
 
-        public async Task<IResult<int>> InitializeAsync()
+        public async Task<IResult> InitializeAsync()
         {
             using var scope = _serviceProvider.CreateScope();
 
@@ -76,7 +76,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 WsTicker.Send(Tickers.Keys);
 
-                return await Result<int>.SuccessAsync(items.Count());
+                return await Result.SuccessAsync();
             }
             else
             {
@@ -85,7 +85,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                 messages.AddRange(candles.Messages);
                 messages.AddRange(codes.Messages);
 
-                return await Result<int>.FailAsync(messages);
+                return await Result.FailAsync(messages);
             }
         }
 

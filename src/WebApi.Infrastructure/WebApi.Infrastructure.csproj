@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Authors>박보규</Authors>
+		<Company>드림로시아</Company>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<RootNamespace>Dreamrosia.Koin.WebApi.Infrastructure</RootNamespace>
+		<AssemblyName>Dreamrosia.Koin.WebApi.Infrastructure</AssemblyName>
+		<Version>1.0.0</Version>
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+	</PropertyGroup>
+	<ItemGroup>
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Shared.Wrapper\Shared.Wrapper.csproj" />
+	</ItemGroup>
+</Project>

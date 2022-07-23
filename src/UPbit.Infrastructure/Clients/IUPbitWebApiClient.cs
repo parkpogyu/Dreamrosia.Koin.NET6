@@ -1,4 +1,6 @@
-﻿namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
+﻿using Dreamrosia.Koin.WebApi.Infrastructure;
+
+namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 {
     public interface IUPbitWebApiClient<TParameter> : IUPbitWebApiClient where TParameter : IWebApiParameter
     {

@@ -32,7 +32,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             _logger = logger;
         }
 
-        public async Task<IResult<int>> GetCandlesAsync()
+        public async Task<IResult> GetCandlesAsync()
         {
             var markets = _context.Symbols.Select(f => f.Id);
 
@@ -42,7 +42,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             {
                 _logger.LogWarning($"GetLastCandlesAsync: {candidates.FullMessage}");
 
-                return await Result<int>.FailAsync(candidates.Messages);
+                return await Result.FailAsync(candidates.Messages);
             }
 
             QtCandle QtCandle = new QtCandle();
@@ -74,7 +74,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                     {
                         _logger.LogWarning($"GetCandlesAsync {result.FullMessage}");
 
-                        return await Result<int>.FailAsync(result.Messages);
+                        return await Result.FailAsync(result.Messages);
                     }
 
                     if (!result.Data.Any()) { break; }
@@ -93,13 +93,13 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
             if (saved.Succeeded)
             {
-                return await Result<int>.SuccessAsync(items.Count());
+                return await Result.SuccessAsync();
             }
             else
             {
                 _logger.LogWarning($"SaveCandlesAsync: {saved.FullMessage}");
 
-                return await Result<int>.FailAsync(saved.Messages);
+                return await Result.FailAsync(saved.Messages);
             }
         }
     }

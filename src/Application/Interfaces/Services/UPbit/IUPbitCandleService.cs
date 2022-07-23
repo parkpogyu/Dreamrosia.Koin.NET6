@@ -5,6 +5,6 @@ namespace Dreamrosia.Koin.Application.Interfaces.Services
 {
     public interface IUPbitCandleService
     {
-        Task<IResult<int>> GetCandlesAsync();
+        Task<IResult> GetCandlesAsync();
     }
 }

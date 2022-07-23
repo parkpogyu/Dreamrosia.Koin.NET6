@@ -1,4 +1,6 @@
-﻿namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
+﻿using Dreamrosia.Koin.WebApi.Infrastructure;
+
+namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 {
     public class QuotaionClient<TParameter> : UPbitWebApiClient<TParameter>, IQuotaionClient where TParameter : IWebApiParameter
     {

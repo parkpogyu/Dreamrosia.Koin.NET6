@@ -1,4 +1,5 @@
 ﻿using Dreamrosia.Koin.Shared.Enums;
+using Dreamrosia.Koin.WebApi.Infrastructure;
 using System.ComponentModel.DataAnnotations;
 
 namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients

@@ -25,7 +25,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             _logger = logger;
         }
 
-        public async Task<IResult<int>> GetCrixesAsync()
+        public async Task<IResult> GetCrixesAsync()
         {
             QtCrix QtCrix = new QtCrix();
 
@@ -41,20 +41,20 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 if (saved.Succeeded)
                 {
-                    return await Result<int>.SuccessAsync(items.Count());
+                    return await Result.SuccessAsync();
                 }
                 else
                 {
                     _logger.LogWarning($"SaveCrixesAsync: {saved.FullMessage}");
 
-                    return await Result<int>.FailAsync(saved.Messages);
+                    return await Result.FailAsync(saved.Messages);
                 }
             }
             else
             {
                 _logger.LogWarning($"GetCrixesAsync: {result.FullMessage}");
 
-                return await Result<int>.FailAsync(result.Messages);
+                return await Result.FailAsync(result.Messages);
             }
         }
     }

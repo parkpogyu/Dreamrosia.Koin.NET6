@@ -489,7 +489,7 @@ namespace Dreamrosia.Koin.Bot.Services
 
                     message = $"[{response.Code}]:{response.FullMessage}";
 
-                    if (response.Code.Equals("too_many_request_order") ||
+                    if (response.Code?.Equals("too_many_request_order") == true ||
                         response.FullMessage?.Contains("일시적인 거래량 급증으로 먼저 접수된 주문을 처리중입니다.") == true)
                     {
                         temporaryErrors.Add(order);

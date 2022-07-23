@@ -89,3 +89,7 @@
 /src/Test/bin/Release/net6.0
 /src/UPbit.Infrastructure/bin/Release/net6.0
 /src/Test/bin/Debug/net6.0
+/src/CoinMarketCap.Infrastructure/bin/Debug/net6.0
+/src/CoinMarketCap.Infrastructure/obj
+/src/WebApi.Infrastructure/bin/Debug/net6.0
+/src/WebApi.Infrastructure/obj

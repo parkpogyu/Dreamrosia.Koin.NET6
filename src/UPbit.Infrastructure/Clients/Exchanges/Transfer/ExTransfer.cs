@@ -1,6 +1,7 @@
 ﻿using Dreamrosia.Koin.Shared.Enums;
 using Dreamrosia.Koin.Shared.Wrapper;
 using Dreamrosia.Koin.UPbit.Infrastructure.Models;
+using Dreamrosia.Koin.WebApi.Infrastructure;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;

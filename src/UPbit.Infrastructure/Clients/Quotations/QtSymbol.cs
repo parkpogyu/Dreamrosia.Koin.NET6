@@ -1,5 +1,6 @@
 ﻿using Dreamrosia.Koin.Shared.Wrapper;
 using Dreamrosia.Koin.UPbit.Infrastructure.Models;
+using Dreamrosia.Koin.WebApi.Infrastructure;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

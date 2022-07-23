@@ -213,6 +213,7 @@ namespace Dreamrosia.Koin.Server.Extensions
             services.AddTransient<ISeasonSignalService, SeasonSignalService>();
             services.AddTransient<ISymbolService, SymbolService>();
             services.AddTransient<IDelistingSymbolService, DelistingSymbolService>();
+            services.AddTransient<IUnlistedSymbolService, UnlistedSymbolService>();
             services.AddTransient<IMarketIndexService, MarketIndexService>();
 
             services.AddTransient<IMiningBotService, MiningBotService>();
@@ -388,6 +389,7 @@ namespace Dreamrosia.Koin.Server.Extensions
                     q.AddJobAndTrigger<SeasonSignalJob>();
                     q.AddJobAndTrigger<MarketIndexJob>();
                     q.AddJobAndTrigger<DelistingSymbolJob>();
+                    //q.AddJobAndTrigger<UnlistedSymbolJob>();
                     q.AddJobAndTrigger<PointJob>();
                 }
             });
@@ -417,6 +419,10 @@ namespace Dreamrosia.Koin.Server.Extensions
             else if (typeof(T) == typeof(DelistingSymbolJob))
             {
                 cronSchedule = "15 * * * * ?";
+            }
+            else if (typeof(T) == typeof(UnlistedSymbolJob))
+            {
+                cronSchedule = "20 * * * * ?";
             }
             else if (typeof(T) == typeof(PointJob))
             {

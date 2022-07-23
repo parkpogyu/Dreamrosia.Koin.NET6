@@ -28,7 +28,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             _logger = logger;
         }
 
-        public async Task<IResult<int>> GetSymbolsAsync()
+        public async Task<IResult> GetSymbolsAsync()
         {
             QtSymbol QtSymbol = new QtSymbol();
 
@@ -46,20 +46,20 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                 {
                     _upbitTickerService.RequestTickers(items.Select(f => f.market));
 
-                    return await Result<int>.SuccessAsync(items.Count());
+                    return await Result.SuccessAsync();
                 }
                 else
                 {
                     _logger.LogWarning($"SaveSymbolsAsync: {result.FullMessage}");
 
-                    return await Result<int>.FailAsync(saved.Messages);
+                    return await Result.FailAsync(saved.Messages);
                 }
             }
             else
             {
                 _logger.LogWarning($"GetSymbolsAsync: {result.FullMessage}");
 
-                return await Result<int>.FailAsync(result.Messages);
+                return await Result.FailAsync(result.Messages);
             }
         }
     }

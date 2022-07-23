@@ -32,6 +32,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\Bot\Bot.csproj" />
+    <ProjectReference Include="..\CoinMarketCap.Infrastructure\CoinMarketCap.Infrastructure.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 

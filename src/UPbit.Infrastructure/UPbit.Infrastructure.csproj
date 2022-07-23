@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<!--<TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>-->
 		<TargetFramework>net6.0</TargetFramework>
 		<Authors>박보규</Authors>
 		<Company>드림로시아</Company>
@@ -13,7 +12,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	  <PackageReference Include="Serilog" Version="2.11.0" />
 	  <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.19.0" />
 	  <PackageReference Include="WebSocket4Net" Version="0.15.2" />
@@ -21,6 +19,6 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Shared.Enums\Shared.Enums.csproj" />
-	  <ProjectReference Include="..\Shared.Wrapper\Shared.Wrapper.csproj" />
+	  <ProjectReference Include="..\WebApi.Infrastructure\WebApi.Infrastructure.csproj" />
 	</ItemGroup>
 </Project>

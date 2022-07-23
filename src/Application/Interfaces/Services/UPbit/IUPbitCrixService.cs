@@ -5,6 +5,6 @@ namespace Dreamrosia.Koin.Application.Interfaces.Services
 {
     public interface IUPbitCrixService
     {
-        Task<IResult<int>> GetCrixesAsync();
+        Task<IResult> GetCrixesAsync();
     }
 }

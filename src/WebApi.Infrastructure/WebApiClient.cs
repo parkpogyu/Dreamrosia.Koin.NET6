@@ -12,7 +12,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
+namespace Dreamrosia.Koin.WebApi.Infrastructure
 {
     public class WebApiClient : IWebApiClient
     {
@@ -98,16 +98,7 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
         {
             var body = stream.ReadToEnd();
 
-            try
-            {
-                return JsonConvert.DeserializeObject<T>(body);
-            }
-            catch (Exception ex)
-            {
-                Logger.log.Error(ex, body);
-
-                throw;
-            }
+            return JsonConvert.DeserializeObject<T>(body);
         }
 
         protected string Serialize(object parameter)
@@ -168,7 +159,7 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 
             try
             {
-                URI = string.Format("{0}/?{1}", URL, QueryString(parameter));
+                URI = string.Format("{0}?{1}", URL, QueryString(parameter));
 
                 var response = await Client.GetAsync(URI);
 
@@ -206,7 +197,7 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
         {
             try
             {
-                URI = string.Format("{0}/?{1}", URL, QueryString(parameter));
+                URI = string.Format("{0}?{1}", URL, QueryString(parameter));
 
                 var response = await Client.DeleteAsync(URI);
 

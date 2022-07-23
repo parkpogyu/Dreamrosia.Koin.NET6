@@ -1,5 +1,5 @@
 ﻿using Dreamrosia.Koin.UPbit.Infrastructure.Models;
-
+using Dreamrosia.Koin.WebApi.Infrastructure;
 
 namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 {

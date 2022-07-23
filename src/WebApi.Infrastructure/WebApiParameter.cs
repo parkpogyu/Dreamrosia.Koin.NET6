@@ -1,4 +1,4 @@
-﻿namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
+﻿namespace Dreamrosia.Koin.WebApi.Infrastructure
 {
     public class WebApiParameter : IWebApiParameter
     {

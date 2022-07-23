@@ -1,4 +1,5 @@
 ﻿using Dreamrosia.Koin.Shared.Wrapper;
+using Dreamrosia.Koin.WebApi.Infrastructure;
 using Newtonsoft.Json;
 using System;
 using System.IdentityModel.Tokens.Jwt;

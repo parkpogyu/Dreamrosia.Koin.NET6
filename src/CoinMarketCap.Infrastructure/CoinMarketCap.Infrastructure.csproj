@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Authors>박보규</Authors>
+		<Company>드림로시아</Company>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<RootNamespace>Dreamrosia.Koin.CoinMarketCap.Infrastructure</RootNamespace>
+		<AssemblyName>Dreamrosia.Koin.CoinMarketCap.Infrastructure</AssemblyName>
+		<Version>1.0.0</Version>
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<!--
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		-->
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Shared.Enums\Shared.Enums.csproj" />
+	  <ProjectReference Include="..\WebApi.Infrastructure\WebApi.Infrastructure.csproj" />
+	</ItemGroup>
+
+</Project>

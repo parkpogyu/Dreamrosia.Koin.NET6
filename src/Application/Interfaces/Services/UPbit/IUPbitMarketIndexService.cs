@@ -5,6 +5,6 @@ namespace Dreamrosia.Koin.Application.Interfaces.Services
 {
     public interface IUPbitMarketIndexService
     {
-        Task<IResult<int>> GetMarketIndicesAsync();
+        Task<IResult> GetMarketIndicesAsync();
     }
 }

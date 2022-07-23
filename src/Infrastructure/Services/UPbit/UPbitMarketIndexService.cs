@@ -30,7 +30,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             _logger = logger;
         }
 
-        public async Task<IResult<int>> GetMarketIndicesAsync()
+        public async Task<IResult> GetMarketIndicesAsync()
         {
             var last = _context.MarketIndices.OrderByDescending(f => f.candleDateTimeUtc).FirstOrDefault();
 
@@ -46,7 +46,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
             if (!result.Succeeded)
             {
-                return await Result<int>.FailAsync(result.Messages);
+                return await Result.FailAsync(result.Messages);
             }
 
             var items = _mapper.Map<IEnumerable<MarketIndex>>(result.Data);
@@ -55,13 +55,13 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
             if (saved.Succeeded)
             {
-                return await Result<int>.SuccessAsync(items.Count());
+                return await Result.SuccessAsync();
             }
             else
             {
                 _logger.LogWarning($"SaveMarketIndicesAsync: {saved.FullMessage}");
 
-                return await Result<int>.FailAsync(saved.Messages);
+                return await Result.FailAsync(saved.Messages);
             }
         }
     }

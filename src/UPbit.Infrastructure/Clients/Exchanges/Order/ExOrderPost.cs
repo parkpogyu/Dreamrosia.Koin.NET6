@@ -2,6 +2,7 @@
 using Dreamrosia.Koin.Shared.Wrapper;
 using Dreamrosia.Koin.UPbit.Infrastructure.Conveters;
 using Dreamrosia.Koin.UPbit.Infrastructure.Models;
+using Dreamrosia.Koin.WebApi.Infrastructure;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;

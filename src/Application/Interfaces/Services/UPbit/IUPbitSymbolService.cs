@@ -5,6 +5,6 @@ namespace Dreamrosia.Koin.Application.Interfaces.Services
 {
     public interface IUPbitSymbolService
     {
-        Task<IResult<int>> GetSymbolsAsync();
+        Task<IResult> GetSymbolsAsync();
     }
 }
