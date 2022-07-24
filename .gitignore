@@ -93,3 +93,5 @@
 /src/CoinMarketCap.Infrastructure/obj
 /src/WebApi.Infrastructure/bin/Debug/net6.0
 /src/WebApi.Infrastructure/obj
+/src/CoinMarketCap.Infrastructure/bin/Release/net6.0
+/src/WebApi.Infrastructure/bin/Release/net6.0

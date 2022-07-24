@@ -5,7 +5,6 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
     internal class RequestCounter
     {
         private DataFlowCounter SecondCounter;
-
         private DataFlowCounter MinuteCounter;
 
         public RequestCounter(string name, int second, int minute)

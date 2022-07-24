@@ -477,7 +477,8 @@ namespace Test
                     QtCandle.QtParameter parameter = new QtCandle.QtParameter()
                     {
                         market = symbol.market,
-                        to = null,
+                        to = DateTime.Today,
+                        count = 1,
                     };
 
                     var candles = await QtCandle.GetCandlesAsync(parameter);

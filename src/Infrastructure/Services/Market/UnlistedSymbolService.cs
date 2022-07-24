@@ -134,7 +134,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             {
                 var items = await _context.UnlistedSymbols
                                           .AsNoTracking()
-                                          .Where(f=>f.CoinMarketCapId != null)
+                                          .Where(f => f.CoinMarketCapId != null)
                                           .ToArrayAsync();
 
                 QtCandle QtCandle = new QtCandle();
@@ -154,7 +154,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                     var candle = candles.Data.OrderByDescending(f => f.timestamp).FirstOrDefault();
 
-                    if (candle == null) { continue; }    
+                    if (candle == null) { continue; }
 
                     item.open = candle.open;
                     item.low = candle.low;

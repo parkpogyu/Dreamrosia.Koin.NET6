@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,34 +9,76 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
     internal class DataFlowCounter
     {
         public string Name { get; set; }
-
         public int Limited { get; private set; }
-
         public int WindowSpan { get; private set; }
+        public int Padding { get; private set; }
+        public CounterModes CounterMode { get; private set; }
+        private Stopwatch Stopwatch { get; set; }
+        private int Count { get; set; }
+        private int Delay => 100;
+        private List<DateTime> SlidingWindow { get; set; }
 
-        public int Buffer { get; private set; }
-
-        private List<DateTime> SlidingWindow = new List<DateTime>();
-
-        public DataFlowCounter(string name, int limited, int span, int buffer = 2)
+        public DataFlowCounter(string name, int limited, int span, CounterModes mode = CounterModes.Stopwatch, int padding = 2)
         {
             Name = name;
 
             Limited = limited;
             WindowSpan = span;
-            Buffer = buffer;
-        }
+            Padding = padding;
+            CounterMode = mode;
 
-        public void SetConditions(string name, int limited, int span, int buffer = 2)
-        {
-            Name = name;
-
-            Limited = limited;
-            WindowSpan = span;
-            Buffer = buffer;
+            if (mode == CounterModes.Stopwatch)
+            {
+                Stopwatch = new Stopwatch();
+            }
+            else
+            {
+                SlidingWindow = new List<DateTime>();
+            }
         }
 
         public void Increment()
+        {
+            if (CounterMode == CounterModes.Stopwatch)
+            {
+                if (Count == 0) { Stopwatch.Start(); }
+
+                StopwatchIncrement();
+            }
+            else
+            {
+                SlidingWindowIncrement();
+            }
+        }
+
+        private void StopwatchIncrement()
+        {
+            if (Stopwatch.ElapsedMilliseconds > WindowSpan)
+            {
+                Logger.log.Debug($"==> OverTime {Name}:[{Limited:N0}/{WindowSpan:N0}], Transfers:{Count:N0}, Elapsed:{Stopwatch.Elapsed:c}");
+
+                Count = 1;
+                Stopwatch.Restart();
+            }
+            else
+            {
+                Count++;
+
+                if (Limited <= Count)
+                {
+                    int delay = (int)(WindowSpan - Stopwatch.ElapsedMilliseconds) + Delay;
+
+                    Logger.log.Debug($"==> OverCount {Name}[{Limited:N0}/{WindowSpan / 1000:N0}s], Transfers:{Count - 1:N0},  Elapsed:{Stopwatch.Elapsed:c}, Delay:{delay:N0}ms");
+
+                    Task.Delay(delay).Wait();
+
+                    Count = 1;
+                    Stopwatch.Restart();
+                }
+            }
+        }
+
+        private void SlidingWindowIncrement()
         {
             DateTime now = DateTime.Now;
 
@@ -43,24 +86,19 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
 
             var count = transfers.Count();
 
-            Logger.log.Debug("==>{0}, tranfers:{1:N0}, Span:{2:N0} Limited:{3:N0}", Name, count, WindowSpan, Limited);
+            //Logger.log.Debug("==> {0}, tranfers:{1:N0}, Span:{2:N0} Limited:{3:N0}", Name, count, WindowSpan, Limited);
 
-            if (count == Limited - Buffer)
+            if (Limited <= count + Padding)
             {
                 TimeSpan span = now.Subtract(transfers.Min());
 
-                int padding = (int)(WindowSpan - span.TotalMilliseconds) + 1;
+                int delay = (int)(WindowSpan - span.TotalMilliseconds);
 
-                int wait = padding;
-
-                if (wait > 0)
+                if (delay > 0)
                 {
-                    Task.Delay(wait).Wait();
-
-                    Logger.log.Debug("==>{0} elapsed [{1,5:N0}ms], wait [{2,5:N0}ms]",
-                                    Name,
-                                    span.TotalMilliseconds,
-                                    wait);
+                    delay = delay + Delay;
+                    Task.Delay(delay).Wait();
+                    Logger.log.Debug($"==> {Name}[{Limited:N0}/{WindowSpan / 1000:N0}s], Transfers:{count:N0}, Elapsed:{span.Milliseconds:N0}ms, Delay:{delay:N0}ms");
                 }
             }
 
@@ -78,6 +116,12 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
         }
 
         public static int SecondWindowSpan => 1000;
-        public static int MinuteWindowSpan => 6000;
+        public static int MinuteWindowSpan => 60000;
+
+        public enum CounterModes
+        {
+            Stopwatch,
+            SlingWindow,
+        }
     }
 }

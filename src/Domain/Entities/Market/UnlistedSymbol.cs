@@ -5,7 +5,7 @@ namespace Dreamrosia.Koin.Domain.Entities
 {
     public class UnlistedSymbol : AuditableEntity<string>
     {
-        public int? CoinMarketCapId { get; set; }   
+        public int? CoinMarketCapId { get; set; }
         public string english_name { get; set; }
         public double open { get; set; }
         public double high { get; set; }
