@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,6 +22,8 @@ namespace Dreamrosia.Koin.Infrastructure.Services
         private readonly IHubContext<SynchronizeHub, ISynchronizeClient> _hubContext;
         private readonly IMapper _mapper;
         private readonly ILogger<UPbitTickerService> _logger;
+
+        private readonly Stopwatch _stopwatch;
 
         public Dictionary<string, WsTicker.WsResponse> Tickers { get; private set; } = new Dictionary<string, WsTicker.WsResponse>();
 
@@ -39,6 +42,8 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             _logger = logger;
 
             WsTicker.OnMessageReceived += WsTicker_OnMessageReceived;
+
+            _stopwatch = new Stopwatch();
         }
 
         public async Task<IResult> InitializeAsync()
@@ -50,6 +55,8 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
             var codes = await symbolService.GetSymbolCodesAsync();
             var candles = await candleService.GetLastCandlesAsync(codes.Data);
+
+            _stopwatch.Start();
 
             if (candles.Succeeded && codes.Succeeded)
             {
@@ -95,9 +102,10 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
             if (Tickers.ContainsKey(message.code))
             {
-                if (Tickers[message.code].trade_price == message.trade_price) { return; }
-
-                Tickers[message.code] = message;
+                if (Tickers[message.code].trade_price != message.trade_price)
+                {
+                    Tickers[message.code] = message;
+                }
             }
             else
             {
@@ -107,6 +115,13 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             Task.Run(async () =>
             {
                 await _hubContext.Clients.All.ReceiveTicker(_mapper.Map<TickerDto>(message));
+
+                if (_stopwatch.ElapsedMilliseconds > GetElapsedMilliseconds())
+                {
+                    await SaveTickers();
+
+                    _stopwatch.Restart();
+                }
             });
         }
 
@@ -151,6 +166,29 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             {
                 return await Result<IEnumerable<DelistingSymbolDto>>.FailAsync(ex.Message);
             }
+        }
+
+        private int GetElapsedMilliseconds()
+        {
+            DateTime now = DateTime.Now;
+
+            if (now.Hour == 9 && now.Minute == 0 && now.Second > 0)
+            {
+                return 1000;
+            }
+            else
+            {
+                return 60000;
+            }
+        }
+
+        private async Task SaveTickers()
+        {
+            using var scope = _serviceProvider.CreateScope();
+
+            var candleService = scope.ServiceProvider.GetRequiredService<ICandleService>();
+
+            await candleService.SaveCandlesAsync(_mapper.Map<IEnumerable<CandleDto>>(Tickers.Values));
         }
     }
 }

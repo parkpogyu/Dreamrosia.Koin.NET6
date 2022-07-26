@@ -40,7 +40,7 @@ namespace Dreamrosia.Koin.Server.Schedules
 
                 await Task.WhenAll(tasks).ConfigureAwait(false);
 
-                await _upbitCandleService.GetCandlesAsync();
+                //await _upbitCandleService.GetCandlesAsync();
                 await _seasonSignalService.UpdateSeasonSignalsAsync(null);
             }
             catch (Exception ex)

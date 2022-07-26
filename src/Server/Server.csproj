@@ -21,6 +21,10 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Remove="Controllers\v1\DashboardController.cs" />
+	  <Compile Remove="Schedule\DelistingSymbolJob.cs" />
+	  <Compile Remove="Schedule\MarketIndexJob.cs" />
+	  <Compile Remove="Schedule\SeasonSignalJob.cs" />
+	  <Compile Remove="Schedule\UnlistedSymbolJob.cs" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="Dockerfile" />

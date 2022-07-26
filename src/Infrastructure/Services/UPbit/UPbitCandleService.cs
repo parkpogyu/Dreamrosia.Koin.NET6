@@ -5,6 +5,7 @@ using Dreamrosia.Koin.Infrastructure.Contexts;
 using Dreamrosia.Koin.Shared.Enums;
 using Dreamrosia.Koin.Shared.Wrapper;
 using Dreamrosia.Koin.UPbit.Infrastructure.Clients;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -101,6 +102,65 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 return await Result.FailAsync(saved.Messages);
             }
+        }
+
+        public async Task<IResult> GetCandlesAsync(TimeFrames frame)
+        {
+            int count = frame == TimeFrames.Week ? 7 :
+                         frame == TimeFrames.Month ? 31 :
+                         frame == TimeFrames.Year ? 365 : 1;
+
+            var markets = _context.Symbols
+                                  .AsNoTracking()
+                                  .Select(f => f.Id);
+
+            IEnumerable<UPbitModels.Candle> candles = null;
+
+            foreach (var market in markets)
+            {
+                candles = await GetCandlesAsync(market, count);
+
+                if (candles is null) { continue; }
+
+                await _candleService.SaveCandlesAsync(_mapper.Map<IEnumerable<CandleDto>>(candles));
+            }
+
+            return await Result.SuccessAsync();
+        }
+
+        private async Task<IEnumerable<UPbitModels.Candle>> GetCandlesAsync(string market, int count)
+        {
+            QtCandle QtCandle = new QtCandle();
+
+            QtCandle.QtParameter parameter = new QtCandle.QtParameter();
+
+            List<UPbitModels.Candle> candles = new List<UPbitModels.Candle>();
+
+            parameter.TimeFrame = TimeFrames.Day;
+            parameter.market = market;
+            parameter.count = count > ClientConstants.MaxCount ? ClientConstants.MaxCount : count;
+
+            while (true)
+            {
+                var result = await QtCandle.GetCandlesAsync(parameter);
+
+                if (!result.Succeeded)
+                {
+                    _logger.LogWarning($"GetCandlesAsync {result.FullMessage}");
+
+                    return null;
+                }
+
+                if (!result.Data.Any()) { break; }
+
+                candles.AddRange(result.Data);
+
+                if (count <= result.Data.Count()) { break; }
+
+                parameter.to = result.Data.Min(f => f.candle_date_time_utc).AddDays(-1);
+            }
+
+            return candles.Take(count).ToArray();
         }
     }
 }

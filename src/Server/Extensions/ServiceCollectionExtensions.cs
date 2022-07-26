@@ -386,9 +386,10 @@ namespace Dreamrosia.Koin.Server.Extensions
                 if (config.Mode == ServerModes.Server ||
                     config.Mode == ServerModes.Agent)
                 {
-                    q.AddJobAndTrigger<SeasonSignalJob>();
-                    q.AddJobAndTrigger<MarketIndexJob>();
-                    q.AddJobAndTrigger<DelistingSymbolJob>();
+                    q.AddJobAndTrigger<MarketJob>();
+                    //q.AddJobAndTrigger<SeasonSignalJob>();
+                    //q.AddJobAndTrigger<MarketIndexJob>();
+                    //q.AddJobAndTrigger<DelistingSymbolJob>();
                     //q.AddJobAndTrigger<UnlistedSymbolJob>();
                     q.AddJobAndTrigger<PointJob>();
                 }
@@ -408,22 +409,22 @@ namespace Dreamrosia.Koin.Server.Extensions
             var configKey = $"Quartz:{jobName}";
             var cronSchedule = "* * * * * ?";
 
-            if (typeof(T) == typeof(SeasonSignalJob))
+            if (typeof(T) == typeof(MarketJob))
             {
                 cronSchedule = "5 * * * * ?";
             }
-            else if (typeof(T) == typeof(MarketIndexJob))
-            {
-                cronSchedule = "10 * * * * ?";
-            }
-            else if (typeof(T) == typeof(DelistingSymbolJob))
-            {
-                cronSchedule = "15 * * * * ?";
-            }
-            else if (typeof(T) == typeof(UnlistedSymbolJob))
-            {
-                cronSchedule = "20 * * * * ?";
-            }
+            //else if (typeof(T) == typeof(MarketIndexJob))
+            //{
+            //    cronSchedule = "10 * * * * ?";
+            //}
+            //else if (typeof(T) == typeof(DelistingSymbolJob))
+            //{
+            //    cronSchedule = "15 * * * * ?";
+            //}
+            //else if (typeof(T) == typeof(UnlistedSymbolJob))
+            //{
+            //    cronSchedule = "20 * * * * ?";
+            //}
             else if (typeof(T) == typeof(PointJob))
             {
                 cronSchedule = "30 0 0 * * ?";

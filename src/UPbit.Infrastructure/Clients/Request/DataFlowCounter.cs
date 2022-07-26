@@ -55,7 +55,7 @@ namespace Dreamrosia.Koin.UPbit.Infrastructure.Clients
         {
             if (Stopwatch.ElapsedMilliseconds > WindowSpan)
             {
-                Logger.log.Debug($"==> OverTime {Name}:[{Limited:N0}/{WindowSpan:N0}], Transfers:{Count:N0}, Elapsed:{Stopwatch.Elapsed:c}");
+                Logger.log.Debug($"==> OverTime {Name}:[{Limited:N0}/{WindowSpan / 1000:N0}s], Transfers:{Count:N0}, Elapsed:{Stopwatch.Elapsed:c}");
 
                 Count = 1;
                 Stopwatch.Restart();

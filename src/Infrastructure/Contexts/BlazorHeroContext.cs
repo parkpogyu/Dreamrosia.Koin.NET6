@@ -536,7 +536,7 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
                 entity.Property(p => p.candle_acc_trade_volume)
                       .HasComment("누적 거래량");
 
-                entity.HasIndex(p => new { p.market, p.candle_date_time_kst })
+                entity.HasIndex(p => new { p.market, p.candle_date_time_utc })
                       .IsUnique(true);
             });
 

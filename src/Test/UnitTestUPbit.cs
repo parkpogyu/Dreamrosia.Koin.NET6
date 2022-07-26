@@ -1,4 +1,3 @@
-using Dreamrosia.Koin.Shared.Common;
 using Dreamrosia.Koin.Shared.Enums;
 using Dreamrosia.Koin.UPbit.Infrastructure.Clients;
 using Microsoft.Extensions.Configuration;
@@ -6,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using UPbitModels = Dreamrosia.Koin.UPbit.Infrastructure.Models;
@@ -618,34 +618,11 @@ namespace Test
         [TestMethod]
         public async Task TestTruncate()
         {
-            DateTime touched = new DateTime();
-            TimeSpan? elapsed = null;
+            DateTime result;
 
-            //var pos = "136602727.27272727";
-            var pos = "136602727.2727";
+            DateTime.TryParseExact("20220725", "yyyyMMdd", null, DateTimeStyles.AssumeLocal, out result);
 
-            var convert_dec = Convert.ToDecimal(pos);
-            var convert_dob = convert_dec;
-
-            System.Diagnostics.Debug.WriteLine($"pos: {pos}");
-            System.Diagnostics.Debug.WriteLine($"convert dec: {convert_dec:N8}");
-            System.Diagnostics.Debug.WriteLine($"convert dob: {convert_dob:N8}");
-
-            convert_dob = convert_dob + .0001m;
-
-            System.Diagnostics.Debug.WriteLine($"convert dob: {convert_dob:N8}");
-
-            convert_dob = convert_dob - .0005m;
-
-            System.Diagnostics.Debug.WriteLine($"convert dob: {convert_dob:N8}");
-
-            var rate = (float)Ratio.ToPercentage(-259238, 13645555);
-
-            var a = 22087623;
-
-            var b = a * (1F / 113F);
-
-            var c = (long)(b / 1000) * 1000;
+            //var trade_date = DateTime.TryParse( out result) ? result : default;
         }
 
         [TestMethod]

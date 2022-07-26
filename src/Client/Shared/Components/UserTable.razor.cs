@@ -39,7 +39,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private IEnumerable<UserFullInfoDto> _items = new List<UserFullInfoDto>();
         private IEnumerable<UserFullInfoDto> _sources;
         private string _searchString { get; set; } = string.Empty;
-        private bool? _chkIsAssignedBot { get; set; } = null;
+        private bool? _chkIsAssignedBot { get; set; } = true;
         private bool? _chkIsAutoTrading { get; set; } = null;
         private string _selectedTimeFrame { get; set; }
         private IEnumerable<string> _selectedTimeFrames { get; set; }
