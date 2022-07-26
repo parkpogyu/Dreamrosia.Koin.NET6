@@ -115,8 +115,6 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             Task.Run(async () =>
             {
                 await _hubContext.Clients.All.ReceiveTicker(_mapper.Map<TickerDto>(message));
-
-                await SaveTickerToCandle();
             });
         }
 
@@ -163,39 +161,17 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             }
         }
 
-
-        private async Task SaveTickerToCandle()
+        public async Task<IResult<IEnumerable<CandleDto>>> GetCandlesAsync()
         {
-            if (!IsSaveTickerToCandle()) { return; }
-
-            using var scope = _serviceProvider.CreateScope();
-
-            var candleService = scope.ServiceProvider.GetRequiredService<ICandleService>();
-
-            await candleService.SaveCandlesAsync(_mapper.Map<IEnumerable<CandleDto>>(Tickers.Values));
-
-            bool IsSaveTickerToCandle()
+            try
             {
-                DateTime now = DateTime.Now;
+                var mapped = _mapper.Map<IEnumerable<CandleDto>>(Tickers.Values);
 
-                int elapsed = 60000;
-
-                // 09:00 ~ 09:10분 사이는 1초 간격 확인 
-                if (9 <= now.Hour && now.Hour < 10 && now.Minute < 10)
-                {
-                    elapsed = 1000;
-                }
-
-                if (elapsed < _stopwatch.ElapsedMilliseconds)
-                {
-                    _stopwatch.Restart();
-
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return await Result<IEnumerable<CandleDto>>.SuccessAsync(mapped);
+            }
+            catch (Exception ex)
+            {
+                return await Result<IEnumerable<CandleDto>>.FailAsync(ex.Message);
             }
         }
     }
