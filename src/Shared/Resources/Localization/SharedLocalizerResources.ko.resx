@@ -1617,4 +1617,7 @@
   <data name="Trading.RebalancingOrder" xml:space="preserve">
     <value>매도순서</value>
   </data>
+  <data name="Symbol.turnoverRatio" xml:space="preserve">
+    <value>회전율(%)</value>
+  </data>
 </root>

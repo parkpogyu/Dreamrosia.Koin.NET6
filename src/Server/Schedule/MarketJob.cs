@@ -51,7 +51,7 @@ namespace Dreamrosia.Koin.Server.Schedules
 
                 DateTime now = DateTime.Now;
                 // 08:50 ~ 09:00 사이 2분 간격 수집
-                if (now.Hour == 8 && 50 < now.Minute && now.Minute % 2 == 0)
+                if (now.Hour == 8 && (50 < now.Minute && now.Minute % 2 == 0))
                 {
                     await _upbitCandleService.GetCandlesAsync(TimeFrames.Week);
                 }

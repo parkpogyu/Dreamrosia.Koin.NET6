@@ -35,6 +35,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         private IEnumerable<string> _selectedWeeklys { get; set; }
         private string _selectedDaily { get; set; }
         private IEnumerable<string> _selectedDailys { get; set; }
+        private bool? _warning { get; set; } = null;
         private string _searchString { get; set; } = string.Empty;
         private int _rowsPerPage { get; set; } = TablePager.DefaultPageSize;
 
@@ -108,7 +109,9 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             _items = _sources.Where(f => (_selectedWeeklys is null ? true :
                                           _selectedWeeklys.Any() ? _selectedWeeklys.Contains(f.WeeklySignal.ToDescriptionString()) : true) &&
                                          (_selectedDailys is null ? true :
-                                          _selectedDailys.Any() ? _selectedDailys.Contains(f.DailySignal.ToDescriptionString()) : true)).ToArray();
+                                          _selectedDailys.Any() ? _selectedDailys.Contains(f.DailySignal.ToDescriptionString()) : true) &&
+                                         (_warning is null ? true :
+                                          _warning == true ? f.market_warning != MarketAlert.None : true)).ToArray();
         }
 
         public static string GetSeasonSignalIcon(SeasonSignals signal)
@@ -164,6 +167,13 @@ namespace Dreamrosia.Koin.Client.Shared.Components
             {
                 return $"{values.First()}, ...";
             }
+        }
+
+        private void CheckWarningChanged(bool? value)
+        {
+            _warning = value;
+
+            SetItems();
         }
 
         private bool Search(SymbolDto item)

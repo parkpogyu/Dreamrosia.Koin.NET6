@@ -50,6 +50,14 @@
                         <MudSelectItem T="string" Value="@(membership.ToDescriptionString())">@(membership.ToDescriptionString())</MudSelectItem>
                     }
                 </MudSelect>
+
+                <MudCheckBox T="bool?" TriState="true"
+                             Label="@_localizer["Symbol.market_warning"]"
+                             Checked="@_warning"
+                             CheckedChanged="@((value) => CheckWarningChanged(value))"
+                             Color="MudBlazor.Color.Primary"
+                             Class="auto-min-width align-self-end ml-4 mb-n2" />
+
                 <MudTextField @bind-Value="@_searchString"
                               Immediate="false"
                               FullWidth="false"
@@ -82,6 +90,9 @@
             </MudTh>
             <MudTh>
                 <MudTableSortLabel SortBy="new Func<SymbolDto, object>(x => x.accTradePrice24h)">@_localizer["Symbol.accTradePrice24h"]</MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<SymbolDto, object>(x => x.turnoverRatio)">@_localizer["Symbol.turnoverRatio"]</MudTableSortLabel>
             </MudTh>
             <MudTh>
                 <MudTableSortLabel SortBy="new Func<SymbolDto, object>(x => x.market_warning)">@_localizer["Symbol.market_warning"]</MudTableSortLabel>
@@ -132,6 +143,12 @@
             </MudTd>
             <MudTd DataLabel=@_localizer["Symbol.accTradePrice24h"] Style="text-align:right">
                 @($"{context.accTradePrice24h:N0}")
+            </MudTd>
+            <MudTd DataLabel=@_localizer["Symbol.turnoverRatio"] Style="text-align:right">
+                @if (context.turnoverRatio is not null)
+                {
+                    @($"{context.turnoverRatio:N2}")
+                }
             </MudTd>
             @if (context.market_warning == MarketAlert.None)
             {

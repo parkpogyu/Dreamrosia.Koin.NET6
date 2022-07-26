@@ -1,4 +1,5 @@
 ﻿using Dreamrosia.Koin.Domain.Entities;
+using Dreamrosia.Koin.Shared.Common;
 using Dreamrosia.Koin.Shared.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
@@ -35,6 +36,8 @@ namespace Dreamrosia.Koin.Application.DTO
         public double trade_price { get; set; }
         public double marketCap { get; set; }
         public double accTradePrice24h { get; set; }
+        [JsonIgnore]
+        public float? turnoverRatio => marketCap == 0 ? null : (float?)Ratio.ToPercentage(accTradePrice24h, marketCap);
         public double signed_change_rate { get; set; }
     }
 }

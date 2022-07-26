@@ -150,7 +150,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             signal.DailySignal = _macdService.HistogramState(1);
             signal.UpdatedAt = DateTime.Now;
 
-            _logger.LogInformation($"{signal.market}, W:{signal.WeeklySignal.ToDescriptionString()}, D:{ signal.DailySignal.ToDescriptionString()}");
+            //_logger.LogInformation($"{signal.market}, W:{signal.WeeklySignal.ToDescriptionString()}, D:{ signal.DailySignal.ToDescriptionString()}");
         }
 
         private async Task<IResult> SaveSeasonSignalsAsync(IEnumerable<SeasonSignalDto> models)
