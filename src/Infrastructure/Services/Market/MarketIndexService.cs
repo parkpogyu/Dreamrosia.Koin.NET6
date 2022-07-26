@@ -59,7 +59,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             }
         }
 
-        public async Task<IResult> SaveMarketIndicesAsync(IEnumerable<MarketIndex> models)
+        public async Task<IResult> SaveMarketIndicesAsync(IEnumerable<MarketIndexDto> models)
         {
             try
             {

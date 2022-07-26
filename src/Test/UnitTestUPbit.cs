@@ -632,7 +632,7 @@ namespace Test
 
             QtMarketIndex.QtParameter parameter = new QtMarketIndex.QtParameter()
             {
-                code = "IDX.UPBIT.UBAI",
+                code = "IDX.UPBIT.UBMI",
                 count = 100,
             };
 

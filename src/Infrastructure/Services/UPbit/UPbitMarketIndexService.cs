@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using Dreamrosia.Koin.Application.DTO;
 using Dreamrosia.Koin.Application.Interfaces.Services;
-using Dreamrosia.Koin.Domain.Entities;
 using Dreamrosia.Koin.Infrastructure.Contexts;
 using Dreamrosia.Koin.Shared.Wrapper;
 using Dreamrosia.Koin.UPbit.Infrastructure.Clients;
@@ -49,7 +49,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                 return await Result.FailAsync(result.Messages);
             }
 
-            var items = _mapper.Map<IEnumerable<MarketIndex>>(result.Data);
+            var items = _mapper.Map<IEnumerable<MarketIndexDto>>(result.Data);
 
             var saved = await _marketIndexService.SaveMarketIndicesAsync(items);
 
