@@ -11,31 +11,31 @@ namespace Dreamrosia.Koin.Server.Schedules
     [DisallowConcurrentExecution]
     public class MarketJob : IJob
     {
-        private readonly IUPbitMarketIndexService _upbitMarketIndexService;
-        private readonly IDelistingSymbolService _delistingSymbolService;
-        private readonly IUnlistedSymbolService _unlistedSymbolService;
-        private readonly ISeasonSignalService _seasonSignalService;
-        private readonly IUPbitCrixService _upbitCrixService;
         private readonly IUPbitSymbolService _upbitSymbolService;
         private readonly IUPbitCandleService _upbitCandleService;
+        private readonly IUPbitCrixService _upbitCrixService;
+        private readonly IUPbitMarketIndexService _upbitMarketIndexService;
+        private readonly ISeasonSignalService _seasonSignalService;
+        private readonly IDelistingSymbolService _delistingSymbolService;
+        private readonly IUnlistedSymbolService _unlistedSymbolService;
         private readonly ILogger<MarketJob> _logger;
 
-        public MarketJob(IUPbitMarketIndexService upbitMarketIndexService,
+        public MarketJob(IUPbitSymbolService upbitSymbolService,
+                         IUPbitCandleService upbitCandleService,
+                         IUPbitCrixService upbitCrixService,
+                         IUPbitMarketIndexService upbitMarketIndexService,
+                         ISeasonSignalService seasonSignalService,
                          IDelistingSymbolService delistingSymbolService,
                          IUnlistedSymbolService unlistedSymbolService,
-                         ISeasonSignalService seasonSignalService,
-                         IUPbitCrixService upbitCrixService,
-                         IUPbitSymbolService upbitSymbolService,
-                         IUPbitCandleService upbitCandleService,
                          ILogger<MarketJob> logger)
         {
-            _delistingSymbolService = delistingSymbolService;
-            _upbitMarketIndexService = upbitMarketIndexService;
-            _unlistedSymbolService = unlistedSymbolService;
-            _seasonSignalService = seasonSignalService;
-            _upbitCrixService = upbitCrixService;
             _upbitSymbolService = upbitSymbolService;
             _upbitCandleService = upbitCandleService;
+            _upbitCrixService = upbitCrixService;
+            _upbitMarketIndexService = upbitMarketIndexService;
+            _seasonSignalService = seasonSignalService;
+            _delistingSymbolService = delistingSymbolService;
+            _unlistedSymbolService = unlistedSymbolService;
             _logger = logger;
         }
 
@@ -45,12 +45,13 @@ namespace Dreamrosia.Koin.Server.Schedules
             {
                 List<Task> tasks = new List<Task>();
 
-                tasks.Add(_upbitCrixService.GetCrixesAsync());
                 tasks.Add(_upbitSymbolService.GetSymbolsAsync());
+                tasks.Add(_upbitCrixService.GetCrixesAsync());
                 tasks.Add(_upbitMarketIndexService.GetMarketIndicesAsync());
 
                 DateTime now = DateTime.Now;
-                //if (now.Hour == 8 && 50 <= now.Minute && now.Minute % 2 == 0)
+                // 08:50 ~ 09:00 사이 2분 간격 수집
+                if (now.Hour == 8 && 50 < now.Minute && now.Minute % 2 == 0)
                 {
                     await _upbitCandleService.GetCandlesAsync(TimeFrames.Week);
                 }

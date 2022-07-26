@@ -116,11 +116,11 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             {
                 await _hubContext.Clients.All.ReceiveTicker(_mapper.Map<TickerDto>(message));
 
-                if (_stopwatch.ElapsedMilliseconds > GetElapsedMilliseconds())
+                if (GetElapsedMilliseconds() <= _stopwatch.ElapsedMilliseconds)
                 {
-                    await SaveTickers();
-
                     _stopwatch.Restart();
+
+                    await SaveTickerToCandle();
                 }
             });
         }
@@ -172,7 +172,8 @@ namespace Dreamrosia.Koin.Infrastructure.Services
         {
             DateTime now = DateTime.Now;
 
-            if (now.Hour == 9 && now.Minute == 0 && now.Second > 0)
+            // 09:00 ~ 09:10분 사이는 1초 간격 확인 
+            if (9 <= now.Hour && now.Hour < 10 && now.Minute < 10)
             {
                 return 1000;
             }
@@ -182,7 +183,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             }
         }
 
-        private async Task SaveTickers()
+        private async Task SaveTickerToCandle()
         {
             using var scope = _serviceProvider.CreateScope();
 
