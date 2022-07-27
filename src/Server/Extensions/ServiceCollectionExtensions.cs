@@ -387,7 +387,6 @@ namespace Dreamrosia.Koin.Server.Extensions
                     config.Mode == ServerModes.Agent)
                 {
                     q.AddJobAndTrigger<MarketJob>();
-                    q.AddJobAndTrigger<TickerJob>();
                     //q.AddJobAndTrigger<SeasonSignalJob>();
                     //q.AddJobAndTrigger<MarketIndexJob>();
                     //q.AddJobAndTrigger<DelistingSymbolJob>();
@@ -412,24 +411,8 @@ namespace Dreamrosia.Koin.Server.Extensions
 
             if (typeof(T) == typeof(MarketJob))
             {
-                cronSchedule = "5 * * * * ?";
-            }
-            else if (typeof(T) == typeof(TickerJob))
-            {
                 cronSchedule = "*/2 * * * * ?";
             }
-            //else if (typeof(T) == typeof(MarketIndexJob))
-            //{
-            //    cronSchedule = "10 * * * * ?";
-            //}
-            //else if (typeof(T) == typeof(DelistingSymbolJob))
-            //{
-            //    cronSchedule = "15 * * * * ?";
-            //}
-            //else if (typeof(T) == typeof(UnlistedSymbolJob))
-            //{
-            //    cronSchedule = "20 * * * * ?";
-            //}
             else if (typeof(T) == typeof(PointJob))
             {
                 cronSchedule = "30 0 0 * * ?";
