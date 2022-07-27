@@ -64,10 +64,7 @@ namespace Dreamrosia.Koin.Client.Pages.Market
                 }
             }
 
-
             await GetMarketIndicesAsync();
-
-            SetItems();
 
             _loaded = true;
         }
@@ -79,11 +76,16 @@ namespace Dreamrosia.Koin.Client.Pages.Market
 
             _sources = _mapper.Map<IEnumerable<CandleDto>>(response.Data ?? new List<MarketIndexDto>());
 
-            if (response.Succeeded) { return; }
-
-            foreach (var message in response.Messages)
+            if (response.Succeeded)
             {
-                _snackBar.Add(message, Severity.Error);
+                SetItems();
+            }
+            else
+            {
+                foreach (var message in response.Messages)
+                {
+                    _snackBar.Add(message, Severity.Error);
+                }
             }
         }
 
@@ -111,7 +113,6 @@ namespace Dreamrosia.Koin.Client.Pages.Market
             SetItems();
         }
 
-
         private async Task SelectedTermChanged(DateRangeTerms value)
         {
             if (_dateRangeTerm == value) { return; }
@@ -119,8 +120,6 @@ namespace Dreamrosia.Koin.Client.Pages.Market
             _dateRangeTerm = value;
 
             await GetMarketIndicesAsync();
-
-            SetItems();
         }
     }
 }

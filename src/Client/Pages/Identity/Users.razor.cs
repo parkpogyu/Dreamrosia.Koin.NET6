@@ -42,6 +42,11 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
         {
             await _jsRuntime.InvokeVoidAsync("LoadScript", "js/splitter.js");
 
+            var now = DateTime.Now.Date;
+
+            _dateRange.Start = now.GetBefore(_dateRangeTerm);
+            _dateRange.End = now;
+
             await GetUsersAsync();
 
             _loaded = true;
@@ -110,11 +115,6 @@ namespace Dreamrosia.Koin.Client.Pages.Identity
 
         private async Task GetUsersAsync()
         {
-            var now = DateTime.Now.Date;
-
-            _dateRange.Start = now.GetBefore(_dateRangeTerm);
-            _dateRange.End = now;
-
             var response = await _userManager.GetFullInfosAsync(_dateRange.Start, _dateRange.End);
 
             _items = response.Data ?? new List<UserFullInfoDto>();
