@@ -108,7 +108,7 @@ namespace Dreamrosia.Koin.Bot.Services
                         ord_type = OrderType.market,
                         volume = item.balance,
                         BalEvalAmt = item.BalEvalAmt,
-                        Remark = string.Format("{0}, {1:N2}", OrderReason.Liquidate.ToDescriptionString(), item.PnLRat),
+                        Remark = $"{OrderReason.Liquidate.ToDescriptionString()}, {item.PnLRat:N2}%",
                     });
                 }
 
@@ -130,7 +130,7 @@ namespace Dreamrosia.Koin.Bot.Services
                     ord_type = OrderType.market,
                     volume = item.balance,
                     BalEvalAmt = item.BalEvalAmt,
-                    Remark = string.Format("{0}, {1:N2}", OrderReason.Signal.ToDescriptionString(), item.PnLRat),
+                    Remark = $"{OrderReason.Signal.ToDescriptionString()}, {item.PnLRat:N2}%",
                 });
             }
             #endregion
@@ -149,11 +149,7 @@ namespace Dreamrosia.Koin.Bot.Services
                         ord_type = OrderType.market,
                         volume = item.balance,
                         BalEvalAmt = item.BalEvalAmt,
-                        Remark = string.Format("{0}, {1} / {2}, {3:N2}%",
-                                 reason.ToDescriptionString(),
-                                 GetPriceText(item.trade_price),
-                                 GetPriceText(item.avg_buy_price),
-                                 item.PnLRat),
+                        Remark = $"{ reason.ToDescriptionString()}, {GetPriceText(item.trade_price)} / {GetPriceText(item.avg_buy_price)}, {item.PnLRat:N2}%",
                     });
                 }
             }
@@ -310,7 +306,7 @@ namespace Dreamrosia.Koin.Bot.Services
                     ord_type = OrderType.market,
                     volume = balance,
                     BalEvalAmt = item.BalEvalAmt,
-                    Remark = OrderReason.Rebalancing.ToDescriptionString(),
+                    Remark = $"{OrderReason.Rebalancing.ToDescriptionString()}, {item.PnLRat:N2}%",
                 });
             }
 
