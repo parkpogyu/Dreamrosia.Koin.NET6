@@ -119,7 +119,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
         {
             var today = DateTime.UtcNow.Date;
 
-            if (today < signal.UpdatedAt.ToUniversalTime()) { return; }
+            if (today < signal.UpdatedAt) { return; }
 
             using var scope = _serviceProvider.CreateScope();
 
@@ -148,7 +148,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             _macdService.Generate(candles);
 
             signal.DailySignal = _macdService.HistogramState(1);
-            signal.UpdatedAt = DateTime.Now;
+            signal.UpdatedAt = DateTime.UtcNow;
 
             //_logger.LogInformation($"{signal.market}, W:{signal.WeeklySignal.ToDescriptionString()}, D:{ signal.DailySignal.ToDescriptionString()}");
         }

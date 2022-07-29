@@ -319,7 +319,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                                                        utc < f.CloseAt && f.CloseAt < utc.AddDays(wait_day1)).DefaultIfEmpty()
                            select ((Func<SeasonSignalDto>)(() =>
                            {
-                               if (lt.UpdatedAt.ToUniversalTime() < utc)
+                               if (lt.UpdatedAt < utc)
                                {
                                    lt.WeeklySignal = SeasonSignals.Indeterminate;
                                    lt.DailySignal = SeasonSignals.Indeterminate;

@@ -622,7 +622,7 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
 
                 entity.Property(p => p.UpdatedAt)
                       .IsRequired(true)
-                      .HasComment("갱신일시");
+                      .HasComment("갱신일시(UTC)");
 
                 entity.HasOne(p => p.User as BlazorHeroUser)
                       .WithMany(p => p.SeasonSignals)
