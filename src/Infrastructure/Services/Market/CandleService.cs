@@ -92,6 +92,47 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             }
         }
 
+        public async Task<IResult<IEnumerable<CandleDto>>> GetTodayCandlesAsync(bool exist = true)
+        {
+            try
+            {
+                var today = DateTime.UtcNow.Date;
+
+                IEnumerable<Candle> items = null;
+
+                items = await _context.Candles
+                                      .AsNoTracking()
+                                      .Where(f => f.candle_date_time_utc == today)
+                                      .ToArrayAsync();
+                if (exist)
+                {
+                    return await Result<IEnumerable<CandleDto>>.SuccessAsync(_mapper.Map<IEnumerable<CandleDto>>(items));
+                }
+                else
+                {
+                    var nonexistents = (from sym in _context.Symbols.AsEnumerable()
+                                        from candle in items.Where(f => sym.Id.Equals(f.market)).DefaultIfEmpty()
+                                        where candle is null
+                                        select ((Func<CandleDto>)(() =>
+                                        {
+                                            return new CandleDto()
+                                            {
+                                                market = sym.Id,
+                                            };
+
+                                        }))()).ToArray();
+
+                    return await Result<IEnumerable<CandleDto>>.SuccessAsync(nonexistents);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return await Result<IEnumerable<CandleDto>>.FailAsync(_localizer["An unhandled error has occurred."]);
+            }
+        }
+
         public async Task<IResult> SaveCandlesAsync(IEnumerable<CandleDto> models)
         {
             try

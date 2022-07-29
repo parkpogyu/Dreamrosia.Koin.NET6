@@ -1,5 +1,18 @@
 ﻿@page "/help"
 
+<style>
+    table {
+        width: 100%;
+        border: 2px solid #E0E0E0;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 2px solid #E0E0E0;
+        padding: 16px;
+    }
+</style>
+
 <PageMenuTitle Menus="@(new []
 {
     $"{_localizer["Help"]}",
@@ -105,107 +118,114 @@ else
                 <MudIcon Icon="@Icons.Filled.CheckBoxOutlineBlank" Size="Size.Small" Class="mr-1" />
                 <MudText Typo="Typo.h6"> @_localizer["SeasonSignals"] </MudText>
             </div>
-            <MudText Class="ml-4 ma-2" Typo="Typo.body1">- 매매신호는 주간, 일간 시세를 기반으로 Fastlane에서 생성하는 매수/매도 신호와 사용자 설정에 따른 매도신호가 있습니다.</MudText>
+            <MudText Class="ml-4 ma-2" Typo="Typo.body1">- 매매신호는 일간/주간 시세를 기반으로 Fastlane에서 생성하는 매수/매도 신호와 사용자 설정에 따른 매도신호가 있습니다.</MudText>
             <img src="/images/SeasonSignals.png" style=" width:100%;height:auto" class="ma-2" />
-            <div class="flex-x-scroll-container">
-                <table border="1" align="center" width="100%" class="ma-2">
-                    <tr align="center">
-                        <td>
-                            <MudText Class="ma-2">구분</MudText>
+            <MudSimpleTable Hover="false" Dense="true" Striped="false" Bordered="true" Outlined="true">
+                <thead align="center">
+                    <tr>
+                        <th><MudText>구분</MudText></th>
+                        <th colspan="2"><MudText>내용</MudText></th>
+                        <th><MudText>비고</MudText></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="2">
+                            <MudText Style="color:orangered" Align="MudBlazor.Align.Center">@_localizer["Order.Bid"]</MudText>
                         </td>
-                        <td colspan="3">
-                            <MudText Class="ma-2">내용</MudText>
+                        <td>
+                            <MudText Align="MudBlazor.Align.Center">@_localizer["TimeFrames.Day"]</MudText>
                         </td>
                         <td>
-                            <MudText Class="ma-2">비고</MudText>
+                            <MudText>봄(일간)</MudText>
+                        </td>
+                        <td rowspan="2">
+                            <MudText Align="MudBlazor.Align.Center">@_localizer["SeasonSignals"]</MudText>
                         </td>
                     </tr>
 
                     <tr>
-                        <td align="center" rowspan="2">
-                            <MudText Class="ma-2" Style="color:orangered">매수</MudText>
-                        </td>
-                        <td align="center" rowspan="2">
-                            <MudText Class="ma-2">매매신호 주기</MudText>
-                        </td>
-                        <td align="center">
-                            <MudText Class="ma-2">주간</MudText>
+                        <td>
+                            <MudText Align="MudBlazor.Align.Center">@_localizer["TimeFrames.Week"]</MudText>
                         </td>
                         <td>
-                            <MudText Class="ma-2">봄(주간), 여름(주간) & 봄(일간)</MudText>
-                        </td>
-                        <td align="center" rowspan="2">
-                            <MudText Class="ma-2">미 보유시</MudText>
+                            <MudText>봄(주간), 여름(주간) & 봄(일간)</MudText>
                         </td>
                     </tr>
 
                     <tr>
-                        <td align="center">
-                            <MudText Class="ma-2">일간</MudText>
+                        <td rowspan="6">
+                            <MudText Style="color:dodgerblue" Align="MudBlazor.Align.Center">@_localizer["Order.Ask"]</MudText>
                         </td>
                         <td>
-                            <MudText Class="ma-2">봄(일간)</MudText>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td align="center" rowspan="4">
-                            <MudText Class="ma-2" Style="color:dodgerblue">매도</MudText>
-                        </td>
-                        <td align="center" rowspan="2">
-                            <MudText Class="ma-2">매매신호 주기</MudText>
-                        </td>
-                        <td align="center">
-                            <MudText Class="ma-2">주간</MudText>
+                            <MudText Align="MudBlazor.Align.Center">@_localizer["TimeFrames.Day"]</MudText>
                         </td>
                         <td>
-                            <MudText Class="ma-2"> 가을(주간), 겨울(주간)</MudText>
+                            <MudText> 가을(일간), 겨울(일간)</MudText>
                         </td>
-                        <td align="center" rowspan="4">
-                            <MudText Class="ma-2"> 보유시</MudText>
+                        <td rowspan="2">
+                            <MudText Align="MudBlazor.Align.Center">@_localizer["SeasonSignals"]</MudText>
                         </td>
                     </tr>
 
                     <tr>
-                        <td align="center">
-                            <MudText Class="ma-2">일간</MudText>
+                        <td>
+                            <MudText Align="MudBlazor.Align.Center">@_localizer["TimeFrames.Week"]</MudText>
                         </td>
                         <td>
-                            <MudText Class="ma-2"> 가을(일간), 겨울(일간)</MudText>
+                            <MudText>가을(주간), 겨울(주간)</MudText>
                         </td>
                     </tr>
 
                     <tr>
-                        <td colspan="3">
-                            <MudText Class="ma-2">목표 수익 도달 시 (주문설정: @(_localizer["AskTerms.TakeProfit"]))</MudText>
+                        <td colspan="2">
+                            <MudText>목표 수익 도달 시 (주문설정: @_localizer["AskTerms.TakeProfit"])</MudText>
                         </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3">
-                            <MudText Class="ma-2">한계 손실 발생 시 (주문설정: @(_localizer["AskTerms.StopLoss"]))</MudText>
+                        <td rowspan="4">
+                            <MudText Align="MudBlazor.Align.Center">사용자 설정</MudText>
                         </td>
                     </tr>
 
                     <tr>
-                        <td align="center">
-                            <MudText Class="ma-2">주간</MudText>
+                        <td colspan="2">
+                            <MudText>한계 손실 발생 시 (주문설정: @_localizer["AskTerms.StopLoss"])</MudText>
                         </td>
-                        <td colspan="3">
-                            <MudText Class="ma-2">월요일 ~ 일요일</MudText>
-                        </td>
-                        <td> </td>
                     </tr>
+
                     <tr>
-                        <td align="center">
-                            <MudText Class="ma-2">일간</MudText>
+                        <td colspan="2">
+                            <MudText>@_localizer["Partial sale of holding coins in case of insufficient purchase amount"] (주문설정: @_localizer["Trading.Rebalancing"])</MudText>
                         </td>
-                        <td colspan="3">
-                            <MudText Class="ma-2">오늘 09:00:00 ~ 내일 08:59:59</MudText>
-                        </td>
-                        <td> </td>
                     </tr>
-                </table>
-            </div>
+
+                    <tr>
+                        <td colspan="2">
+                            <MudText>청산 (주문설정: @_localizer["AskTerms.LiquidatePositions"])</MudText>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <MudText Align="MudBlazor.Align.Center">@_localizer["TimeFrames.Day"]</MudText>
+                        </td>
+                        <td colspan="2">
+                            <MudText>00:00:00 ~ 23:59:59</MudText>
+                        </td>
+                        <td rowspan="2">
+                            <MudText  Align="MudBlazor.Align.Center">UTC(협정세계시)</MudText>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <MudText Align="MudBlazor.Align.Center">@_localizer["TimeFrames.Week"]</MudText>
+                        </td>
+                        <td colspan="2">
+                            <MudText>월요일 ~ 일요일</MudText>
+                        </td>
+                    </tr>
+                </tbody>
+            </MudSimpleTable>
         </MudPaper>
     </MudPaper>
 }

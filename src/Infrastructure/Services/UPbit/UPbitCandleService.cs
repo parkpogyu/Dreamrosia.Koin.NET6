@@ -5,7 +5,6 @@ using Dreamrosia.Koin.Infrastructure.Contexts;
 using Dreamrosia.Koin.Shared.Enums;
 using Dreamrosia.Koin.Shared.Wrapper;
 using Dreamrosia.Koin.UPbit.Infrastructure.Clients;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -104,15 +103,11 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             }
         }
 
-        public async Task<IResult> GetCandlesAsync(TimeFrames frame)
+        public async Task<IResult> GetCandlesAsync(TimeFrames frame, IEnumerable<string> markets)
         {
             int count = frame == TimeFrames.Week ? 7 :
-                         frame == TimeFrames.Month ? 31 :
-                         frame == TimeFrames.Year ? 365 : 1;
-
-            var markets = _context.Symbols
-                                  .AsNoTracking()
-                                  .Select(f => f.Id);
+                        frame == TimeFrames.Month ? 31 :
+                        frame == TimeFrames.Year ? 365 : 1;
 
             IEnumerable<UPbitModels.Candle> candles = null;
 

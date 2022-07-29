@@ -75,6 +75,8 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 var signals = _unitOfWork.Repository<SeasonSignal>().Entities;
 
+                var today = DateTime.UtcNow.Date;
+
                 var items = (from lt in symbols
                              from rt in signals.AsNoTracking()
                                                .Where(f => f.UserId.Equals(userId) &&
@@ -87,7 +89,9 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                                  return item;
 
-                             }))()).ToArray();
+                             }))()).Where(f => f.UpdatedAt < today).ToArray();
+
+                if (!items.Any()) { return await Result.SuccessAsync(); }
 
                 Parallel.ForEach(items, async item =>
                 {

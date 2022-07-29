@@ -1,4 +1,5 @@
-﻿using Dreamrosia.Koin.Application.Interfaces.Services;
+﻿using Dreamrosia.Koin.Application.DTO;
+using Dreamrosia.Koin.Application.Interfaces.Services;
 using Dreamrosia.Koin.Shared.Enums;
 using Microsoft.Extensions.Logging;
 using Quartz;
@@ -52,47 +53,11 @@ namespace Dreamrosia.Koin.Server.Schedules
             {
                 List<Task> tasks = new List<Task>();
 
-                tasks.Add(TickerToCandleJobAsync());
                 tasks.Add(SeasonSignalJobAsync());
                 tasks.Add(SymbolJobAsync());
                 tasks.Add(CandleJobAsync());
 
                 await Task.WhenAll(tasks).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-            }
-        }
-
-        private async Task TickerToCandleJobAsync()
-        {
-            try
-            {
-                DateTime utc = DateTime.UtcNow;
-
-                // 00:00 ~ 00:05 2초간격, 이외는 정분에 작용
-                // 00:[00-05]:ss/2,  hh:mm:00
-                if (utc.Hour == 0)
-                {
-                    if (utc.Minute > 5 && utc.Second != 0) { return; }
-                }
-                else
-                {
-                    if (utc.Second != 0) { return; }
-                }
-
-                var response = await _upbitTickerService.GetCandlesAsync();
-
-                if (!response.Succeeded) { return; }
-
-                var candles = response.Data
-                                      .Where(f => f.candle_date_time_utc == utc.Date)
-                                      .ToArray();
-
-                if (!candles.Any()) { return; }
-
-                await _candleService.SaveCandlesAsync(candles);
             }
             catch (Exception ex)
             {
@@ -154,13 +119,69 @@ namespace Dreamrosia.Koin.Server.Schedules
         {
             try
             {
-                DateTime now = DateTime.UtcNow;
+                DateTime utc = DateTime.UtcNow;
 
-                // 23:50 ~ 24:00 사이 2분 간격 수집
-                // hh:mm:04
-                if (now.Hour != 23 || now.Minute < 50 || now.Minute % 2 == 0 || now.Second != 4) { return; }
+                IEnumerable<CandleDto> candles = null;
 
-                await _upbitCandleService.GetCandlesAsync(TimeFrames.Week);
+                if (utc.Hour == 0 && utc.Minute < 5)
+                {
+                    candles = (await _candleService.GetTodayCandlesAsync(exist: false)).Data;
+
+                    if (candles.Any()) 
+                    {
+                        var markets = candles.Select(f => f.market)
+                                             .ToArray();
+
+                        await _upbitCandleService.GetCandlesAsync(TimeFrames.Week, markets);
+
+                        return;
+                    }
+                }
+
+                // 00:[00-05]:ss/2,  hh:mm:00
+                if (utc.Second != 0) { return; }
+
+                candles = (await _upbitTickerService.GetCandlesAsync()).Data
+                                                                       .Where(f => f.candle_date_time_utc == utc.Date)
+                                                                       .ToArray();
+                if (!candles.Any()) { return; }
+
+                await _candleService.SaveCandlesAsync(candles);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+        }
+
+        private async Task TickerToCandleJobAsync()
+        {
+            try
+            {
+                DateTime utc = DateTime.UtcNow;
+
+                // 00:00 ~ 00:05 2초간격, 이외는 정분에 작용
+                // 00:[00-05]:ss/2,  hh:mm:00
+                if (utc.Hour == 0)
+                {
+                    if (utc.Minute > 5 && utc.Second != 0) { return; }
+                }
+                else
+                {
+                    if (utc.Second != 0) { return; }
+                }
+
+                var response = await _upbitTickerService.GetCandlesAsync();
+
+                if (!response.Succeeded) { return; }
+
+                var candles = response.Data
+                                      .Where(f => f.candle_date_time_utc == utc.Date)
+                                      .ToArray();
+
+                if (!candles.Any()) { return; }
+
+                await _candleService.SaveCandlesAsync(candles);
             }
             catch (Exception ex)
             {
