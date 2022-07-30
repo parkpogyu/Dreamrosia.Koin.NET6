@@ -61,6 +61,28 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             }
         }
 
+        public async Task<IResult<IEnumerable<CandleDto>>> GetOldCandlesAsync(string market, DateTime head, DateTime rear)
+        {
+            try
+            {
+                var items = await _context.OldCandles
+                                          .AsNoTracking()
+                                          .Where(f => f.market.Equals(market) &&
+                                                      f.candle_date_time_utc >= head.Date &&
+                                                      f.candle_date_time_utc <= rear.Date)
+                                          .OrderByDescending(f => f.candle_date_time_utc)
+                                          .ToArrayAsync();
+
+                return await Result<IEnumerable<CandleDto>>.SuccessAsync(_mapper.Map<IEnumerable<CandleDto>>(items));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return await Result<IEnumerable<CandleDto>>.FailAsync(_localizer["An unhandled error has occurred."]);
+            }
+        }
+
         public async Task<IResult<IEnumerable<LastCandleDto>>> GetLastCandlesAsync(IEnumerable<string> markets)
         {
             try
@@ -166,6 +188,24 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 return await Result.SuccessAsync(string.Format(_localizer["{0} Updated"], _localizer["Candles"]));
 
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.Rollback();
+
+                _logger.LogError(ex, ex.Message);
+
+                return await Result.FailAsync(_localizer["An unhandled error has occurred."]);
+            }
+        }
+
+        public async Task<IResult> MoveOldCandlesAsync()
+        {
+            try
+            {
+                await _context.Database.ExecuteSqlRawAsync("CALL PRC_Move_Candles()");
+
+                return await Result.SuccessAsync(string.Format(_localizer["{0} Updated"], _localizer["Candles"]));
             }
             catch (Exception ex)
             {

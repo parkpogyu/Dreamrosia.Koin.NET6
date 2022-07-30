@@ -9,8 +9,10 @@ namespace Dreamrosia.Koin.Application.Interfaces.Services
     public interface ICandleService
     {
         Task<IResult<IEnumerable<CandleDto>>> GetCandlesAsync(string market, DateTime head, DateTime rear);
+        Task<IResult<IEnumerable<CandleDto>>> GetOldCandlesAsync(string market, DateTime head, DateTime rear);
         Task<IResult<IEnumerable<LastCandleDto>>> GetLastCandlesAsync(IEnumerable<string> models);
         Task<IResult<IEnumerable<CandleDto>>> GetTodayCandlesAsync(bool exist = true);
         Task<IResult> SaveCandlesAsync(IEnumerable<CandleDto> models);
+        Task<IResult> MoveOldCandlesAsync();
     }
 }

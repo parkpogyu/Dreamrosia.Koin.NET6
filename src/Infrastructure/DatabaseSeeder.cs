@@ -74,7 +74,7 @@ namespace Dreamrosia.Koin.Infrastructure
                     //_ = _askTermsService.AddAskTermsAsync(superUser.Id);
                     //_ = _bidTermsService.AddBidTermsAsync(superUser.Id);
 
-                    _db.Database.ExecuteSqlRaw($"CALL PRC_Initialize_User_Terms('{superUser.Id}')");
+                    await _db.Database.ExecuteSqlRawAsync($"CALL PRC_Initialize_User_Terms('{superUser.Id}')");
 
                     if (createResult.Succeeded && rollResult.Succeeded && externalResult.Succeeded)
                     {

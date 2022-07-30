@@ -43,6 +43,7 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
 
         #region Market
         public DbSet<Candle> Candles { get; set; }
+        public DbSet<OldCandle> OldCandles { get; set; }
         public DbSet<Crix> Crixes { get; set; }
         public DbSet<Symbol> Symbols { get; set; }
         public DbSet<DelistingSymbol> DelistingSymbols { get; set; }
@@ -500,6 +501,49 @@ namespace Dreamrosia.Koin.Infrastructure.Contexts
             builder.Entity<Candle>(entity =>
             {
                 entity.ToTable("Candles").HasComment("코인시세");
+
+                entity.Property(p => p.market)
+                      .HasMaxLength(20)
+                      .IsRequired(true)
+                      .HasComment("마켓코드");
+
+                entity.Property(p => p.candle_date_time_utc)
+                      .IsRequired(true)
+                      .HasComment("기준일시 (UTC)");
+
+                entity.Property(p => p.candle_date_time_kst)
+                      .IsRequired(true)
+                      .HasComment("기준일시 (KST)");
+
+                entity.Property(p => p.opening_price)
+                      .IsRequired(true)
+                      .HasComment("시가");
+
+                entity.Property(p => p.high_price)
+                      .IsRequired(true)
+                      .HasComment("고가");
+
+                entity.Property(p => p.low_price)
+                      .IsRequired(true)
+                      .HasComment("저가");
+
+                entity.Property(p => p.trade_price)
+                      .IsRequired(true)
+                      .HasComment("현재가");
+
+                entity.Property(p => p.candle_acc_trade_price)
+                      .HasComment("누적 거래대금");
+
+                entity.Property(p => p.candle_acc_trade_volume)
+                      .HasComment("누적 거래량");
+
+                entity.HasIndex(p => new { p.market, p.candle_date_time_utc })
+                      .IsUnique(true);
+            });
+
+            builder.Entity<OldCandle>(entity =>
+            {
+                entity.ToTable("OldCandles").HasComment("코인시세");
 
                 entity.Property(p => p.market)
                       .HasMaxLength(20)

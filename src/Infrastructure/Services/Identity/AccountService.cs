@@ -215,7 +215,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services.Identity
                     await _userManager.SetAuthenticationTokenAsync(user, external.LoginProvider, KakaoConfiguration.TockenName, access_token?.Value);
                     await _userManager.AddToRoleAsync(user, RoleConstants.BasicRole);
 
-                    _context.Database.ExecuteSqlRaw($"CALL PRC_Initialize_User_Terms('{user.Id}')");
+                    await _context.Database.ExecuteSqlRawAsync($"CALL PRC_Initialize_User_Terms('{user.Id}')");
 
                     return await Result<UserDto>.SuccessAsync(_localizer["User Registered"]);
                 }

@@ -127,7 +127,7 @@ namespace Dreamrosia.Koin.Server.Schedules
                 {
                     candles = (await _candleService.GetTodayCandlesAsync(exist: false)).Data;
 
-                    if (candles.Any()) 
+                    if (candles.Any())
                     {
                         var markets = candles.Select(f => f.market)
                                              .ToArray();
@@ -136,6 +136,11 @@ namespace Dreamrosia.Koin.Server.Schedules
 
                         return;
                     }
+                }
+
+                if (utc.Hour == 0 && utc.Minute == 0 && utc.Second == 30)
+                {
+                    await _candleService.MoveOldCandlesAsync();
                 }
 
                 // 00:[00-05]:ss/2,  hh:mm:00

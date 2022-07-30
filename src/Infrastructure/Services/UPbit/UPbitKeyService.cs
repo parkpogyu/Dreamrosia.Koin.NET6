@@ -145,7 +145,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 if (ticket is null)
                 {
-                    _context.Database.ExecuteSqlRaw($"CALL PRC_Assign_MiningBotTicket('{model.UserId}')");
+                    await _context.Database.ExecuteSqlRawAsync($"CALL PRC_Assign_MiningBotTicket('{model.UserId}')");
                 }
 
                 await _unitOfWork.Commit(new CancellationToken());

@@ -87,40 +87,32 @@ namespace Dreamrosia.Koin.Infrastructure.Services
                 Dictionary<string, PaperPositionDto> DicPositions = new Dictionary<string, PaperPositionDto>();
                 Dictionary<string, IEnumerable<CandleDto>> DicCandles = new Dictionary<string, IEnumerable<CandleDto>>();
 
-                var symbols = _context.Candles.AsNoTracking()
-                                              .GroupBy(g => g.market)
-                                              .Select(f => f.Key)
-                                              .AsEnumerable();
-
-                var markets = (from lt in symbols
-                               from rt in trackings.Where(f => lt.Equals(f.market)).DefaultIfEmpty()
-                               where rt is not null
-                               select lt).Distinct().ToArray();
+                var markets = trackings.Where(f => !Currency.Unit.KRW.Equals(f.code))
+                                       .GroupBy(g => g.market)
+                                       .Select(f => f.OrderBy(f => f.done_at).First());
 
                 DateTime today = DateTime.UtcNow.Date;
 
+                List<CandleDto> candles = new List<CandleDto>();
+
                 foreach (var market in markets)
                 {
-                    var splits = market.Split("-", StringSplitOptions.RemoveEmptyEntries);
+                    candles.Clear();
 
-                    DicPositions.Add(market, new PaperPositionDto()
+                    candles.AddRange((await _candleService.GetCandlesAsync(market.market, market.done_at.ToUniversalDate(), today)).Data);
+                    candles.AddRange((await _candleService.GetOldCandlesAsync(market.market, market.done_at.ToUniversalDate(), today)).Data);
+
+                    if (!candles.Any()) { continue; }
+
+                    var splits = market.market.Split("-", StringSplitOptions.RemoveEmptyEntries);
+
+                    DicPositions.Add(market.market, new PaperPositionDto()
                     {
                         unit_currency = splits[0],
                         code = splits[1]
-                    }); ;
+                    });
 
-                    var tracking = trackings.Where(f => market.Equals(f.market))
-                                            .OrderBy(f => f.done_at)
-                                            .FirstOrDefault();
-
-                    if (tracking is not null)
-                    {
-                        var candles = await _candleService.GetCandlesAsync(market,
-                                                                           tracking.done_at.ToUniversalDate(),
-                                                                           today);
-
-                        DicCandles.Add(market, candles.Data);
-                    }
+                    DicCandles.Add(market.market, candles.OrderBy(f => f.candle_date_time_utc).ToArray());
                 }
 
                 List<AssetDto> assets = new List<AssetDto>();

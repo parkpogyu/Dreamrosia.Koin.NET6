@@ -14,6 +14,8 @@ namespace Dreamrosia.Koin.Application.Mappings
                                           .ForMember(s => s.Id, opt => opt.Ignore());
 
             CreateMap<CandleDto, CandleExtensionDto>();
+
+            CreateMap<OldCandle, CandleDto>().ForMember(d => d.candle_acc_trade_price, o => o.MapFrom(s => s.candle_acc_trade_price / StaticValue.HundredMillion));
         }
     }
 }
