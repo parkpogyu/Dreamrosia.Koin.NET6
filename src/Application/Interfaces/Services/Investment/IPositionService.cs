@@ -8,6 +8,6 @@ namespace Dreamrosia.Koin.Application.Interfaces.Services
     public interface IPositionService
     {
         Task<IResult<PositionsDto>> GetPositionsAsync(string userId);
-        Task<IResult<int>> SavePositionsAsync(string userId, IEnumerable<PositionDto> models);
+        Task<IResult> SavePositionsAsync(string userId, IEnumerable<PositionDto> models);
     }
 }

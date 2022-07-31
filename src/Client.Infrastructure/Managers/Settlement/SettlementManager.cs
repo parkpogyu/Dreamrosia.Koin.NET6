@@ -25,11 +25,11 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers
             return await response.ToResult<IEnumerable<BankingTransactionDto>>();
         }
 
-        public async Task<IResult<int>> ImportBankingTransactionsAsync(UploadRequest model)
+        public async Task<IResult> ImportBankingTransactionsAsync(UploadRequest model)
         {
             var response = await _httpClient.PostAsJsonAsync(Routes.SettlementsEndpoints.ImportBankingTransactions, model);
 
-            return await response.ToResult<int>();
+            return await response.ToResult();
         }
 
         public async Task<IResult<IEnumerable<PointDto>>> GetPointsAsync(PointsRequestDto model)

@@ -120,7 +120,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             }
         }
 
-        public async Task<IResult<int>> SavePositionsAsync(string userId, IEnumerable<PositionDto> models)
+        public async Task<IResult> SavePositionsAsync(string userId, IEnumerable<PositionDto> models)
         {
             try
             {
@@ -128,7 +128,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 if (user is null)
                 {
-                    return await Result<int>.FailAsync(_localizer["User Not Found!"]);
+                    return await Result.FailAsync(_localizer["User Not Found!"]);
                 }
 
                 var registered = _unitOfWork.Repository<Position>()
@@ -170,7 +170,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 await _unitOfWork.Commit(new CancellationToken());
 
-                return await Result<int>.SuccessAsync(models.Count(), string.Format(_localizer["{0} Saved"], _localizer["Positions"]));
+                return await Result.SuccessAsync(string.Format(_localizer["{0} Saved"], _localizer["Positions"]));
             }
             catch (Exception ex)
             {
@@ -178,7 +178,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<int>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
     }

@@ -94,7 +94,7 @@ namespace Dreamrosia.Koin.Infrastructure.Hubs
             return result.Data;
         }
 
-        public async Task<int> SaveOrders(string userId, IEnumerable<OrderDto> models, bool done)
+        public async Task SaveOrders(string userId, IEnumerable<OrderDto> models, bool done)
         {
             var result = await _orderService.SaveOrdersAsync(userId, models, done);
 
@@ -105,11 +105,9 @@ namespace Dreamrosia.Koin.Infrastructure.Hubs
                     _logger.LogError($"SaveOrder Error: userId:{userId}: {message}");
                 }
             }
-
-            return result.Data;
         }
 
-        public async Task<int> SavePositions(string userId, byte[] bytes)
+        public async Task SavePositions(string userId, byte[] bytes)
         {
             var models = await ObjectGZip.DecompressAsync<IEnumerable<PositionDto>>(bytes);
 
@@ -147,11 +145,9 @@ namespace Dreamrosia.Koin.Infrastructure.Hubs
             {
                 await Clients.Client(connectionId.Key)?.ReceivePositions(userId, positions);
             }
-
-            return result.Data;
         }
 
-        public async Task<int> SaveTransfers(string userId, IEnumerable<TransferDto> models)
+        public async Task SaveTransfers(string userId, IEnumerable<TransferDto> models)
         {
             var result = await _transferService.SaveTransfersAsync(userId, models);
 
@@ -162,15 +158,11 @@ namespace Dreamrosia.Koin.Infrastructure.Hubs
                     _logger.LogError($"SaveTransfers Error: userId:{userId}: {message}");
                 }
             }
-
-            return result.Data;
         }
 
-        public async Task<bool> OccurredFatalError(string userId, string error)
+        public async Task OccurredFatalError(string userId, string error)
         {
-            var result = await _upbitKeyService.OccurredFatalErrorAsync(userId, error);
-
-            return result.Succeeded;
+            await _upbitKeyService.OccurredFatalErrorAsync(userId, error);
         }
     }
 }

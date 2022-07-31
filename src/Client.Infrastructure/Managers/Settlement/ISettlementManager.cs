@@ -10,7 +10,7 @@ namespace Dreamrosia.Koin.Client.Infrastructure.Managers
     {
         Task<IResult<IEnumerable<BankingTransactionDto>>> GetBankingTransactionsAsync(BankingTransactionsRequestDto model);
 
-        Task<IResult<int>> ImportBankingTransactionsAsync(UploadRequest model);
+        Task<IResult> ImportBankingTransactionsAsync(UploadRequest model);
 
         Task<IResult<IEnumerable<PointDto>>> GetPointsAsync(PointsRequestDto model);
     }

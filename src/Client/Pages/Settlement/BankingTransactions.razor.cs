@@ -52,7 +52,7 @@ namespace Dreamrosia.Koin.Client.Pages.Settlement
             }
         }
 
-        private async Task<IResult<int>> ImportExcel(UploadRequest uploadFile)
+        private async Task<IResult> ImportExcel(UploadRequest uploadFile)
         {
             var result = await SettlmentManager.ImportBankingTransactionsAsync(uploadFile);
 
@@ -66,7 +66,7 @@ namespace Dreamrosia.Koin.Client.Pages.Settlement
                 { nameof(ImportExcelModal.ModelName), $"{_localizer["Settlements"]} {_localizer["Transfers"]}"}
             };
 
-            Func<UploadRequest, Task<IResult<int>>> importExcel = ImportExcel;
+            Func<UploadRequest, Task<IResult>> importExcel = ImportExcel;
 
             parameters.Add(nameof(ImportExcelModal.OnSaved), importExcel);
 

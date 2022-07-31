@@ -138,7 +138,7 @@ namespace Dreamrosia.Koin.Server.Schedules
                     }
                 }
 
-                if (utc.Hour == 0 && utc.Minute == 0 && utc.Second == 30)
+                if (utc.Hour == 23 && utc.Minute == 59 && utc.Second == 30)
                 {
                     await _candleService.MoveOldCandlesAsync();
                 }

@@ -85,7 +85,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             }
         }
 
-        public async Task<IResult<int>> ImportBankingTransactionsAsync(UploadRequest model)
+        public async Task<IResult> ImportBankingTransactionsAsync(UploadRequest model)
         {
             try
             {
@@ -149,7 +149,7 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                     if (!items.Any())
                     {
-                        return await Result<int>.SuccessAsync(items.Count());
+                        return await Result.SuccessAsync();
                     }
 
                     var min = items.Min(f => f.done_at).AddMinutes(-1);
@@ -185,11 +185,11 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                     await _unitOfWork.Commit(new CancellationToken());
 
-                    return await Result<int>.SuccessAsync(items.Count(), string.Format(_localizer["{0} Saved"], _localizer["Transfers"]));
+                    return await Result.SuccessAsync(string.Format(_localizer["{0} Saved"], _localizer["Transfers"]));
                 }
                 else
                 {
-                    return await Result<int>.FailAsync(result.Messages);
+                    return await Result.FailAsync(result.Messages);
                 }
 
             }
@@ -197,12 +197,12 @@ namespace Dreamrosia.Koin.Infrastructure.Services
             {
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<int>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result.FailAsync(_localizer["An unhandled error has occurred."]);
             }
         }
 
 
-        public async Task<IResult<int>> SaveBankingTransactionsAsync(string userId, IEnumerable<BankingTransactionDto> models)
+        public async Task<IResult> SaveBankingTransactionsAsync(string userId, IEnumerable<BankingTransactionDto> models)
         {
             try
             {
@@ -210,16 +210,16 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
                 if (user is null)
                 {
-                    return await Result<int>.FailAsync(_localizer["User Not Found!"]);
+                    return await Result.FailAsync(_localizer["User Not Found!"]);
                 }
 
-                return await Result<int>.FailAsync(_localizer["User Not Found!"]);
+                return await Result.FailAsync(_localizer["User Not Found!"]);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
 
-                return await Result<int>.FailAsync(_localizer["An unhandled error has occurred."]);
+                return await Result.FailAsync(_localizer["An unhandled error has occurred."]);
             }
 
             //try
@@ -252,13 +252,13 @@ namespace Dreamrosia.Koin.Infrastructure.Services
 
             //    await _unitOfWork.Commit(new CancellationToken());
 
-            //    return await Result<int>.SuccessAsync(models.Count(), string.Format(_localizer["{0} Saved"], _localizer["BankingTransactions"]));
+            //    return await Result.SuccessAsync(models.Count(), string.Format(_localizer["{0} Saved"], _localizer["BankingTransactions"]));
             //}
             //catch (Exception ex)
             //{
             //    await _unitOfWork.Rollback();
 
-            //    return await Result<int>.FailAsync(ex.Message);
+            //    return await Result.FailAsync(ex.Message);
             //}
         }
     }

@@ -16,7 +16,7 @@ namespace Dreamrosia.Koin.Client.Shared.Components
         [CascadingParameter] private MudDialogInstance MudDialog { get; set; }
         [Parameter] public UploadRequest UploadRequest { get; set; } = new();
         [Parameter] public string ModelName { get; set; }
-        [Parameter] public Func<UploadRequest, Task<IResult<int>>> OnSaved { get; set; }
+        [Parameter] public Func<UploadRequest, Task<IResult>> OnSaved { get; set; }
 
         private FluentValidationValidator _fluentValidationValidator;
         private bool Validated => _fluentValidationValidator.Validate(options => { options.IncludeAllRuleSets(); });

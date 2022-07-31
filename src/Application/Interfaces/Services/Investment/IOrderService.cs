@@ -9,6 +9,6 @@ namespace Dreamrosia.Koin.Application.Interfaces.Services
     {
         Task<IResult<IEnumerable<OrderDto>>> GetOrdersAsync(OrdersRequestDto model);
         Task<IResult<OrderDto>> GetLastOrderAsync(string userId);
-        Task<IResult<int>> SaveOrdersAsync(string userId, IEnumerable<OrderDto> models, bool done);
+        Task<IResult> SaveOrdersAsync(string userId, IEnumerable<OrderDto> models, bool done);
     }
 }

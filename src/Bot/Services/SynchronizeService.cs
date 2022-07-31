@@ -153,7 +153,7 @@ namespace Dreamrosia.Koin.Bot.Services
 
                 foreach (var items in bundle)
                 {
-                    _ = await connection.InvokeAsync<int>(HubMethod.SaveOrders, Depot.TradingTerms.UserId, items, true);
+                    await connection.InvokeAsync(HubMethod.SaveOrders, Depot.TradingTerms.UserId, items, true);
                 }
 
                 orders = Depot.WaitingOrders;
@@ -165,7 +165,7 @@ namespace Dreamrosia.Koin.Bot.Services
 
                 foreach (var items in bundle)
                 {
-                    _ = await connection.InvokeAsync<int>(HubMethod.SaveOrders, Depot.TradingTerms.UserId, items, false);
+                    await connection.InvokeAsync(HubMethod.SaveOrders, Depot.TradingTerms.UserId, items, false);
                 }
             }
             catch (Exception ex)
@@ -182,7 +182,7 @@ namespace Dreamrosia.Koin.Bot.Services
             {
                 var bytes = await CompressAsync(Depot.Positions);
 
-                var result = await connection.InvokeAsync<int>(HubMethod.SavePositions, Depot.TradingTerms.UserId, bytes);
+                await connection.InvokeAsync(HubMethod.SavePositions, Depot.TradingTerms.UserId, bytes);
 
             }
             catch (Exception ex)
@@ -237,7 +237,7 @@ namespace Dreamrosia.Koin.Bot.Services
 
                 foreach (var items in bundle)
                 {
-                    var result = await connection.InvokeAsync<int>(HubMethod.SaveTransfers, Depot.TradingTerms.UserId, items);
+                    await connection.InvokeAsync(HubMethod.SaveTransfers, Depot.TradingTerms.UserId, items);
                 }
             }
             catch (Exception ex)
@@ -250,7 +250,7 @@ namespace Dreamrosia.Koin.Bot.Services
         {
             if (string.IsNullOrEmpty(Depot.TradingTerms?.UserId) || !IsConnected) { return; }
 
-            await connection.InvokeAsync<bool>(HubMethod.OccurredFatalError, Depot.UserId, message);
+            await connection.InvokeAsync(HubMethod.OccurredFatalError, Depot.UserId, message);
         }
 
         private bool IsConnected => connection?.State == HubConnectionState.Connected ? true : false;
